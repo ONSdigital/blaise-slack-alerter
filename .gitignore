@@ -1,5 +1,7 @@
+.coverage
 .mypy_cache
 .pytest_cache
-__pycache__/
 .venv
+__pycache__/
+coverage.xml
 requirements.txt
