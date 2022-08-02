@@ -1,4 +1,4 @@
-from typing import Dict, Any, Tuple, Optional
+from typing import Dict, Any, Tuple, Optional, Union
 
 from lib.cloud_logging.log_entry import LogEntry, PayloadType
 
@@ -23,7 +23,9 @@ def parse_resource_type(raw: Dict[str, Any]) -> Optional[str]:
     return resource_type
 
 
-def parse_payload(raw: Dict[str, Any]) -> Tuple[PayloadType, str | Dict[str, Any]]:
+def parse_payload(
+    raw: Dict[str, Any]
+) -> Tuple[PayloadType, Union[str, Dict[str, Any]]]:
     payload_type = PayloadType.NONE
     payload = raw
     if "textPayload" in raw:

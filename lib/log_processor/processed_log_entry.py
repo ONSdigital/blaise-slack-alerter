@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Any, Dict, cast, Callable, Optional
+from typing import Any, Dict, cast, Callable, Optional, Union
 
 from lib.cloud_logging import LogEntry
 from lib.log_processor.app_log_payload import AppLogPayload
@@ -8,7 +8,7 @@ from lib.log_processor.app_log_payload import AppLogPayload
 @dataclass(frozen=True)
 class ProcessedLogEntry:
     message: str
-    data: str | Dict[str, Any] = field(
+    data: Union[str, Dict[str, Any]] = field(
         default_factory=cast(Callable[[], Dict[str, Any]], dict)
     )
     severity: Optional[str] = field(default=None)
