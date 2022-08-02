@@ -1,5 +1,4 @@
 import json
-import logging
 
 import pytest
 import requests_mock
@@ -82,17 +81,25 @@ def test_successfully_sending_a_message():
         ]
     )
 
-    def test_error_occurred_sending_message(caplog):
-        send_alert = create_slack_alerter("https://slack.com/example/web-hook")
 
-        with pytest.raises(SlackAlertFailed) as err:
-            with requests_mock.Mocker() as mock:
-                mock.post(
-                    "https://slack.com/example/web-hook",
-                    text="example response",
-                    status_code=500,
+def test_error_occurred_sending_message():
+    send_alert = create_slack_alerter("https://slack.com/example/web-hook")
+
+    with pytest.raises(SlackAlertFailed) as err:
+        with requests_mock.Mocker() as mock:
+            mock.post(
+                "https://slack.com/example/web-hook",
+                text="example response",
+                status_code=500,
+            )
+            send_alert(
+                SlackMessage(
+                    title="hello world",
+                    fields={},
+                    content="",
+                    footnote="",
                 )
-                send_alert(SlackMessage(title="hello world"))
+            )
 
-        assert err.value.args[0] == 500
-        assert err.value.args[1] == "example response"
+    assert err.value.args[0] == 500
+    assert err.value.args[1] == "example response"
