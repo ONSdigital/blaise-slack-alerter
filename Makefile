@@ -10,7 +10,6 @@ format:
 check-types:
 	@poetry run mypy .
 
-
 .PHONY=test
 test: lint check-types
 	@poetry run python -m pytest

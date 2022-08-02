@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, Union
 
 
 class PayloadType(Enum):
@@ -13,7 +13,7 @@ class PayloadType(Enum):
 class LogEntry:
     resource_type: Optional[str]
     payload_type: PayloadType
-    payload: str | Dict[str, Any]
+    payload: Union[str, Dict[str, Any]]
     severity: Optional[str]
     log_name: Optional[str]
     timestamp: Optional[str]
