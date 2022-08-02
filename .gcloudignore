@@ -1,0 +1,10 @@
+.idea
+.venv
+.mypy_cache
+.pytest_cache
+
+Makefile
+tests
+pyproject.toml
+poetry.lock
+.gitignore
