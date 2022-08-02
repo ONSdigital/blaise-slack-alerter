@@ -53,7 +53,7 @@ def send_alert():
     return Mock()
 
 
-def test_bad_pubsub_envelope(caplog, send_alert):
+def test_bad_pubsub_envelope(caplog, log_matching, send_alert):
     event = {
         "@type": "type.googleapis.com/google.pubsub.v1.PubsubMessage",
         "attributes": {
@@ -66,15 +66,12 @@ def test_bad_pubsub_envelope(caplog, send_alert):
 
     assert response == "Alert sent (invalid envelope)"
 
-    log_entries = [record for record in caplog.records]
-    assert log_entries[0].levelno == logging.WARNING
-    assert (
-        log_entries[0].message == "Invalid PubSub envelope: Field 'data' was missing."
+    warning = log_matching(
+        logging.WARNING, "Invalid PubSub envelope: Field 'data' was missing."
     )
-    assert json.loads(log_entries[0].textPayload) == event
+    assert json.loads(warning.textPayload) == event
 
-    assert log_entries[1].levelno == logging.INFO
-    assert log_entries[1].message == "Sending raw message to Slack"
+    log_matching(logging.INFO, "Sending raw message to Slack")
 
     send_alert.assert_called_with(
         SlackMessage(
@@ -89,7 +86,7 @@ def test_bad_pubsub_envelope(caplog, send_alert):
     )
 
 
-def test_send_raw_string_slack_alert(caplog, log_entry, send_alert):
+def test_send_raw_string_slack_alert(caplog, log_entry, send_alert, log_matching):
     event = {
         "@type": "type.googleapis.com/google.pubsub.v1.PubsubMessage",
         "attributes": {
@@ -103,10 +100,8 @@ def test_send_raw_string_slack_alert(caplog, log_entry, send_alert):
     with caplog.at_level(logging.INFO):
         response = slack_alerts.execute(event, environment="dev", send_alert=send_alert)
 
-    log_entries = [record for record in caplog.records]
-    assert log_entries[0].levelno == logging.INFO
-    assert log_entries[0].message == "Sending message to Slack"
-    assert log_entries[0].textPayload == "This is a raw string message"
+    info = log_matching(logging.INFO, "Sending message to Slack")
+    assert info.textPayload == "This is a raw string message"
 
     assert response == "Alert sent"
 
@@ -126,7 +121,7 @@ def test_send_raw_string_slack_alert(caplog, log_entry, send_alert):
     )
 
 
-def test_send_slack_alert(caplog, log_entry, send_alert):
+def test_send_slack_alert(caplog, log_matching, log_entry, send_alert):
     event = {
         "@type": "type.googleapis.com/google.pubsub.v1.PubsubMessage",
         "attributes": {
@@ -138,10 +133,8 @@ def test_send_slack_alert(caplog, log_entry, send_alert):
     with caplog.at_level(logging.INFO):
         response = slack_alerts.execute(event, environment="dev", send_alert=send_alert)
 
-    log_entries = [record for record in caplog.records]
-    assert log_entries[0].levelno == logging.INFO
-    assert log_entries[0].message == "Sending message to Slack"
-    assert log_entries[0].textPayload == "Example error message"
+    info = log_matching(logging.INFO, "Sending message to Slack")
+    assert info.textPayload == "Example error message"
 
     assert response == "Alert sent"
 
