@@ -82,6 +82,58 @@ def test_successfully_sending_a_message():
     )
 
 
+def test_successfully_sending_a_message_with_no_content():
+    send_alert = create_slack_alerter("https://slack.com/example/web-hook")
+
+    with requests_mock.Mocker() as mock:
+        mock.post("https://slack.com/example/web-hook", text="example response")
+        send_alert(
+            SlackMessage(
+                title="hello world",
+                fields={
+                    "Platform": "gce_instance",
+                    "Application": "bts",
+                },
+                content="",
+                footnote=(
+                    "*Next Steps*\n"
+                    "1. Add some :eyes: to show you are investigating\n"
+                    "2. Check the system is online\n"
+                    "3. <http://google.com | View the logs>\n"
+                ),
+            )
+        )
+
+    assert mock.call_count is 1
+    assert json.loads(mock.request_history[0].text) == dict(
+        blocks=[
+            dict(
+                text=dict(text=":alert: hello world", type="plain_text"),
+                type="header",
+            ),
+            dict(
+                fields=[
+                    dict(text="*Platform:*\ngce_instance", type="mrkdwn"),
+                    dict(text="*Application:*\nbts", type="mrkdwn"),
+                ],
+                type="section",
+            ),
+            dict(type="divider"),
+            dict(
+                text=dict(
+                    text="*Next Steps*\n"
+                    "1. Add some :eyes: to show you are "
+                    "investigating\n"
+                    "2. Check the system is online\n"
+                    "3. <http://google.com | View the logs>\n",
+                    type="mrkdwn",
+                ),
+                type="section",
+            ),
+        ]
+    )
+
+
 def test_error_occurred_sending_message():
     send_alert = create_slack_alerter("https://slack.com/example/web-hook")
 
