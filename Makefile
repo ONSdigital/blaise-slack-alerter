@@ -18,16 +18,6 @@ requirements.txt:
 	@poetry export -f requirements.txt --without-hashes --output requirements.txt
 
 # TODO remove me
-.PHONY=deploy-slack-alerts
-deploy-slack-alerts: requirements.txt
-	 @gcloud functions deploy slack-alerts \
-        --region=europe-west2 \
-        --entry-point=send_slack_alert \
-        --trigger-topic=slack-alerts \
-        --runtime=python310 \
-        --set-env-vars SLACK_URL=$$SLACK_URL,ENVIRONMENT=$$ENVIRONMENT
-
-# TODO remove me
 .PHONY=deploy-log-error
 deploy-log-error: requirements.txt
 	 @gcloud functions deploy log-error \
