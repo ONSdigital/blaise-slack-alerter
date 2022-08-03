@@ -66,6 +66,12 @@ def create_slack_message(
         else "3. Determine the cause of the error"
     )
 
+    content = (
+        processed_log_entry.data
+        if isinstance(processed_log_entry.data, str)
+        else json.dumps(processed_log_entry.data, indent=2)
+    )
+
     return SlackMessage(
         title=f"{processed_log_entry.severity or 'UNKNOWN'}: {processed_log_entry.message}",
         fields=dict(
@@ -73,7 +79,7 @@ def create_slack_message(
             Application=processed_log_entry.application or "unknown",
             Environment=environment,
         ),
-        content=json.dumps(processed_log_entry.data, indent=2),
+        content=content,
         footnote=(
             "*Next Steps*\n"
             "1. Add some :eyes: to show you are investigating\n"
