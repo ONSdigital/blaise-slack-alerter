@@ -10,6 +10,7 @@ from lib.log_processor import process_log_entry
 def test_parse_log_entry_with_compute_engine_instance_log():
     log_entry = LogEntry(
         resource_type="gce_instance",
+        resource_labels=dict(),
         payload_type=PayloadType.JSON,
         payload=dict(
             computer_name="my-vm", extra_info="extra data", message="GAE error message"
@@ -32,6 +33,7 @@ def test_parse_log_entry_with_compute_engine_instance_log():
 def test_parse_log_entry_with_json_payload():
     log_entry = LogEntry(
         resource_type=None,
+        resource_labels=dict(),
         payload_type=PayloadType.JSON,
         payload=dict(
             info="message info",
@@ -58,6 +60,7 @@ def test_parse_log_entry_with_json_payload():
 def test_parse_log_entry_with_text_payload():
     log_entry = LogEntry(
         resource_type=None,
+        resource_labels=dict(),
         payload_type=PayloadType.TEXT,
         payload="example error",
         severity=None,
@@ -73,6 +76,7 @@ def test_parse_log_entry_with_text_payload():
 def test_parse_log_entry_with_no_text_or_json_payload():
     log_entry = LogEntry(
         resource_type=None,
+        resource_labels=dict(),
         payload_type=PayloadType.NONE,
         payload=dict(randomField="example value"),
         severity=None,
@@ -90,6 +94,7 @@ def test_parse_log_entry_with_no_text_or_json_payload():
 def test_parse_log_entry_with_severity():
     log_entry = LogEntry(
         resource_type=None,
+        resource_labels=dict(),
         payload_type=PayloadType.TEXT,
         payload="example error",
         severity="ERROR",
@@ -105,6 +110,7 @@ def test_parse_log_entry_with_severity():
 def test_parse_log_entry_with_log_name():
     log_entry = LogEntry(
         resource_type=None,
+        resource_labels=dict(),
         payload_type=PayloadType.TEXT,
         payload="example error",
         severity=None,
@@ -122,6 +128,7 @@ def test_parse_log_entry_with_log_name():
 def test_parse_log_entry_with_received_timestamp():
     log_entry = LogEntry(
         resource_type=None,
+        resource_labels=dict(),
         payload_type=PayloadType.TEXT,
         payload="example error",
         severity=None,

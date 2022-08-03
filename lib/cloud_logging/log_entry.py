@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any, Dict, Optional, Union
 
@@ -12,6 +12,7 @@ class PayloadType(Enum):
 @dataclass(frozen=True)
 class LogEntry:
     resource_type: Optional[str]
+    resource_labels: Dict[str, str]
     payload_type: PayloadType
     payload: Union[str, Dict[str, Any]]
     severity: Optional[str]

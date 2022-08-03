@@ -10,6 +10,7 @@ from lib.log_processor.log_types.gce_instance import attempt_create
 def log_entry() -> LogEntry:
     return LogEntry(
         resource_type="gce_instance",
+        resource_labels=dict(),
         payload_type=PayloadType.JSON,
         payload=dict(
             message="GCE Error", extra="example extra", computer_name="my-instance"
