@@ -7,6 +7,7 @@ from lib.log_processor.processed_log_entry import create_processed_log_entry
 def test_create_processed_log_entry():
     log_entry = LogEntry(
         resource_type="ignored",
+        resource_labels=dict(),
         payload_type=PayloadType.JSON,
         payload="ignore",
         severity="WARN",

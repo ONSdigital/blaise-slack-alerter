@@ -12,6 +12,7 @@ from lib.log_processor import (
 def test_process_log_entry_raise_if_no_factories_are_provided():
     log_entry = LogEntry(
         resource_type="ignored",
+        resource_labels=dict(),
         payload_type=PayloadType.JSON,
         payload="ignored",
         severity="ignored",
@@ -25,6 +26,7 @@ def test_process_log_entry_raise_if_no_factories_are_provided():
 def test_process_log_entry_raise_if_no_factories_create_a_value():
     log_entry = LogEntry(
         resource_type="ignored",
+        resource_labels=dict(),
         payload_type=PayloadType.JSON,
         payload="ignored",
         severity="ignored",
@@ -38,6 +40,7 @@ def test_process_log_entry_raise_if_no_factories_create_a_value():
 def test_process_log_entry_returns_a_proceed_log_entry_for_the_first_created_payload():
     log_entry = LogEntry(
         resource_type="ignored",
+        resource_labels=dict(),
         payload_type=PayloadType.JSON,
         payload="ignored",
         severity="ERROR",
