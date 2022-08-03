@@ -12,9 +12,9 @@ setup_logging(StructuredLogHandler())
 
 def send_slack_alert(event: dict, _context) -> str:
     slack_url = os.environ["SLACK_URL"]
-    environment = os.environ["ENVIRONMENT"]
+    project_name = os.environ["GCP_PROJECT_NAME"]
     return slack_alerts.execute(
-        event, environment=environment, send_alert=create_slack_alerter(slack_url)
+        event, project_name=project_name, send_alert=create_slack_alerter(slack_url)
     )
 
 

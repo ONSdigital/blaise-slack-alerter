@@ -13,7 +13,7 @@ from lib.send_alert import SendAlert
 from lib.slack.slack_message import SlackMessage
 
 
-def execute(event, environment: str, send_alert: SendAlert) -> str:
+def execute(event, project_name: str, send_alert: SendAlert) -> str:
     try:
         log_data = parse_event(event).data
     except InvalidCloudFunctionEvent:
@@ -26,7 +26,7 @@ def execute(event, environment: str, send_alert: SendAlert) -> str:
             SlackMessage(
                 title="Error with bad format received",
                 fields=dict(
-                    Platform="unknown", Application="unknown", Environment=environment
+                    Platform="unknown", Application="unknown", Project=project_name
                 ),
                 content=json.dumps(event, indent=2),
                 footnote=(
@@ -47,15 +47,15 @@ def execute(event, environment: str, send_alert: SendAlert) -> str:
     logging.info(
         f"Sending message to Slack", extra=dict(textPayload=processed_log_entry.message)
     )
-    send_alert(create_slack_message(environment, processed_log_entry))
+    send_alert(create_slack_message(project_name, processed_log_entry))
     return "Alert sent"
 
 
 def create_slack_message(
-    environment: str, processed_log_entry: ProcessedLogEntry
+    project_name: str, processed_log_entry: ProcessedLogEntry
 ) -> SlackMessage:
-    uptime_url = f"https://console.cloud.google.com/monitoring/uptime?referrer=search&project=project-prefix--{environment}"
-    log_link_url = f"https://console.cloud.google.com/logs/query;query=%0A;cursorTimestamp={processed_log_entry.timestamp}?referrer=search&project=project-prefix--{environment}"
+    uptime_url = f"https://console.cloud.google.com/monitoring/uptime?referrer=search&project={project_name}"
+    log_link_url = f"https://console.cloud.google.com/logs/query;query=%0A;cursorTimestamp={processed_log_entry.timestamp}?referrer=search&project={project_name}"
     managing_alerts_link = (
         "https://confluence.ons.gov.uk/pages/viewpage.action?pageId=98502389"
     )
@@ -77,7 +77,7 @@ def create_slack_message(
         fields=dict(
             Platform=processed_log_entry.platform or "unknown",
             Application=processed_log_entry.application or "unknown",
-            Environment=environment,
+            Project=project_name,
         ),
         content=content,
         footnote=(
