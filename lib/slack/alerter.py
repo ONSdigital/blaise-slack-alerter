@@ -39,9 +39,7 @@ def create_slack_alerter(slack_url: str) -> SendAlert:
             slack_url, data=json.dumps(slack_data), headers=headers
         )
 
-        print(response.text)
-
         if response.status_code != 200:
-            raise SlackAlertFailed(response.status_code, response.text)
+            raise SlackAlertFailed(response.status_code, response.text, slack_data)
 
     return send_alert

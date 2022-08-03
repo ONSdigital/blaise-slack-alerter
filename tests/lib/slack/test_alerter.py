@@ -103,3 +103,13 @@ def test_error_occurred_sending_message():
 
     assert err.value.args[0] == 500
     assert err.value.args[1] == "example response"
+    assert err.value.args[2] == dict(
+        blocks=[
+            dict(
+                text=dict(text=":alert: hello world", type="plain_text"), type="header"
+            ),
+            dict(fields=[], type="section"),
+            dict(type="divider"),
+            dict(text=dict(text="", type="mrkdwn"), type="section"),
+        ]
+    )
