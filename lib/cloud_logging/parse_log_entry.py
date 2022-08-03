@@ -6,8 +6,11 @@ from lib.cloud_logging.log_entry import LogEntry, PayloadType
 def parse_log_entry(raw: Dict[str, Any]) -> LogEntry:
     payload_type, payload = parse_payload(raw)
 
+    resource_type, resource_labels = parse_resource(raw)
+
     return LogEntry(
-        resource_type=parse_resource_type(raw),
+        resource_type=resource_type,
+        resource_labels=resource_labels,
         payload_type=payload_type,
         payload=payload,
         severity=raw.get("severity"),
@@ -16,22 +19,24 @@ def parse_log_entry(raw: Dict[str, Any]) -> LogEntry:
     )
 
 
-def parse_resource_type(raw: Dict[str, Any]) -> Optional[str]:
+def parse_resource(raw: Dict[str, Any]) -> Tuple[Optional[str], Dict[str, str]]:
     resource_type = None
+    resource_labels = dict()
+
     if "resource" in raw and isinstance(raw["resource"], dict):
         resource_type = raw["resource"].get("type")
-    return resource_type
+        resource_labels = raw["resource"].get("labels", dict())
+
+    return resource_type, resource_labels
 
 
 def parse_payload(
     raw: Dict[str, Any]
 ) -> Tuple[PayloadType, Union[str, Dict[str, Any]]]:
-    payload_type = PayloadType.NONE
-    payload = raw
     if "textPayload" in raw:
-        payload_type = PayloadType.TEXT
-        payload = raw["textPayload"]
+        return PayloadType.TEXT, raw["textPayload"]
+
     elif "jsonPayload" in raw:
-        payload_type = PayloadType.JSON
-        payload = raw["jsonPayload"]
-    return payload_type, payload
+        return PayloadType.JSON, raw["jsonPayload"]
+
+    return PayloadType.NONE, raw

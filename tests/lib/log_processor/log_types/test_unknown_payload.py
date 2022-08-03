@@ -10,6 +10,7 @@ from lib.log_processor.log_types.unknown_payload import attempt_create
 def log_entry() -> LogEntry:
     return LogEntry(
         resource_type="unknown-resource",
+        resource_labels=dict(),
         payload_type=PayloadType.NONE,
         payload="Example text payload",
         severity="ERROR",
