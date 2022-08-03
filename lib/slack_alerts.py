@@ -25,7 +25,9 @@ def execute(event, environment: str, send_alert: SendAlert) -> str:
         send_alert(
             SlackMessage(
                 title="Error with bad format received",
-                fields={"Platform": "unknown", "Application": "unknown"},
+                fields=dict(
+                    Platform="unknown", Application="unknown", Environment=environment
+                ),
                 content=json.dumps(event, indent=2),
                 footnote=(
                     "This message was not in an expected format; "
@@ -66,10 +68,11 @@ def create_slack_message(
 
     return SlackMessage(
         title=f"{processed_log_entry.severity or 'UNKNOWN'}: {processed_log_entry.message}",
-        fields={
-            "Platform": processed_log_entry.platform or "unknown",
-            "Application": processed_log_entry.application or "unknown",
-        },
+        fields=dict(
+            Platform=processed_log_entry.platform or "unknown",
+            Application=processed_log_entry.application or "unknown",
+            Environment=environment,
+        ),
         content=json.dumps(processed_log_entry.data, indent=2),
         footnote=(
             "*Next Steps*\n"
