@@ -10,28 +10,35 @@ from lib.slack.slack_message import SlackMessage
 
 def create_slack_alerter(slack_url: str) -> SendAlert:
     def send_alert(message: SlackMessage) -> None:
-        slack_data = dict(
-            blocks=[
-                dict(
-                    type="header",
-                    text=dict(type="plain_text", text=f":alert: {message.title}"),
-                ),
-                dict(
-                    type="section",
-                    fields=[
-                        dict(type="mrkdwn", text=f"*{key}:*\n{value}")
-                        for key, value in message.fields.items()
-                    ],
-                ),
-                dict(type="divider"),
+        blocks = [
+            dict(
+                type="header",
+                text=dict(type="plain_text", text=f":alert: {message.title}"),
+            ),
+            dict(
+                type="section",
+                fields=[
+                    dict(type="mrkdwn", text=f"*{key}:*\n{value}")
+                    for key, value in message.fields.items()
+                ],
+            ),
+        ]
+
+        if message.content != "":
+            blocks.append(dict(type="divider"))
+            blocks.append(
                 dict(
                     type="section",
                     text=dict(type="plain_text", text=message.content),
-                ),
-                dict(type="divider"),
-                dict(type="section", text=dict(type="mrkdwn", text=message.footnote)),
-            ]
+                )
+            )
+
+        blocks.append(dict(type="divider"))
+        blocks.append(
+            dict(type="section", text=dict(type="mrkdwn", text=message.footnote))
         )
+
+        slack_data = dict(blocks=blocks)
 
         byte_length = str(sys.getsizeof(slack_data))
         headers = {"Content-Type": "application/json", "Content-Length": byte_length}
