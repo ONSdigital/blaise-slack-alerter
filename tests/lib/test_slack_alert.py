@@ -76,7 +76,7 @@ def test_bad_pubsub_envelope(caplog, log_matching, send_alert):
     send_alert.assert_called_with(
         SlackMessage(
             title="Error with bad format received",
-            fields=dict(Platform="unknown", Application="unknown"),
+            fields=dict(Platform="unknown", Application="unknown", Environment="dev"),
             content=json.dumps(event, indent=2),
             footnote=(
                 "This message was not in an expected format; "
@@ -98,7 +98,9 @@ def test_send_raw_string_slack_alert(caplog, log_entry, send_alert, log_matching
     }
 
     with caplog.at_level(logging.INFO):
-        response = slack_alerts.execute(event, environment="dev", send_alert=send_alert)
+        response = slack_alerts.execute(
+            event, environment="preprod", send_alert=send_alert
+        )
 
     info = log_matching(logging.INFO, "Sending message to Slack")
     assert info.textPayload == "This is a raw string message"
@@ -108,12 +110,14 @@ def test_send_raw_string_slack_alert(caplog, log_entry, send_alert, log_matching
     send_alert.assert_called_with(
         SlackMessage(
             title="UNKNOWN: This is a raw string message",
-            fields=dict(Platform="unknown", Application="unknown"),
+            fields=dict(
+                Platform="unknown", Application="unknown", Environment="preprod"
+            ),
             content="{}",
             footnote=(
                 "*Next Steps*\n"
                 "1. Add some :eyes: to show you are investigating\n"
-                "2. <https://console.cloud.google.com/monitoring/uptime?referrer=search&project=project-prefix--dev | Check the system is online>\n"
+                "2. <https://console.cloud.google.com/monitoring/uptime?referrer=search&project=project-prefix--preprod | Check the system is online>\n"
                 "3. Determine the cause of the error\n"
                 "4. Follow the <https://confluence.ons.gov.uk/pages/viewpage.action?pageId=98502389 | Managing Prod Alerts> process"
             ),
@@ -131,7 +135,9 @@ def test_send_slack_alert(caplog, log_matching, log_entry, send_alert):
     }
 
     with caplog.at_level(logging.INFO):
-        response = slack_alerts.execute(event, environment="dev", send_alert=send_alert)
+        response = slack_alerts.execute(
+            event, environment="prod", send_alert=send_alert
+        )
 
     info = log_matching(logging.INFO, "Sending message to Slack")
     assert info.textPayload == "Example error message"
@@ -141,13 +147,15 @@ def test_send_slack_alert(caplog, log_matching, log_entry, send_alert):
     send_alert.assert_called_with(
         SlackMessage(
             title="ERROR: Example error message",
-            fields=dict(Platform="cloud_function", Application="unknown"),
+            fields=dict(
+                Platform="cloud_function", Application="unknown", Environment="prod"
+            ),
             content="{}",
             footnote=(
                 "*Next Steps*\n"
                 "1. Add some :eyes: to show you are investigating\n"
-                "2. <https://console.cloud.google.com/monitoring/uptime?referrer=search&project=project-prefix--dev | Check the system is online>\n"
-                "3. <https://console.cloud.google.com/logs/query;query=%0A;cursorTimestamp=2022-07-22T20:36:22.219592062Z?referrer=search&project=project-prefix--dev | View the logs>\n"
+                "2. <https://console.cloud.google.com/monitoring/uptime?referrer=search&project=project-prefix--prod | Check the system is online>\n"
+                "3. <https://console.cloud.google.com/logs/query;query=%0A;cursorTimestamp=2022-07-22T20:36:22.219592062Z?referrer=search&project=project-prefix--prod | View the logs>\n"
                 "4. Follow the <https://confluence.ons.gov.uk/pages/viewpage.action?pageId=98502389 | Managing Prod Alerts> process"
             ),
         )
