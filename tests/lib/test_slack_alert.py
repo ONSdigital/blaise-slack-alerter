@@ -138,7 +138,9 @@ def test_send_gce_instance_slack_alert(caplog, log_matching, send_alert):
     send_alert.assert_called_with(
         SlackMessage(
             title="ERROR: Error message from VM",
-            fields=dict(Platform="gce_instance", Application="vm-mgmt"),
+            fields=dict(
+                Platform="gce_instance", Application="vm-mgmt", Environment="dev"
+            ),
             content=json.dumps(
                 {
                     "channel": "application",
@@ -224,9 +226,9 @@ def test_send_cloud_function_slack_alert(caplog, log_matching, send_alert):
         SlackMessage(
             title="ERROR: Example error message",
             fields=dict(
-                Platform="cloud_function", Application="unknown", Environment="prod"
+                Platform="cloud_function", Application="log-error", Environment="prod"
             ),
-            content="{}",
+            content="",
             footnote=(
                 "*Next Steps*\n"
                 "1. Add some :eyes: to show you are investigating\n"
