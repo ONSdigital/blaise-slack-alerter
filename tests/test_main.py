@@ -7,7 +7,7 @@ import pytest
 import requests_mock
 from flask import Request
 
-from main import log_error, send_alert
+from main import log_error, send_slack_alert
 
 
 def test_log_error(caplog, log_matching):
@@ -47,7 +47,7 @@ def test_bad_pubsub_envelope(context):
 
     with requests_mock.Mocker() as http_mock:
         http_mock.post("https://slack.co/webhook/1234")
-        response = send_alert(event, context)
+        response = send_slack_alert(event, context)
 
     assert response == "Alert sent (invalid envelope)"
 
@@ -112,7 +112,7 @@ def test_send_raw_string_slack_alert(context):
 
     with requests_mock.Mocker() as http_mock:
         http_mock.post("https://slack.co/webhook/1234")
-        response = send_alert(event, context)
+        response = send_slack_alert(event, context)
 
     assert response == "Alert sent"
 
@@ -199,7 +199,7 @@ def test_send_gce_instance_slack_alert(context):
 
     with requests_mock.Mocker() as http_mock:
         http_mock.post("https://slack.co/webhook/1234")
-        response = send_alert(event, context)
+        response = send_slack_alert(event, context)
 
     assert response == "Alert sent"
 
@@ -310,7 +310,7 @@ def test_send_cloud_function_slack_alert(context):
 
     with requests_mock.Mocker() as http_mock:
         http_mock.post("https://slack.co/webhook/1234")
-        response = send_alert(event, context)
+        response = send_slack_alert(event, context)
 
     assert response == "Alert sent"
 
@@ -344,6 +344,153 @@ def test_send_cloud_function_slack_alert(context):
                         "4. Follow the <https://confluence.ons.gov.uk/pages/viewpage.action?pageId=98502389 "
                         "| Managing Prod Alerts> process"
                     ),
+                    type="mrkdwn",
+                ),
+                type="section",
+            ),
+        ]
+    )
+
+
+def test_send_app_engine_slack_alert(caplog, log_matching):
+    app_engine_log_entry = {
+        "httpRequest": {"status": 500},
+        "insertId": "62ea8ace00082d55ac0d62b5",
+        "labels": {"clone_id": "3248384304320984320483204832048"},
+        "logName": "projects/project-name/logs/appengine.googleapis.com%2Frequest_log",
+        "operation": {
+            "first": True,
+            "id": "324254354325434543543",
+            "last": True,
+            "producer": "appengine.googleapis.com/request_id",
+        },
+        "protoPayload": {
+            "@type": "type.googleapis.com/google.appengine.logging.v1.RequestLog",
+            "appEngineRelease": "1.9.71",
+            "appId": "g~project-name",
+            "endTime": "2022-08-03T14:48:46.535746Z",
+            "finished": True,
+            "first": True,
+            "host": "0.20220803t140821.app-name.project-name.nw.r.appspot.com",
+            "httpVersion": "HTTP/1.1",
+            "instanceId": "45545245342",
+            "ip": "0.1.0.3",
+            "latency": "0.004229s",
+            "line": [
+                {
+                    "logMessage": "Example GAE Error",
+                    "severity": "ERROR",
+                    "time": "2022-08-03T14:48:46.535735Z",
+                }
+            ],
+            "method": "GET",
+            "moduleId": "app-name",
+            "requestId": "5435342543254325423543254325432543252345",
+            "resource": "/_ah/stop",
+            "responseSize": "3013",
+            "spanId": "7842417449535267939",
+            "startTime": "2022-08-03T14:48:46.531517Z",
+            "status": 500,
+            "traceId": "9998776867876876",
+            "traceSampled": True,
+            "urlMapEntry": "<unused>",
+            "versionId": "20220803t140821",
+        },
+        "receiveTimestamp": "2022-08-03T14:48:46.538301573Z",
+        "resource": {
+            "labels": {
+                "module_id": "app-name",
+                "project_id": "project-name",
+                "version_id": "123123123123",
+                "zone": "europe-west2-3",
+            },
+            "type": "gae_app",
+        },
+        "severity": "ERROR",
+        "spanId": "7842417449535267939",
+        "timestamp": "2022-08-03T14:48:46.531517Z",
+        "trace": "projects/project-name/traces/123123123123123123123",
+        "traceSampled": True,
+    }
+
+    event = {
+        "@type": "type.googleapis.com/google.pubsub.v1.PubsubMessage",
+        "attributes": {
+            "logging.googleapis.com/timestamp": "2022-07-22T20:36:21.891133Z"
+        },
+        "data": base64.b64encode(json.dumps(app_engine_log_entry).encode("ascii")),
+    }
+
+    with requests_mock.Mocker() as http_mock:
+        http_mock.post("https://slack.co/webhook/1234")
+        response = send_slack_alert(event, context)
+
+    assert response == "Alert sent"
+
+    assert http_mock.call_count is 1
+    assert json.loads(http_mock.request_history[0].text) == dict(
+        blocks=[
+            dict(
+                text=dict(text=":alert: ERROR: Example GAE Error", type="plain_text"),
+                type="header",
+            ),
+            dict(
+                fields=[
+                    dict(text="*Platform:*\ngae_app", type="mrkdwn"),
+                    dict(text="*Application:*\napp-name", type="mrkdwn"),
+                    dict(text="*Project:*\nproject-dev", type="mrkdwn"),
+                ],
+                type="section",
+            ),
+            dict(type="divider"),
+            dict(
+                text=dict(
+                    text="{\n"
+                    '  "@type": '
+                    '"type.googleapis.com/google.appengine.logging.v1.RequestLog",\n'
+                    '  "appEngineRelease": "1.9.71",\n'
+                    '  "appId": "g~project-name",\n'
+                    '  "endTime": "2022-08-03T14:48:46.535746Z",\n'
+                    '  "finished": true,\n'
+                    '  "first": true,\n'
+                    '  "host": '
+                    '"0.20220803t140821.app-name.project-name.nw.r.appspot.com",\n'
+                    '  "httpVersion": "HTTP/1.1",\n'
+                    '  "instanceId": "45545245342",\n'
+                    '  "ip": "0.1.0.3",\n'
+                    '  "latency": "0.004229s",\n'
+                    '  "method": "GET",\n'
+                    '  "requestId": '
+                    '"5435342543254325423543254325432543252345",\n'
+                    '  "resource": "/_ah/stop",\n'
+                    '  "responseSize": "3013",\n'
+                    '  "spanId": "7842417449535267939",\n'
+                    '  "startTime": "2022-08-03T14:48:46.531517Z",\n'
+                    '  "status": 500,\n'
+                    '  "traceId": "9998776867876876",\n'
+                    '  "traceSampled": true,\n'
+                    '  "urlMapEntry": "<unused>",\n'
+                    '  "versionId": "20220803t140821"\n'
+                    "}",
+                    type="plain_text",
+                ),
+                type="section",
+            ),
+            dict(type="divider"),
+            dict(
+                text=dict(
+                    text="*Next Steps*\n"
+                    "1. Add some :eyes: to show you are "
+                    "investigating\n"
+                    "2. "
+                    "<https://console.cloud.google.com/monitoring/uptime?referrer=search&project=project-dev "
+                    "| Check the system is online>\n"
+                    "3. "
+                    "<https://console.cloud.google.com/logs/query;query=%0A;cursorTimestamp=2022-08-03T14:48:46.538301573Z?referrer=search&project=project-dev "
+                    "| View the logs>\n"
+                    "4. Follow the "
+                    "<https://confluence.ons.gov.uk/pages/viewpage.action?pageId=98502389 "
+                    "| Managing Prod Alerts> process",
                     type="mrkdwn",
                 ),
                 type="section",

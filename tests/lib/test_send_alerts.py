@@ -7,7 +7,7 @@ import pytest
 
 from lib import send_alerts
 from lib.alerter import Alerter
-from lib.log_processor import ProcessedLogEntry
+from lib.log_processor import ProcessedLogEntry, APP_LOG_PAYLOAD_FACTORIES
 from lib.slack.slack_message import SlackMessage
 
 
@@ -24,6 +24,11 @@ def alerter(message) -> Mock:
     return alerter
 
 
+@pytest.fixture
+def factories():
+    return APP_LOG_PAYLOAD_FACTORIES
+
+
 class TestWithBadPubSubEnvelope:
     @pytest.fixture
     def event(self):
@@ -34,31 +39,39 @@ class TestWithBadPubSubEnvelope:
             },
         }
 
-    def test_it_sends_the_alert(self, event, alerter, message):
-        send_alerts.execute(event, alerter=alerter)
+    def test_it_sends_the_alert(self, event, alerter, message, factories):
+        send_alerts.send_alerts(
+            event, alerter=alerter, app_log_payload_factories=factories
+        )
 
         alerter.create_raw_alert.assert_called_with(event)
         alerter.send_alert.assert_called_with(message)
 
-    def test_it_returns_string(self, event, alerter):
-        response = send_alerts.execute(event, alerter=alerter)
+    def test_it_returns_string(self, event, alerter, factories):
+        response = send_alerts.send_alerts(
+            event, alerter=alerter, app_log_payload_factories=factories
+        )
         assert response == "Alert sent (invalid envelope)"
 
     def test_it_logs_a_bad_pubsub_envelope_warning(
-        self, caplog, event, log_matching, alerter, message
+        self, caplog, event, log_matching, alerter, message, factories
     ):
         with caplog.at_level(logging.INFO):
-            send_alerts.execute(event, alerter=alerter)
+            send_alerts.send_alerts(
+                event, alerter=alerter, app_log_payload_factories=factories
+            )
         warning = log_matching(
             logging.WARNING, "Invalid PubSub envelope: Field 'data' was missing."
         )
         assert json.loads(warning.textPayload) == event
 
     def test_it_logs_a_sending_raw_message_info(
-        self, caplog, event, log_matching, alerter, message
+        self, caplog, event, log_matching, alerter, message, factories
     ):
         with caplog.at_level(logging.INFO):
-            send_alerts.execute(event, alerter=alerter)
+            send_alerts.send_alerts(
+                event, alerter=alerter, app_log_payload_factories=factories
+            )
         log_matching(logging.INFO, "Sending raw message to Slack")
 
 
@@ -75,8 +88,10 @@ class TestWithRawStringLog:
             ),
         }
 
-    def test_it_sends_the_alert(self, event, alerter, message):
-        send_alerts.execute(event, alerter=alerter)
+    def test_it_sends_the_alert(self, event, alerter, message, factories):
+        send_alerts.send_alerts(
+            event, alerter=alerter, app_log_payload_factories=factories
+        )
         alerter.create_alert.assert_called_with(
             ProcessedLogEntry(
                 message="This is a raw string message",
@@ -90,13 +105,19 @@ class TestWithRawStringLog:
         )
         alerter.send_alert.assert_called_with(message)
 
-    def test_it_returns_a_string(self, event, alerter):
-        response = send_alerts.execute(event, alerter=alerter)
+    def test_it_returns_a_string(self, event, alerter, factories):
+        response = send_alerts.send_alerts(
+            event, alerter=alerter, app_log_payload_factories=factories
+        )
         assert response == "Alert sent"
 
-    def test_it_logs_an_info_message(self, event, caplog, alerter, log_matching):
+    def test_it_logs_an_info_message(
+        self, event, caplog, alerter, log_matching, factories
+    ):
         with caplog.at_level(logging.INFO):
-            send_alerts.execute(event, alerter=alerter)
+            send_alerts.send_alerts(
+                event, alerter=alerter, app_log_payload_factories=factories
+            )
 
         info = log_matching(logging.INFO, "Sending message to Slack")
         assert info.textPayload == "This is a raw string message"
@@ -145,8 +166,10 @@ class TestWithStructuredLog:
             "data": base64.b64encode(json.dumps(payload).encode("ascii")),
         }
 
-    def test_it_sends_the_alert(self, event, alerter, message):
-        send_alerts.execute(event, alerter=alerter)
+    def test_it_sends_the_alert(self, event, alerter, message, factories):
+        send_alerts.send_alerts(
+            event, alerter=alerter, app_log_payload_factories=factories
+        )
 
         alerter.create_alert.assert_called_with(
             ProcessedLogEntry(
@@ -173,13 +196,19 @@ class TestWithStructuredLog:
         )
         alerter.send_alert.assert_called_with(message)
 
-    def test_it_returns_a_string(self, event, alerter):
-        response = send_alerts.execute(event, alerter=alerter)
+    def test_it_returns_a_string(self, event, alerter, factories):
+        response = send_alerts.send_alerts(
+            event, alerter=alerter, app_log_payload_factories=factories
+        )
         assert response == "Alert sent"
 
-    def test_it_logs_an_info_message(self, event, caplog, alerter, log_matching):
+    def test_it_logs_an_info_message(
+        self, event, caplog, alerter, log_matching, factories
+    ):
         with caplog.at_level(logging.INFO):
-            send_alerts.execute(event, alerter=alerter)
+            send_alerts.send_alerts(
+                event, alerter=alerter, app_log_payload_factories=factories
+            )
 
         info = log_matching(logging.INFO, "Sending message to Slack")
         assert info.textPayload == "Error message from VM"
