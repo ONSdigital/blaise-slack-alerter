@@ -6,27 +6,33 @@ from lib.log_processor.app_log_payload import AppLogPayload
 
 
 def attempt_create(entry: LogEntry) -> Optional[AppLogPayload]:
-    if entry.payload_type is not PayloadType.JSON:
-        return None
-
-    if not isinstance(entry.payload, dict):
-        return None
-
     if entry.resource_type != "gce_instance":
         return None
 
-    if "message" not in entry.payload:
-        return None
+    if isinstance(entry.payload, str):
+        return AppLogPayload(
+            message=entry.payload,
+            data="",
+            platform="gce_instance",
+            application="[unknown]",
+        )
 
-    if "computer_name" not in entry.payload:
-        return None
+    message = "Unknown Error"
+    application = "[unknown]"
+
+    if "message" in entry.payload:
+        message = entry.payload["message"]
+
+    if "computer_name" in entry.payload:
+        application = entry.payload["computer_name"]
 
     data = copy(entry.payload)
-    del data["message"]
-    del data["computer_name"]
+    data.pop("message", None)
+    data.pop("computer_name", None)
+
     return AppLogPayload(
-        message=entry.payload["message"],
+        message=message,
         data=data,
         platform="gce_instance",
-        application=entry.payload["computer_name"],
+        application=application,
     )
