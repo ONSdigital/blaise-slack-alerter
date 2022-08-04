@@ -1,3 +1,5 @@
+from unittest.mock import Mock
+
 import pytest
 
 from lib.cloud_logging import LogEntry, PayloadType
@@ -23,6 +25,25 @@ def test_process_log_entry_raise_if_no_factories_are_provided():
         process_log_entry(log_entry, [])
 
 
+def test_process_log_entry_calls_factories_with_log_entry():
+    log_entry = LogEntry(
+        resource_type="ignored",
+        resource_labels=dict(),
+        payload_type=PayloadType.JSON,
+        payload="ignored",
+        severity="ignored",
+        log_name="ignored",
+        timestamp="ignored",
+    )
+    factory1 = Mock(return_value=None)
+    factory2 = Mock(return_value=None)
+    with pytest.raises(NoMatchingLogTypeFound):
+        process_log_entry(log_entry, [factory1, factory2])
+
+    factory1.assert_called_with(log_entry)
+    factory2.assert_called_with(log_entry)
+
+
 def test_process_log_entry_raise_if_no_factories_create_a_value():
     log_entry = LogEntry(
         resource_type="ignored",
@@ -34,7 +55,7 @@ def test_process_log_entry_raise_if_no_factories_create_a_value():
         timestamp="ignored",
     )
     with pytest.raises(NoMatchingLogTypeFound):
-        process_log_entry(log_entry, [lambda: None, lambda: None])
+        process_log_entry(log_entry, [lambda _: None, lambda _: None])
 
 
 def test_process_log_entry_returns_a_proceed_log_entry_for_the_first_created_payload():
@@ -50,13 +71,13 @@ def test_process_log_entry_returns_a_proceed_log_entry_for_the_first_created_pay
     result = process_log_entry(
         log_entry,
         [
-            lambda: AppLogPayload(
+            lambda _: AppLogPayload(
                 message="message 1",
                 data=dict(),
                 platform="platform1",
                 application="app1",
             ),
-            lambda: AppLogPayload(
+            lambda _: AppLogPayload(
                 message="message 1",
                 data=dict(),
                 platform="platform2",

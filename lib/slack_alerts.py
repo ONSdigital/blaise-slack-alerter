@@ -3,11 +3,7 @@ import logging
 
 from lib.cloud_functions import InvalidCloudFunctionEvent, parse_event
 from lib.cloud_logging import parse_log_entry
-from lib.log_processor import (
-    apply_argument_to_all,
-    APP_LOG_PAYLOAD_FACTORIES,
-    ProcessedLogEntry,
-)
+from lib.log_processor import APP_LOG_PAYLOAD_FACTORIES, ProcessedLogEntry
 from lib.log_processor import process_log_entry
 from lib.send_alert import SendAlert
 from lib.slack.slack_message import SlackMessage
@@ -41,8 +37,7 @@ def execute(event, project_name: str, send_alert: SendAlert) -> str:
         processed_log_entry = ProcessedLogEntry(message=log_data)
     else:
         log_entry = parse_log_entry(log_data)
-        factories = apply_argument_to_all(APP_LOG_PAYLOAD_FACTORIES, log_entry)
-        processed_log_entry = process_log_entry(log_entry, factories)
+        processed_log_entry = process_log_entry(log_entry, APP_LOG_PAYLOAD_FACTORIES)
 
     logging.info(
         f"Sending message to Slack", extra=dict(textPayload=processed_log_entry.message)
