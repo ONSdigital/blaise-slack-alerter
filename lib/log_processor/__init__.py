@@ -1,7 +1,6 @@
 from lib.log_processor.app_log_payload import AppLogPayload
 from lib.log_processor.app_log_payload_factories import (
     APP_LOG_PAYLOAD_FACTORIES,
-    apply_argument_to_all,
 )
 from lib.log_processor.process_log_entry import (
     process_log_entry,

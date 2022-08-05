@@ -22,17 +22,3 @@ APP_LOG_PAYLOAD_FACTORIES: List[CreateAppLogPayloadFromLogEntry] = [
     text_payload.attempt_create,
     unknown_payload.attempt_create,
 ]
-
-
-Arg = TypeVar("Arg")
-Return = TypeVar("Return")
-
-
-def apply_argument_to_all(
-    fs: List[Callable[[Arg], Return]], argument: Arg
-) -> List[Callable[[], Return]]:
-    return [apply_argument(create, argument) for create in fs]
-
-
-def apply_argument(f: Callable[[Arg], Return], argument: Arg) -> Callable[[], Return]:
-    return lambda: f(argument)
