@@ -41,6 +41,19 @@ def test_parse_log_entry_with_json_payload_fields():
     )
 
 
+def test_parse_log_entry_with_proto_payload_fields():
+    entry = dict(protoPayload=dict(example_key="example value"))
+    assert parse_log_entry(entry) == LogEntry(
+        resource_type=None,
+        payload_type=PayloadType.JSON,
+        payload=dict(example_key="example value"),
+        severity=None,
+        log_name=None,
+        timestamp=None,
+        resource_labels=dict(),
+    )
+
+
 def test_parse_log_entry_with_resource_type():
     entry = parse_log_entry(
         dict(textPayload="example error", resource=dict(type="type_string"))
