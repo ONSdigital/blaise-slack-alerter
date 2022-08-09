@@ -37,25 +37,21 @@ def test_attempt_create_returns_none_if_resource_type_is_wrong(log_entry):
     assert instance is None
 
 
-def test_attempt_create_returns_none_if_message_is_missing(log_entry):
+def test_attempt_create_returns_unknown_error_if_message_is_missing(log_entry):
     del log_entry.payload["message"]
     instance = attempt_create(log_entry)
-    assert instance is None
+    assert instance.message == "Unknown Error"
 
 
-def test_attempt_create_returns_none_if_computer_name_is_missing(log_entry):
+def test_attempt_create_returns_unknown_app_if_computer_name_is_missing(log_entry):
     del log_entry.payload["computer_name"]
     instance = attempt_create(log_entry)
-    assert instance is None
+    assert instance.application == "[unknown]"
 
 
-def test_attempt_create_returns_none_if_payload_type_is_not_json(log_entry):
-    log_entry = dataclasses.replace(log_entry, payload_type=PayloadType.TEXT)
+def test_attempt_create_returns_none_if_payload_type_is_text(log_entry):
+    log_entry = dataclasses.replace(
+        log_entry, payload_type=PayloadType.TEXT, payload="Error message"
+    )
     instance = attempt_create(log_entry)
-    assert instance is None
-
-
-def test_attempt_create_returns_none_if_payload_not_a_dict(log_entry):
-    log_entry = dataclasses.replace(log_entry, payload="text payload")
-    instance = attempt_create(log_entry)
-    assert instance is None
+    assert instance.message == "Error message"

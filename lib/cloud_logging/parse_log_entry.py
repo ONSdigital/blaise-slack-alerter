@@ -36,7 +36,10 @@ def parse_payload(
     if "textPayload" in raw:
         return PayloadType.TEXT, raw["textPayload"]
 
-    elif "jsonPayload" in raw:
+    if "jsonPayload" in raw:
         return PayloadType.JSON, raw["jsonPayload"]
+
+    if "protoPayload" in raw:
+        return PayloadType.JSON, raw["protoPayload"]
 
     return PayloadType.NONE, raw
