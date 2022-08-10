@@ -90,10 +90,16 @@ def test_create_from_processed_log_with_no_timestamp(processed_log_entry):
     )
 
 
-def test_create_from_processed_log_with_message_containing_newlines(processed_log_entry):
+def test_create_from_processed_log_with_message_containing_newlines(
+    processed_log_entry,
+):
     message = create_from_processed_log_entry(
-        replace(processed_log_entry, message="An error occurred\nIt was a terrible error", data="Extra content"),
-        project_name="example-gcp-project"
+        replace(
+            processed_log_entry,
+            message="An error occurred\nIt was a terrible error",
+            data="Extra content",
+        ),
+        project_name="example-gcp-project",
     )
 
     assert message.title == "ERROR: An error occurred"
@@ -101,6 +107,34 @@ def test_create_from_processed_log_with_message_containing_newlines(processed_lo
         "**Error Message**\n"
         "An error occurred\n"
         "It was a terrible error\n"
+        "\n"
+        "**Extra Content**\n"
+        "Extra content"
+    )
+
+
+def test_create_from_processed_log_with_titles_over_150_characters(processed_log_entry):
+    message = create_from_processed_log_entry(
+        replace(
+            processed_log_entry,
+            message=(
+                "This message creates a title over 150 characters long when combined with the severity "
+                "because it is really really really really really really long"
+            ),
+            severity="ERROR",
+            data="Extra content",
+        ),
+        project_name="example-gcp-project",
+    )
+
+    assert message.title == (
+        "ERROR: This message creates a title over 150 characters long when combined with the severity "
+        "because it is really really really really really rea..."
+    )
+    assert message.content == (
+        "**Error Message**\n"
+        "This message creates a title over 150 characters long when combined with the "
+        "severity because it is really really really really really really long\n"
         "\n"
         "**Extra Content**\n"
         "Extra content"
