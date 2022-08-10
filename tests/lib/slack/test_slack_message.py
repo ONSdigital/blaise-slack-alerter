@@ -88,3 +88,20 @@ def test_create_from_processed_log_with_no_timestamp(processed_log_entry):
         "3. Determine the cause of the error\n"
         "4. Follow the <https://confluence.ons.gov.uk/pages/viewpage.action?pageId=98502389 | Managing Prod Alerts> process"
     )
+
+
+def test_create_from_processed_log_with_message_containing_newlines(processed_log_entry):
+    message = create_from_processed_log_entry(
+        replace(processed_log_entry, message="An error occurred\nIt was a terrible error", data="Extra content"),
+        project_name="example-gcp-project"
+    )
+
+    assert message.title == "ERROR: An error occurred"
+    assert message.content == (
+        "**Error Message**\n"
+        "An error occurred\n"
+        "It was a terrible error\n"
+        "\n"
+        "**Extra Content**\n"
+        "Extra content"
+    )

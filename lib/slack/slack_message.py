@@ -40,14 +40,26 @@ def create_from_processed_log_entry(
         else "3. Determine the cause of the error"
     )
 
+    message_lines = processed_log_entry.message.split("\n")
+    title = message_lines[0]
+
     content = (
         processed_log_entry.data
         if isinstance(processed_log_entry.data, str)
         else json.dumps(processed_log_entry.data, indent=2)
     )
 
+    if len(message_lines) > 1:
+        content = (
+            "**Error Message**\n"
+            f"{processed_log_entry.message}\n"
+            "\n"
+            "**Extra Content**\n"
+            f"{content}"
+        )
+
     return SlackMessage(
-        title=f"{processed_log_entry.severity or 'UNKNOWN'}: {processed_log_entry.message}",
+        title=f"{processed_log_entry.severity or 'UNKNOWN'}: {title}",
         fields=dict(
             Platform=processed_log_entry.platform or "unknown",
             Application=processed_log_entry.application or "unknown",
