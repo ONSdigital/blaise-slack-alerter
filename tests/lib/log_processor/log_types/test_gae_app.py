@@ -13,13 +13,6 @@ def log_entry() -> LogEntry:
         resource_labels=dict(module_id="app-name"),
         payload_type=PayloadType.JSON,
         payload=dict(
-            line=[
-                dict(
-                    logMessage="Error message",
-                    severity="ERROR",
-                    time="2022-08-03T14:48:46.535735Z",
-                )
-            ],
             moduleId="app-name",
             extra="something",
         ),
@@ -29,7 +22,16 @@ def log_entry() -> LogEntry:
     )
 
 
-def test_attempt_create_succeeds_with_complete_entry(log_entry):
+def test_attempt_create_succeeds_with_no_message_or_line(log_entry):
+    instance = attempt_create(log_entry)
+
+    assert instance is not None
+    assert instance.message == "Unknown error"
+
+
+def test_attempt_create_succeeds_with_complete_entry_with_message(log_entry):
+    log_entry.payload["message"] = "Error message"
+
     instance = attempt_create(log_entry)
 
     assert instance is not None
@@ -39,13 +41,38 @@ def test_attempt_create_succeeds_with_complete_entry(log_entry):
     assert instance.application == "app-name"
 
 
-def test_attempt_create_succeeds_with_no_line(log_entry):
-    del log_entry.payload["line"]
+def test_attempt_create_succeeds_with_complete_entry_with_message_and_line(log_entry):
+    log_entry.payload["message"] = "Error message"
+    log_entry.payload["line"] = [
+        dict(
+            logMessage="Line message message",
+            severity="ERROR",
+            time="2022-08-03T14:48:46.535735Z",
+        )
+    ]
 
     instance = attempt_create(log_entry)
 
     assert instance is not None
-    assert instance.message == "Unknown error"
+    assert instance.message == "Error message"
+
+
+def test_attempt_create_succeeds_with_complete_entry_with_line(log_entry):
+    log_entry.payload["line"] = [
+        dict(
+            logMessage="Error message",
+            severity="ERROR",
+            time="2022-08-03T14:48:46.535735Z",
+        )
+    ]
+
+    instance = attempt_create(log_entry)
+
+    assert instance is not None
+    assert instance.message == "Error message"
+    assert instance.data == dict(extra="something")
+    assert instance.platform == "gae_app"
+    assert instance.application == "app-name"
 
 
 def test_attempt_create_succeeds_with_line_which_is_not_an_array(log_entry):

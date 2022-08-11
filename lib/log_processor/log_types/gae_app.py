@@ -16,16 +16,20 @@ def attempt_create(entry: LogEntry) -> Optional[AppLogPayload]:
         message = entry.payload
     else:
         data = copy(entry.payload)
-        data.pop("line", None)
+
         data.pop("moduleId", None)
 
-        if (
+        if "message" in entry.payload:
+            data.pop("message", None)
+            message = entry.payload["message"]
+        elif (
             "line" in entry.payload
             and isinstance(entry.payload["line"], list)
             and len(entry.payload["line"]) > 0
             and isinstance(entry.payload["line"][0], dict)
             and "logMessage" in entry.payload["line"][0]
         ):
+            data.pop("line", None)
             message = entry.payload["line"][0]["logMessage"]
 
     return AppLogPayload(
