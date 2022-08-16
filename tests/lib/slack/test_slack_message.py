@@ -139,3 +139,41 @@ def test_create_from_processed_log_with_titles_over_150_characters(processed_log
         "**Extra Content**\n"
         "Extra content"
     )
+
+
+def test_create_from_processed_log_with_content_over_2900_characters(
+    processed_log_entry,
+):
+    message = create_from_processed_log_entry(
+        replace(
+            processed_log_entry,
+            message="Example Title",
+            severity="ERROR",
+            data="X" * 2901,
+        ),
+        project_name="example-gcp-project",
+    )
+
+    assert message.content == (f"{'X' * 2900}...\n[truncated]")
+
+
+def test_create_from_processed_log_with_content_over_2900_characters_with_extra_message(
+    processed_log_entry,
+):
+    message = create_from_processed_log_entry(
+        replace(
+            processed_log_entry,
+            message="Example Title\nAdditional Line",
+            severity="ERROR",
+            data="X" * 2901,
+        ),
+        project_name="example-gcp-project",
+    )
+
+    extra_chars = (
+        "**Error Message**\nExample Title\nAdditional Line\n\n**Extra Content**\n"
+    )
+
+    assert message.content == (
+        f"{extra_chars}{'X' * (2900 - len(extra_chars))}...\n[truncated]"
+    )
