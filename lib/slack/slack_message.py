@@ -1,6 +1,6 @@
 import json
 from dataclasses import dataclass
-from typing import Dict, Any
+from typing import Dict, Any, Tuple, Optional
 
 from lib.log_processor import ProcessedLogEntry
 
@@ -40,7 +40,30 @@ def create_from_processed_log_entry(
         else "3. Determine the cause of the error"
     )
 
+    title, full_message = _get_title(processed_log_entry)
+    content = _get_content(processed_log_entry, full_message)
+
+    return SlackMessage(
+        title=title,
+        fields=dict(
+            Platform=processed_log_entry.platform or "unknown",
+            Application=processed_log_entry.application or "unknown",
+            Project=project_name,
+        ),
+        content=content,
+        footnote=(
+            "*Next Steps*\n"
+            "1. Add some :eyes: to show you are investigating\n"
+            f"2. <{uptime_url} | Check the system is online>\n"
+            f"{log_action_line}\n"
+            f"4. Follow the <{managing_alerts_link} | Managing Prod Alerts> process"
+        ),
+    )
+
+
+def _get_title(processed_log_entry: ProcessedLogEntry) -> Tuple[str, Optional[str]]:
     message_lines = processed_log_entry.message.split("\n")
+
     title = f"{processed_log_entry.severity or 'UNKNOWN'}: {message_lines[0]}"
 
     full_message = processed_log_entry.message if len(message_lines) > 1 else None
@@ -49,6 +72,10 @@ def create_from_processed_log_entry(
         title = f"{title[:145]}..."
         full_message = processed_log_entry.message
 
+    return title, full_message
+
+
+def _get_content(processed_log_entry: ProcessedLogEntry, full_message: Optional[str]):
     content = (
         processed_log_entry.data
         if isinstance(processed_log_entry.data, str)
@@ -67,19 +94,4 @@ def create_from_processed_log_entry(
     if len(content) > 2900:
         content = f"{content[:2900]}...\n[truncated]"
 
-    return SlackMessage(
-        title=title,
-        fields=dict(
-            Platform=processed_log_entry.platform or "unknown",
-            Application=processed_log_entry.application or "unknown",
-            Project=project_name,
-        ),
-        content=content,
-        footnote=(
-            "*Next Steps*\n"
-            "1. Add some :eyes: to show you are investigating\n"
-            f"2. <{uptime_url} | Check the system is online>\n"
-            f"{log_action_line}\n"
-            f"4. Follow the <{managing_alerts_link} | Managing Prod Alerts> process"
-        ),
-    )
+    return content
