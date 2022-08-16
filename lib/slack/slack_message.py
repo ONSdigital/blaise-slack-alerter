@@ -64,6 +64,9 @@ def create_from_processed_log_entry(
             f"{content}"
         )
 
+    if len(content) > 2900:
+        content = f"{content[:2900]}...\n[truncated]"
+
     return SlackMessage(
         title=title,
         fields=dict(
