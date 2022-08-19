@@ -30,9 +30,15 @@ def attempt_create(entry: LogEntry) -> Optional[AppLogPayload]:
     data.pop("message", None)
     data.pop("computer_name", None)
 
+    log_query = {"resource.type": "gce_instance"}
+
+    if "instance_id" in entry.resource_labels:
+        log_query["resource.labels.instance_id"] = entry.resource_labels["instance_id"]
+
     return AppLogPayload(
         message=message,
         data=data,
         platform="gce_instance",
         application=application,
+        log_query=log_query,
     )

@@ -24,6 +24,7 @@ def test_parse_log_entry_with_compute_engine_instance_log():
         platform="gce_instance",
         application="my-vm",
         data=dict(extra_info="extra data"),
+        log_query={"resource.type": "gce_instance"},
     )
 
 
