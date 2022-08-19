@@ -38,7 +38,7 @@ def test_create_from_processed_log_entry(processed_log_entry):
             "*Next Steps*\n"
             "1. Add some :eyes: to show you are investigating\n"
             "2. <https://console.cloud.google.com/monitoring/uptime?referrer=search&project=example-gcp-project | Check the system is online>\n"
-            "3. <https://console.cloud.google.com/logs/query;query=;cursorTimestamp=2022-08-10T14:54:03.318939Z?referrer=search&project=example-gcp-project | View the logs>\n"
+            '3. <https://console.cloud.google.com/logs/query;query=severity:"WARNING"%20OR%20severity:"ERROR"%20OR%20severity:"CRITICAL"%20OR%20severity:"ALERT"%20OR%20severity:"EMERGENCY";cursorTimestamp=2022-08-10T14:54:03.318939Z?referrer=search&project=example-gcp-project | View the logs>\n'
             "4. Follow the <https://confluence.ons.gov.uk/pages/viewpage.action?pageId=98502389 | Managing Prod Alerts> process"
         ),
     )

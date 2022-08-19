@@ -36,8 +36,17 @@ def create_from_processed_log_entry(
 ) -> SlackMessage:
     uptime_url = f"https://console.cloud.google.com/monitoring/uptime?referrer=search&project={project_name}"
 
+    severities = [
+        "WARNING",
+        "ERROR",
+        "CRITICAL",
+        "ALERT",
+        "EMERGENCY",
+    ]
     log_link_url = (
-        create_log_query_link({}, [], processed_log_entry.timestamp, project_name)
+        create_log_query_link(
+            {}, severities, processed_log_entry.timestamp, project_name
+        )
         if processed_log_entry.timestamp
         else None
     )
