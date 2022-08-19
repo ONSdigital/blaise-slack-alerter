@@ -21,7 +21,7 @@ def attempt_create(entry: LogEntry) -> Optional[AppLogPayload]:
         data=data,
         platform=entry.resource_type,
         application=function_name or "[unknown]",
-        log_query=log_query
+        log_query=log_query,
     )
 
 

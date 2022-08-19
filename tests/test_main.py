@@ -471,7 +471,7 @@ def test_send_app_engine_slack_alert(caplog, log_matching):
                     "<https://console.cloud.google.com/monitoring/uptime?referrer=search&project=project-dev "
                     "| Check the system is online>\n"
                     "3. "
-                    '<https://console.cloud.google.com/logs/query;query=severity:"WARNING"%20OR%20severity:"ERROR"%20OR%20severity:"CRITICAL"%20OR%20severity:"ALERT"%20OR%20severity:"EMERGENCY";cursorTimestamp=2022-08-03T14:48:46.538301Z?referrer=search&project=project-dev '
+                    '<https://console.cloud.google.com/logs/query;query=resource.type:"gae_app"%20resource.labels.module_id:"app-name"%20severity:"WARNING"%20OR%20severity:"ERROR"%20OR%20severity:"CRITICAL"%20OR%20severity:"ALERT"%20OR%20severity:"EMERGENCY";cursorTimestamp=2022-08-03T14:48:46.538301Z?referrer=search&project=project-dev '
                     "| View the logs>\n"
                     "4. Follow the "
                     "<https://confluence.ons.gov.uk/pages/viewpage.action?pageId=98502389 "

@@ -46,7 +46,9 @@ def test_attempt_create_returns_unknown_application_if_label_is_missing(log_entr
     assert instance.application == "[unknown]"
 
 
-def test_attempt_create_returns_query_without_function_name_if_label_is_missing(log_entry):
+def test_attempt_create_returns_query_without_function_name_if_label_is_missing(
+    log_entry,
+):
     del log_entry.resource_labels["function_name"]
     instance = attempt_create(log_entry)
     assert instance is not None
