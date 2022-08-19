@@ -17,6 +17,7 @@ def processed_log_entry() -> ProcessedLogEntry:
         application="my-app",
         log_name="/log/my-log",
         timestamp=parse("2022-08-10T14:54:03.318939Z"),
+        log_query={},
     )
 
 
@@ -51,6 +52,21 @@ def test_create_from_processed_log_with_string_data(processed_log_entry):
     )
 
     assert message.content == "This data is a string"
+
+
+def test_create_from_processed_log_query_fields(processed_log_entry):
+    message = create_from_processed_log_entry(
+        replace(processed_log_entry, log_query=dict(field1="value1", field2="value2")),
+        project_name="example-gcp-project",
+    )
+
+    assert message.footnote == (
+        "*Next Steps*\n"
+        "1. Add some :eyes: to show you are investigating\n"
+        "2. <https://console.cloud.google.com/monitoring/uptime?referrer=search&project=example-gcp-project | Check the system is online>\n"
+        '3. <https://console.cloud.google.com/logs/query;query=field1:"value1"%20field2:"value2"%20severity:"WARNING"%20OR%20severity:"ERROR"%20OR%20severity:"CRITICAL"%20OR%20severity:"ALERT"%20OR%20severity:"EMERGENCY";cursorTimestamp=2022-08-10T14:54:03.318939Z?referrer=search&project=example-gcp-project | View the logs>\n'
+        "4. Follow the <https://confluence.ons.gov.uk/pages/viewpage.action?pageId=98502389 | Managing Prod Alerts> process"
+    )
 
 
 def test_create_from_processed_log_with_no_severity(processed_log_entry):

@@ -81,6 +81,7 @@ def test_create_processed_log_entry_when_timestamp_not_parseable():
         data=dict(key="example_value"),
         platform="cloud_function",
         application="my_app",
+        log_query=dict(field1="value1", field2="value2"),
     )
     result = create_processed_log_entry(log_entry, app_log_payload)
 
@@ -92,4 +93,5 @@ def test_create_processed_log_entry_when_timestamp_not_parseable():
         timestamp=None,
         platform="cloud_function",
         application="my_app",
+        log_query=dict(field1="value1", field2="value2"),
     )

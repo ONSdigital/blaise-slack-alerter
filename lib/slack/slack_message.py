@@ -45,7 +45,10 @@ def create_from_processed_log_entry(
     ]
     log_link_url = (
         create_log_query_link(
-            {}, severities, processed_log_entry.timestamp, project_name
+            fields=processed_log_entry.log_query,
+            severities=severities,
+            cursor_timestamp=processed_log_entry.timestamp,
+            project_name=project_name,
         )
         if processed_log_entry.timestamp
         else None

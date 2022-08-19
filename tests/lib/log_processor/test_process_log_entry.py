@@ -74,4 +74,5 @@ def test_process_log_entry_returns_a_proceed_log_entry_for_the_first_created_pay
         timestamp=None,
         platform="platform1",
         application="app1",
+        log_query={},
     )

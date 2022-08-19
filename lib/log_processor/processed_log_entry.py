@@ -19,6 +19,7 @@ class ProcessedLogEntry:
     application: Optional[str] = field(default=None)
     log_name: Optional[str] = field(default=None)
     timestamp: Optional[datetime] = field(default=None)
+    log_query: Dict[str, str] = field(default_factory=dict)
 
 
 def create_processed_log_entry(
@@ -32,6 +33,7 @@ def create_processed_log_entry(
         timestamp=_parse_datetime(entry),
         platform=app_log_payload.platform,
         application=app_log_payload.application,
+        log_query=app_log_payload.log_query,
     )
 
 

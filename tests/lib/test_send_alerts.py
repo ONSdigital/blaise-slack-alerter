@@ -102,6 +102,7 @@ class TestWithRawStringLog:
                 application=None,
                 log_name=None,
                 timestamp=None,
+                log_query={},
             )
         )
         alerter.send_alert.assert_called_with(message)
@@ -193,6 +194,7 @@ class TestWithStructuredLog:
                 application="vm-mgmt",
                 log_name="projects/secret-project/logs/winevt.raw",
                 timestamp=parse("2022-08-02T19:06:42.275819947Z"),
+                log_query={},
             )
         )
         alerter.send_alert.assert_called_with(message)
