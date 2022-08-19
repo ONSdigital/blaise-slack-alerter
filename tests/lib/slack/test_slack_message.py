@@ -1,6 +1,7 @@
 from dataclasses import replace
 
 import pytest
+from dateutil.parser import parse
 
 from lib.log_processor import ProcessedLogEntry
 from lib.slack.slack_message import create_from_processed_log_entry, SlackMessage
@@ -15,7 +16,7 @@ def processed_log_entry() -> ProcessedLogEntry:
         platform="cloud_functions",
         application="my-app",
         log_name="/log/my-log",
-        timestamp="2022-08-10T14:54:03.318939Z",
+        timestamp=parse("2022-08-10T14:54:03.318939Z"),
     )
 
 

@@ -4,6 +4,7 @@ import logging
 from unittest.mock import Mock
 
 import pytest
+from dateutil.parser import parse
 
 from lib import send_alerts
 from lib.alerter import Alerter
@@ -191,7 +192,7 @@ class TestWithStructuredLog:
                 platform="gce_instance",
                 application="vm-mgmt",
                 log_name="projects/secret-project/logs/winevt.raw",
-                timestamp="2022-08-02T19:06:42.275819947Z",
+                timestamp=parse("2022-08-02T19:06:42.275819947Z"),
             )
         )
         alerter.send_alert.assert_called_with(message)

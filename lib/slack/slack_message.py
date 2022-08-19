@@ -2,8 +2,6 @@ import json
 from dataclasses import dataclass
 from typing import Dict, Any, Tuple, Optional
 
-from dateutil.parser import parse
-
 from lib.log_processor import ProcessedLogEntry
 
 
@@ -36,14 +34,14 @@ def create_from_processed_log_entry(
     processed_log_entry: ProcessedLogEntry, project_name: str
 ) -> SlackMessage:
     uptime_url = f"https://console.cloud.google.com/monitoring/uptime?referrer=search&project={project_name}"
-    log_link_url = f"https://console.cloud.google.com/logs/query;query=%0A;cursorTimestamp={processed_log_entry.timestamp}?referrer=search&project={project_name}"
+    log_link_url = _create_log_link_url(processed_log_entry, project_name)
     managing_alerts_link = (
         "https://confluence.ons.gov.uk/pages/viewpage.action?pageId=98502389"
     )
 
     log_action_line = (
         f"3. <{log_link_url} | View the logs>"
-        if processed_log_entry.timestamp is not None
+        if log_link_url is not None
         else "3. Determine the cause of the error"
     )
 
@@ -51,7 +49,7 @@ def create_from_processed_log_entry(
     content = _get_content(processed_log_entry, full_message)
 
     log_time = (
-        parse(str(processed_log_entry.timestamp)).strftime("%Y-%m-%d %H:%M:%S")
+        processed_log_entry.timestamp.strftime("%Y-%m-%d %H:%M:%S")
         if processed_log_entry.timestamp is not None
         else "unknown"
     )
@@ -72,6 +70,18 @@ def create_from_processed_log_entry(
             f"{log_action_line}\n"
             f"4. Follow the <{managing_alerts_link} | Managing Prod Alerts> process"
         ),
+    )
+
+
+def _create_log_link_url(
+    processed_log_entry: ProcessedLogEntry, project_name: str
+) -> Optional[str]:
+    if processed_log_entry.timestamp is None:
+        return None
+    return (
+        f"https://console.cloud.google.com/logs/query;"
+        f"query=%0A;cursorTimestamp={processed_log_entry.timestamp.strftime('%Y-%m-%dT%H:%M:%S.%fZ')}"
+        f"?referrer=search&project={project_name}"
     )
 
 
