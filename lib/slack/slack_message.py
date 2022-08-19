@@ -2,6 +2,8 @@ import json
 from dataclasses import dataclass
 from typing import Dict, Any, Tuple, Optional
 
+from dateutil.parser import parse
+
 from lib.log_processor import ProcessedLogEntry
 
 
@@ -16,7 +18,12 @@ class SlackMessage:
 def create_from_raw(event: Any, project_name: str) -> SlackMessage:
     return SlackMessage(
         title="Error with bad format received",
-        fields=dict(Platform="unknown", Application="unknown", Project=project_name),
+        fields={
+            "Platform": "unknown",
+            "Application": "unknown",
+            "Log Time": "unknown",
+            "Project": project_name,
+        },
         content=json.dumps(event, indent=2),
         footnote=(
             "This message was not in an expected format; "
@@ -43,13 +50,20 @@ def create_from_processed_log_entry(
     title, full_message = _get_title(processed_log_entry)
     content = _get_content(processed_log_entry, full_message)
 
+    log_time = (
+        parse(str(processed_log_entry.timestamp)).strftime("%Y-%m-%d %H:%M:%S")
+        if processed_log_entry.timestamp is not None
+        else "unknown"
+    )
+
     return SlackMessage(
         title=title,
-        fields=dict(
-            Platform=processed_log_entry.platform or "unknown",
-            Application=processed_log_entry.application or "unknown",
-            Project=project_name,
-        ),
+        fields={
+            "Platform": processed_log_entry.platform or "unknown",
+            "Application": processed_log_entry.application or "unknown",
+            "Log Time": log_time,
+            "Project": project_name,
+        },
         content=content,
         footnote=(
             "*Next Steps*\n"

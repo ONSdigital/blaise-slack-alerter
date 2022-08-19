@@ -65,6 +65,7 @@ def test_bad_pubsub_envelope(context):
                 fields=[
                     dict(text="*Platform:*\nunknown", type="mrkdwn"),
                     dict(text="*Application:*\nunknown", type="mrkdwn"),
+                    dict(text="*Log Time:*\nunknown", type="mrkdwn"),
                     dict(text="*Project:*\nproject-dev", type="mrkdwn"),
                 ],
                 type="section",
@@ -130,6 +131,7 @@ def test_send_raw_string_slack_alert(context):
                 fields=[
                     dict(text="*Platform:*\nunknown", type="mrkdwn"),
                     dict(text="*Application:*\nunknown", type="mrkdwn"),
+                    dict(text="*Log Time:*\nunknown", type="mrkdwn"),
                     dict(text="*Project:*\nproject-dev", type="mrkdwn"),
                 ],
                 type="section",
@@ -216,6 +218,7 @@ def test_send_gce_instance_slack_alert(context):
                 fields=[
                     dict(text="*Platform:*\ngce_instance", type="mrkdwn"),
                     dict(text="*Application:*\nvm-mgmt", type="mrkdwn"),
+                    dict(text="*Log Time:*\n2022-08-02 19:06:42", type="mrkdwn"),
                     dict(text="*Project:*\nproject-dev", type="mrkdwn"),
                 ],
                 type="section",
@@ -327,6 +330,7 @@ def test_send_cloud_function_slack_alert(context):
                 fields=[
                     dict(text="*Platform:*\ncloud_function", type="mrkdwn"),
                     dict(text="*Application:*\nlog-error", type="mrkdwn"),
+                    dict(text="*Log Time:*\n2022-07-22 20:36:22", type="mrkdwn"),
                     dict(text="*Project:*\nproject-dev", type="mrkdwn"),
                 ],
                 type="section",
@@ -438,6 +442,7 @@ def test_send_app_engine_slack_alert(caplog, log_matching):
                 fields=[
                     dict(text="*Platform:*\ngae_app", type="mrkdwn"),
                     dict(text="*Application:*\napp-name", type="mrkdwn"),
+                    dict(text="*Log Time:*\n2022-08-03 14:48:46", type="mrkdwn"),
                     dict(text="*Project:*\nproject-dev", type="mrkdwn"),
                 ],
                 type="section",
