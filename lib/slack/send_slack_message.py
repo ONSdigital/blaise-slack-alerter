@@ -4,36 +4,11 @@ import sys
 import requests
 
 from lib.slack.slack_message import SlackMessage
+from lib.slack.slack_message_formatter import convert_slack_message_to_blocks
 
 
 def send_slack_message(slack_url: str, message: SlackMessage) -> None:
-    blocks = [
-        dict(
-            type="header",
-            text=dict(type="plain_text", text=f":alert: {message.title}"),
-        ),
-        dict(
-            type="section",
-            fields=[
-                dict(type="mrkdwn", text=f"*{key}:*\n{value}")
-                for key, value in message.fields.items()
-            ],
-        ),
-    ]
-
-    if message.content != "":
-        blocks.append(dict(type="divider"))
-        blocks.append(
-            dict(
-                type="section",
-                text=dict(type="plain_text", text=message.content),
-            )
-        )
-
-    blocks.append(dict(type="divider"))
-    blocks.append(dict(type="section", text=dict(type="mrkdwn", text=message.footnote)))
-
-    slack_data = dict(blocks=blocks)
+    slack_data = convert_slack_message_to_blocks(message)
 
     byte_length = str(sys.getsizeof(slack_data))
     headers = {"Content-Type": "application/json", "Content-Length": byte_length}
