@@ -1,6 +1,7 @@
 from dataclasses import replace
 
 import pytest
+from dateutil.parser import parse
 
 from lib.log_processor import ProcessedLogEntry
 from lib.slack.slack_message import create_from_processed_log_entry, SlackMessage
@@ -15,7 +16,7 @@ def processed_log_entry() -> ProcessedLogEntry:
         platform="cloud_functions",
         application="my-app",
         log_name="/log/my-log",
-        timestamp="2022-08-10T14:54:03.318939Z",
+        timestamp=parse("2022-08-10T14:54:03.318939Z"),
     )
 
 
@@ -26,11 +27,12 @@ def test_create_from_processed_log_entry(processed_log_entry):
 
     assert message == SlackMessage(
         title="ERROR: Example error",
-        fields=dict(
-            Platform="cloud_functions",
-            Application="my-app",
-            Project="example-gcp-project",
-        ),
+        fields={
+            "Platform": "cloud_functions",
+            "Application": "my-app",
+            "Log Time": "2022-08-10 14:54:03",
+            "Project": "example-gcp-project",
+        },
         content='{\n  "example_field": "example value"\n}',
         footnote=(
             "*Next Steps*\n"
@@ -81,6 +83,7 @@ def test_create_from_processed_log_with_no_timestamp(processed_log_entry):
         replace(processed_log_entry, timestamp=None), project_name="example-gcp-project"
     )
 
+    assert message.fields["Log Time"] == "unknown"
     assert message.footnote == (
         "*Next Steps*\n"
         "1. Add some :eyes: to show you are investigating\n"
