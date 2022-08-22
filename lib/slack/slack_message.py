@@ -115,7 +115,21 @@ def _get_content(processed_log_entry: ProcessedLogEntry, full_message: Optional[
             f"{content}"
         )
 
-    if len(content) > 2900:
-        content = f"{content[:2900]}...\n[truncated]"
+    content = _trim_number_of_lines(content, max_lines=10)
 
+    content = _trim_length(content, max_chars=2900)
+
+    return content
+
+
+def _trim_number_of_lines(content, max_lines):
+    lines = content.split("\n")
+    if len(lines) > max_lines:
+        content = "\n".join(lines[0 : max_lines - 2]) + "\n" "...\n" "[truncated]"
+    return content
+
+
+def _trim_length(content, max_chars):
+    if len(content) > max_chars:
+        content = f"{content[:max_chars]}...\n[truncated]"
     return content
