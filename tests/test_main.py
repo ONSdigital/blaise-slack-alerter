@@ -7,6 +7,8 @@ import pytest
 import requests_mock
 from flask import Request
 
+from lib.slack import SlackMessage
+from lib.slack.slack_message_formatter import convert_slack_message_to_blocks
 from main import log_error, send_slack_alert
 
 
@@ -52,51 +54,28 @@ def test_bad_pubsub_envelope(context):
     assert response == "Alert sent (invalid envelope)"
 
     assert http_mock.call_count is 1
-    assert json.loads(http_mock.request_history[0].text) == dict(
-        blocks=[
-            dict(
-                text={
-                    "text": ":alert: Error with bad format received",
-                    "type": "plain_text",
-                },
-                type="header",
+    assert json.loads(
+        http_mock.request_history[0].text
+    ) == convert_slack_message_to_blocks(
+        SlackMessage(
+            title="Error with bad format received",
+            fields={
+                "Platform": "unknown",
+                "Application": "unknown",
+                "Log Time": "unknown",
+                "Project": "project-dev",
+            },
+            content="{\n"
+            '  "@type": "type.googleapis.com/google.pubsub.v1.PubsubMessage",\n'
+            '  "attributes": {\n'
+            '    "logging.googleapis.com/timestamp": "2022-07-22T20:36:21.891133Z"\n'
+            "  }\n"
+            "}",
+            footnote=(
+                "This message was not in an expected format; "
+                "consider extending the alerting lambda to support this message type."
             ),
-            dict(
-                fields=[
-                    dict(text="*Platform:*\nunknown", type="mrkdwn"),
-                    dict(text="*Application:*\nunknown", type="mrkdwn"),
-                    dict(text="*Log Time:*\nunknown", type="mrkdwn"),
-                    dict(text="*Project:*\nproject-dev", type="mrkdwn"),
-                ],
-                type="section",
-            ),
-            dict(type="divider"),
-            dict(
-                text=dict(
-                    text=(
-                        "{\n"
-                        '  "@type": "type.googleapis.com/google.pubsub.v1.PubsubMessage",\n'
-                        '  "attributes": {\n'
-                        '    "logging.googleapis.com/timestamp": "2022-07-22T20:36:21.891133Z"\n'
-                        "  }\n"
-                        "}"
-                    ),
-                    type="plain_text",
-                ),
-                type="section",
-            ),
-            dict(type="divider"),
-            dict(
-                text=dict(
-                    text=(
-                        "This message was not in an expected format; "
-                        "consider extending the alerting lambda to support this message type."
-                    ),
-                    type="mrkdwn",
-                ),
-                type="section",
-            ),
-        ]
+        )
     )
 
 
@@ -118,43 +97,28 @@ def test_send_raw_string_slack_alert(context):
     assert response == "Alert sent"
 
     assert http_mock.call_count is 1
-    assert json.loads(http_mock.request_history[0].text) == dict(
-        blocks=[
-            dict(
-                text=dict(
-                    text=":alert: UNKNOWN: This is a raw string message",
-                    type="plain_text",
-                ),
-                type="header",
+    assert json.loads(
+        http_mock.request_history[0].text
+    ) == convert_slack_message_to_blocks(
+        SlackMessage(
+            title="UNKNOWN: This is a raw string message",
+            fields={
+                "Platform": "unknown",
+                "Application": "unknown",
+                "Log Time": "unknown",
+                "Project": "project-dev",
+            },
+            content="{}",
+            footnote=(
+                "*Next Steps*\n"
+                "1. Add some :eyes: to show you are investigating\n"
+                "2. <https://console.cloud.google.com/monitoring/uptime?referrer=search&project=project-dev "
+                "| Check the system is online>\n"
+                "3. Determine the cause of the error\n"
+                "4. Follow the <https://confluence.ons.gov.uk/pages/viewpage.action?pageId=98502389 "
+                "| Managing Prod Alerts> process"
             ),
-            dict(
-                fields=[
-                    dict(text="*Platform:*\nunknown", type="mrkdwn"),
-                    dict(text="*Application:*\nunknown", type="mrkdwn"),
-                    dict(text="*Log Time:*\nunknown", type="mrkdwn"),
-                    dict(text="*Project:*\nproject-dev", type="mrkdwn"),
-                ],
-                type="section",
-            ),
-            dict(type="divider"),
-            dict(text=dict(text="{}", type="plain_text"), type="section"),
-            dict(type="divider"),
-            dict(
-                text=dict(
-                    text=(
-                        "*Next Steps*\n"
-                        "1. Add some :eyes: to show you are investigating\n"
-                        "2. <https://console.cloud.google.com/monitoring/uptime?referrer=search&project=project-dev "
-                        "| Check the system is online>\n"
-                        "3. Determine the cause of the error\n"
-                        "4. Follow the <https://confluence.ons.gov.uk/pages/viewpage.action?pageId=98502389 "
-                        "| Managing Prod Alerts> process"
-                    ),
-                    type="mrkdwn",
-                ),
-                type="section",
-            ),
-        ]
+        )
     )
 
 
@@ -206,60 +170,40 @@ def test_send_gce_instance_slack_alert(context):
     assert response == "Alert sent"
 
     assert http_mock.call_count is 1
-    assert json.loads(http_mock.request_history[0].text) == dict(
-        blocks=[
-            dict(
-                text=dict(
-                    text=":alert: ERROR: Error message from VM", type="plain_text"
-                ),
-                type="header",
+    assert json.loads(
+        http_mock.request_history[0].text
+    ) == convert_slack_message_to_blocks(
+        SlackMessage(
+            title="ERROR: Error message from VM",
+            fields={
+                "Platform": "gce_instance",
+                "Application": "vm-mgmt",
+                "Log Time": "2022-08-02 19:06:42",
+                "Project": "project-dev",
+            },
+            content=(
+                "{\n"
+                '  "channel": "application",\n'
+                '  "description": "Error description from VM",\n'
+                '  "event_category": "0",\n'
+                '  "event_id": "0",\n'
+                '  "event_type": "error",\n'
+                '  "record_number": "6569254",\n'
+                '  "source_name": "Blaise",\n'
+                "...\n"
+                "[truncated]"
             ),
-            dict(
-                fields=[
-                    dict(text="*Platform:*\ngce_instance", type="mrkdwn"),
-                    dict(text="*Application:*\nvm-mgmt", type="mrkdwn"),
-                    dict(text="*Log Time:*\n2022-08-02 19:06:42", type="mrkdwn"),
-                    dict(text="*Project:*\nproject-dev", type="mrkdwn"),
-                ],
-                type="section",
+            footnote=(
+                "*Next Steps*\n"
+                "1. Add some :eyes: to show you are investigating\n"
+                "2. <https://console.cloud.google.com/monitoring/uptime?referrer=search&project=project-dev "
+                "| Check the system is online>\n"
+                '3. <https://console.cloud.google.com/logs/query;query=resource.type:"gce_instance"%20resource.labels.instance_id:"89453598437598"%20severity:"WARNING"%20OR%20severity:"ERROR"%20OR%20severity:"CRITICAL"%20OR%20severity:"ALERT"%20OR%20severity:"EMERGENCY";cursorTimestamp=2022-08-02T19:06:42.275819Z?referrer=search&project=project-dev '
+                "| View the logs>\n"
+                "4. Follow the <https://confluence.ons.gov.uk/pages/viewpage.action?pageId=98502389 "
+                "| Managing Prod Alerts> process"
             ),
-            dict(type="divider"),
-            dict(
-                text=dict(
-                    text=(
-                        "{\n"
-                        '  "channel": "application",\n'
-                        '  "description": "Error description from VM",\n'
-                        '  "event_category": "0",\n'
-                        '  "event_id": "0",\n'
-                        '  "event_type": "error",\n'
-                        '  "record_number": "6569254",\n'
-                        '  "source_name": "Blaise",\n'
-                        "...\n"
-                        "[truncated]"
-                    ),
-                    type="plain_text",
-                ),
-                type="section",
-            ),
-            dict(type="divider"),
-            dict(
-                text=dict(
-                    text=(
-                        "*Next Steps*\n"
-                        "1. Add some :eyes: to show you are investigating\n"
-                        "2. <https://console.cloud.google.com/monitoring/uptime?referrer=search&project=project-dev "
-                        "| Check the system is online>\n"
-                        '3. <https://console.cloud.google.com/logs/query;query=resource.type:"gce_instance"%20resource.labels.instance_id:"89453598437598"%20severity:"WARNING"%20OR%20severity:"ERROR"%20OR%20severity:"CRITICAL"%20OR%20severity:"ALERT"%20OR%20severity:"EMERGENCY";cursorTimestamp=2022-08-02T19:06:42.275819Z?referrer=search&project=project-dev '
-                        "| View the logs>\n"
-                        "4. Follow the <https://confluence.ons.gov.uk/pages/viewpage.action?pageId=98502389 "
-                        "| Managing Prod Alerts> process"
-                    ),
-                    type="mrkdwn",
-                ),
-                type="section",
-            ),
-        ]
+        )
     )
 
 
@@ -315,41 +259,30 @@ def test_send_cloud_function_slack_alert(context):
     assert response == "Alert sent"
 
     assert http_mock.call_count is 1
-    assert json.loads(http_mock.request_history[0].text) == dict(
-        blocks=[
-            dict(
-                text=dict(
-                    text=":alert: ERROR: Example error message", type="plain_text"
-                ),
-                type="header",
+    assert json.loads(
+        http_mock.request_history[0].text
+    ) == convert_slack_message_to_blocks(
+        SlackMessage(
+            title="ERROR: Example error message",
+            fields={
+                "Platform": "cloud_function",
+                "Application": "log-error",
+                "Log Time": "2022-07-22 20:36:22",
+                "Project": "project-dev",
+            },
+            content="",
+            footnote=(
+                "*Next Steps*\n"
+                "1. Add some :eyes: to show you are investigating\n"
+                "2. <https://console.cloud.google.com/monitoring/uptime?referrer=search&project=project-dev "
+                "| Check the system is online>\n"
+                "3. "
+                '<https://console.cloud.google.com/logs/query;query=resource.type:"cloud_function"%20resource.labels.function_name:"log-error"%20severity:"WARNING"%20OR%20severity:"ERROR"%20OR%20severity:"CRITICAL"%20OR%20severity:"ALERT"%20OR%20severity:"EMERGENCY";cursorTimestamp=2022-07-22T20:36:22.219592Z?referrer=search&project=project-dev '
+                "| View the logs>\n"
+                "4. Follow the <https://confluence.ons.gov.uk/pages/viewpage.action?pageId=98502389 "
+                "| Managing Prod Alerts> process"
             ),
-            dict(
-                fields=[
-                    dict(text="*Platform:*\ncloud_function", type="mrkdwn"),
-                    dict(text="*Application:*\nlog-error", type="mrkdwn"),
-                    dict(text="*Log Time:*\n2022-07-22 20:36:22", type="mrkdwn"),
-                    dict(text="*Project:*\nproject-dev", type="mrkdwn"),
-                ],
-                type="section",
-            ),
-            dict(type="divider"),
-            dict(
-                text=dict(
-                    text=(
-                        "*Next Steps*\n"
-                        "1. Add some :eyes: to show you are investigating\n"
-                        "2. <https://console.cloud.google.com/monitoring/uptime?referrer=search&project=project-dev "
-                        "| Check the system is online>\n"
-                        '3. <https://console.cloud.google.com/logs/query;query=resource.type:"cloud_function"%20resource.labels.function_name:"log-error"%20severity:"WARNING"%20OR%20severity:"ERROR"%20OR%20severity:"CRITICAL"%20OR%20severity:"ALERT"%20OR%20severity:"EMERGENCY";cursorTimestamp=2022-07-22T20:36:22.219592Z?referrer=search&project=project-dev '
-                        "| View the logs>\n"
-                        "4. Follow the <https://confluence.ons.gov.uk/pages/viewpage.action?pageId=98502389 "
-                        "| Managing Prod Alerts> process"
-                    ),
-                    type="mrkdwn",
-                ),
-                type="section",
-            ),
-        ]
+        )
     )
 
 
@@ -429,56 +362,41 @@ def test_send_app_engine_slack_alert(caplog, log_matching):
     assert response == "Alert sent"
 
     assert http_mock.call_count is 1
-    assert json.loads(http_mock.request_history[0].text) == dict(
-        blocks=[
-            dict(
-                text=dict(text=":alert: ERROR: Example GAE Error", type="plain_text"),
-                type="header",
+    assert json.loads(
+        http_mock.request_history[0].text
+    ) == convert_slack_message_to_blocks(
+        SlackMessage(
+            title="ERROR: Example GAE Error",
+            fields={
+                "Platform": "gae_app",
+                "Application": "app-name",
+                "Log Time": "2022-08-03 14:48:46",
+                "Project": "project-dev",
+            },
+            content="{\n"
+            '  "@type": '
+            '"type.googleapis.com/google.appengine.logging.v1.RequestLog",\n'
+            '  "appEngineRelease": "1.9.71",\n'
+            '  "appId": "g~project-name",\n'
+            '  "endTime": "2022-08-03T14:48:46.535746Z",\n'
+            '  "finished": true,\n'
+            '  "first": true,\n'
+            '  "host": "0.20220803t140821.app-name.project-name.nw.r.appspot.com",\n'
+            "...\n"
+            "[truncated]",
+            footnote=(
+                "*Next Steps*\n"
+                "1. Add some :eyes: to show you are "
+                "investigating\n"
+                "2. "
+                "<https://console.cloud.google.com/monitoring/uptime?referrer=search&project=project-dev "
+                "| Check the system is online>\n"
+                "3. "
+                '<https://console.cloud.google.com/logs/query;query=resource.type:"gae_app"%20resource.labels.module_id:"app-name"%20severity:"WARNING"%20OR%20severity:"ERROR"%20OR%20severity:"CRITICAL"%20OR%20severity:"ALERT"%20OR%20severity:"EMERGENCY";cursorTimestamp=2022-08-03T14:48:46.538301Z?referrer=search&project=project-dev '
+                "| View the logs>\n"
+                "4. Follow the "
+                "<https://confluence.ons.gov.uk/pages/viewpage.action?pageId=98502389 "
+                "| Managing Prod Alerts> process"
             ),
-            dict(
-                fields=[
-                    dict(text="*Platform:*\ngae_app", type="mrkdwn"),
-                    dict(text="*Application:*\napp-name", type="mrkdwn"),
-                    dict(text="*Log Time:*\n2022-08-03 14:48:46", type="mrkdwn"),
-                    dict(text="*Project:*\nproject-dev", type="mrkdwn"),
-                ],
-                type="section",
-            ),
-            dict(type="divider"),
-            dict(
-                text=dict(
-                    text="{\n"
-                    '  "@type": "type.googleapis.com/google.appengine.logging.v1.RequestLog",\n'
-                    '  "appEngineRelease": "1.9.71",\n'
-                    '  "appId": "g~project-name",\n'
-                    '  "endTime": "2022-08-03T14:48:46.535746Z",\n'
-                    '  "finished": true,\n'
-                    '  "first": true,\n'
-                    '  "host": "0.20220803t140821.app-name.project-name.nw.r.appspot.com",\n'
-                    "...\n"
-                    "[truncated]",
-                    type="plain_text",
-                ),
-                type="section",
-            ),
-            dict(type="divider"),
-            dict(
-                text=dict(
-                    text="*Next Steps*\n"
-                    "1. Add some :eyes: to show you are "
-                    "investigating\n"
-                    "2. "
-                    "<https://console.cloud.google.com/monitoring/uptime?referrer=search&project=project-dev "
-                    "| Check the system is online>\n"
-                    "3. "
-                    '<https://console.cloud.google.com/logs/query;query=resource.type:"gae_app"%20resource.labels.module_id:"app-name"%20severity:"WARNING"%20OR%20severity:"ERROR"%20OR%20severity:"CRITICAL"%20OR%20severity:"ALERT"%20OR%20severity:"EMERGENCY";cursorTimestamp=2022-08-03T14:48:46.538301Z?referrer=search&project=project-dev '
-                    "| View the logs>\n"
-                    "4. Follow the "
-                    "<https://confluence.ons.gov.uk/pages/viewpage.action?pageId=98502389 "
-                    "| Managing Prod Alerts> process",
-                    type="mrkdwn",
-                ),
-                type="section",
-            ),
-        ]
+        )
     )
