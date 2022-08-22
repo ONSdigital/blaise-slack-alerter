@@ -37,5 +37,6 @@ def send_alerts(
     logging.info(
         f"Sending message to Slack", extra=dict(textPayload=processed_log_entry.message)
     )
-    alerter.send_alert(alerter.create_alert(processed_log_entry))
+    alert = alerter.create_alert(processed_log_entry)
+    alerter.send_alert(alert)
     return "Alert sent"
