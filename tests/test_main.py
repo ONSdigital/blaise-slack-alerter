@@ -235,11 +235,8 @@ def test_send_gce_instance_slack_alert(context):
                         '  "event_type": "error",\n'
                         '  "record_number": "6569254",\n'
                         '  "source_name": "Blaise",\n'
-                        '  "string_inserts": [],\n'
-                        '  "time_generated": "2022-08-02 20:06:38 +0100",\n'
-                        '  "time_written": "2022-08-02 20:06:38 +0100",\n'
-                        '  "user": ""\n'
-                        "}"
+                        "...\n"
+                        "[truncated]"
                     ),
                     type="plain_text",
                 ),
@@ -451,32 +448,15 @@ def test_send_app_engine_slack_alert(caplog, log_matching):
             dict(
                 text=dict(
                     text="{\n"
-                    '  "@type": '
-                    '"type.googleapis.com/google.appengine.logging.v1.RequestLog",\n'
+                    '  "@type": "type.googleapis.com/google.appengine.logging.v1.RequestLog",\n'
                     '  "appEngineRelease": "1.9.71",\n'
                     '  "appId": "g~project-name",\n'
                     '  "endTime": "2022-08-03T14:48:46.535746Z",\n'
                     '  "finished": true,\n'
                     '  "first": true,\n'
-                    '  "host": '
-                    '"0.20220803t140821.app-name.project-name.nw.r.appspot.com",\n'
-                    '  "httpVersion": "HTTP/1.1",\n'
-                    '  "instanceId": "45545245342",\n'
-                    '  "ip": "0.1.0.3",\n'
-                    '  "latency": "0.004229s",\n'
-                    '  "method": "GET",\n'
-                    '  "requestId": '
-                    '"5435342543254325423543254325432543252345",\n'
-                    '  "resource": "/_ah/stop",\n'
-                    '  "responseSize": "3013",\n'
-                    '  "spanId": "7842417449535267939",\n'
-                    '  "startTime": "2022-08-03T14:48:46.531517Z",\n'
-                    '  "status": 500,\n'
-                    '  "traceId": "9998776867876876",\n'
-                    '  "traceSampled": true,\n'
-                    '  "urlMapEntry": "<unused>",\n'
-                    '  "versionId": "20220803t140821"\n'
-                    "}",
+                    '  "host": "0.20220803t140821.app-name.project-name.nw.r.appspot.com",\n'
+                    "...\n"
+                    "[truncated]",
                     type="plain_text",
                 ),
                 type="section",
