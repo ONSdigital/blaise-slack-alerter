@@ -10,7 +10,7 @@ from lib.log_processor.log_types.gce_instance import attempt_create
 def log_entry() -> LogEntry:
     return LogEntry(
         resource_type="gce_instance",
-        resource_labels=dict(),
+        resource_labels=dict(instance_id="123123123"),
         payload_type=PayloadType.JSON,
         payload=dict(
             message="GCE Error", extra="example extra", computer_name="my-instance"
@@ -29,6 +29,10 @@ def test_attempt_create_succeeds_with_complete_entry(log_entry):
     assert instance.data == dict(extra="example extra")
     assert instance.platform == "gce_instance"
     assert instance.application == "my-instance"
+    assert instance.log_query == {
+        "resource.type": "gce_instance",
+        "resource.labels.instance_id": "123123123",
+    }
 
 
 def test_attempt_create_returns_none_if_resource_type_is_wrong(log_entry):
@@ -47,6 +51,11 @@ def test_attempt_create_returns_unknown_app_if_computer_name_is_missing(log_entr
     del log_entry.payload["computer_name"]
     instance = attempt_create(log_entry)
     assert instance.application == "[unknown]"
+
+
+def test_attempt_create_does_not_include_instance_id_if_label_is_missing(log_entry):
+    instance = attempt_create(dataclasses.replace(log_entry, resource_labels={}))
+    assert instance.log_query == {"resource.type": "gce_instance"}
 
 
 def test_attempt_create_returns_none_if_payload_type_is_text(log_entry):

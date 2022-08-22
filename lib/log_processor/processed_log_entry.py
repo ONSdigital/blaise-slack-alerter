@@ -1,5 +1,8 @@
 from dataclasses import dataclass, field
+from datetime import datetime
 from typing import Any, Dict, cast, Callable, Optional, Union
+
+from dateutil.parser import parse, ParserError
 
 from lib.cloud_logging import LogEntry
 from lib.log_processor.app_log_payload import AppLogPayload
@@ -15,7 +18,8 @@ class ProcessedLogEntry:
     platform: Optional[str] = field(default=None)
     application: Optional[str] = field(default=None)
     log_name: Optional[str] = field(default=None)
-    timestamp: Optional[str] = field(default=None)
+    timestamp: Optional[datetime] = field(default=None)
+    log_query: Dict[str, str] = field(default_factory=dict)
 
 
 def create_processed_log_entry(
@@ -26,7 +30,15 @@ def create_processed_log_entry(
         data=app_log_payload.data,
         severity=entry.severity,
         log_name=entry.log_name,
-        timestamp=entry.timestamp,
+        timestamp=_parse_datetime(entry),
         platform=app_log_payload.platform,
         application=app_log_payload.application,
+        log_query=app_log_payload.log_query,
     )
+
+
+def _parse_datetime(entry: LogEntry) -> Optional[datetime]:
+    try:
+        return parse(entry.timestamp) if entry.timestamp is not None else None
+    except ParserError:
+        return None

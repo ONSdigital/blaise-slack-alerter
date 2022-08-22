@@ -1,3 +1,4 @@
+from datetime import datetime
 from unittest.mock import Mock
 
 import pytest
@@ -70,7 +71,8 @@ def test_process_log_entry_returns_a_proceed_log_entry_for_the_first_created_pay
         data=dict(),
         severity="ERROR",
         log_name="/example_log",
-        timestamp="NOW",
+        timestamp=None,
         platform="platform1",
         application="app1",
+        log_query={},
     )

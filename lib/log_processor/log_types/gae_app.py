@@ -32,9 +32,16 @@ def attempt_create(entry: LogEntry) -> Optional[AppLogPayload]:
             data.pop("line", None)
             message = entry.payload["line"][0]["logMessage"]
 
+    application = entry.resource_labels.get("module_id", None)
+
+    log_query = {"resource.type": "gae_app"}
+    if application:
+        log_query["resource.labels.module_id"] = application
+
     return AppLogPayload(
         message=message,
         data=data,
         platform="gae_app",
-        application=entry.resource_labels.get("module_id", "[unknown]"),
+        application=application or "[unknown]",
+        log_query=log_query,
     )

@@ -39,6 +39,10 @@ def test_attempt_create_succeeds_with_complete_entry_with_message(log_entry):
     assert instance.data == dict(extra="something")
     assert instance.platform == "gae_app"
     assert instance.application == "app-name"
+    assert instance.log_query == {
+        "resource.type": "gae_app",
+        "resource.labels.module_id": "app-name",
+    }
 
 
 def test_attempt_create_succeeds_with_complete_entry_with_message_and_line(log_entry):
@@ -117,10 +121,18 @@ def test_attempt_create_returns_none_if_resource_type_is_wrong(log_entry):
     assert instance is None
 
 
-def test_attempt_create_returns_none_if_module_id_label_is_missing(log_entry):
+def test_attempt_create_returns_none_application_if_module_id_label_is_missing(
+    log_entry,
+):
     del log_entry.resource_labels["module_id"]
     instance = attempt_create(log_entry)
     assert instance.application == "[unknown]"
+
+
+def test_attempt_create_returns_no_name_filter_if_module_id_label_is_missing(log_entry):
+    del log_entry.resource_labels["module_id"]
+    instance = attempt_create(log_entry)
+    assert instance.log_query == {"resource.type": "gae_app"}
 
 
 def test_attempt_create_succeeds_if_payload_type_is_text(log_entry):

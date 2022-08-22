@@ -1,3 +1,5 @@
+from dateutil.parser import parse
+
 from lib.cloud_logging import LogEntry, PayloadType
 from lib.log_processor import ProcessedLogEntry
 from lib.log_processor.app_log_payload_factories import APP_LOG_PAYLOAD_FACTORIES
@@ -22,6 +24,7 @@ def test_parse_log_entry_with_compute_engine_instance_log():
         platform="gce_instance",
         application="my-vm",
         data=dict(extra_info="extra data"),
+        log_query={"resource.type": "gce_instance"},
     )
 
 
@@ -122,5 +125,5 @@ def test_parse_log_entry_with_received_timestamp():
     )
     processed = process_log_entry(log_entry, APP_LOG_PAYLOAD_FACTORIES)
     assert processed == ProcessedLogEntry(
-        message="example error", timestamp="2022-08-01T11:25:38.670159583Z"
+        message="example error", timestamp=parse("2022-08-01T11:25:38.670159583Z")
     )
