@@ -250,7 +250,7 @@ def test_send_gce_instance_slack_alert(context):
                         "1. Add some :eyes: to show you are investigating\n"
                         "2. <https://console.cloud.google.com/monitoring/uptime?referrer=search&project=project-dev "
                         "| Check the system is online>\n"
-                        "3. <https://console.cloud.google.com/logs/query;query=%0A;cursorTimestamp=2022-08-02T19:06:42.275819Z?referrer=search&project=project-dev "
+                        '3. <https://console.cloud.google.com/logs/query;query=resource.type:"gce_instance"%20resource.labels.instance_id:"89453598437598"%20severity:"WARNING"%20OR%20severity:"ERROR"%20OR%20severity:"CRITICAL"%20OR%20severity:"ALERT"%20OR%20severity:"EMERGENCY";cursorTimestamp=2022-08-02T19:06:42.275819Z?referrer=search&project=project-dev '
                         "| View the logs>\n"
                         "4. Follow the <https://confluence.ons.gov.uk/pages/viewpage.action?pageId=98502389 "
                         "| Managing Prod Alerts> process"
@@ -340,7 +340,7 @@ def test_send_cloud_function_slack_alert(context):
                         "1. Add some :eyes: to show you are investigating\n"
                         "2. <https://console.cloud.google.com/monitoring/uptime?referrer=search&project=project-dev "
                         "| Check the system is online>\n"
-                        "3. <https://console.cloud.google.com/logs/query;query=%0A;cursorTimestamp=2022-07-22T20:36:22.219592Z?referrer=search&project=project-dev "
+                        '3. <https://console.cloud.google.com/logs/query;query=resource.type:"cloud_function"%20resource.labels.function_name:"log-error"%20severity:"WARNING"%20OR%20severity:"ERROR"%20OR%20severity:"CRITICAL"%20OR%20severity:"ALERT"%20OR%20severity:"EMERGENCY";cursorTimestamp=2022-07-22T20:36:22.219592Z?referrer=search&project=project-dev '
                         "| View the logs>\n"
                         "4. Follow the <https://confluence.ons.gov.uk/pages/viewpage.action?pageId=98502389 "
                         "| Managing Prod Alerts> process"
@@ -471,7 +471,7 @@ def test_send_app_engine_slack_alert(caplog, log_matching):
                     "<https://console.cloud.google.com/monitoring/uptime?referrer=search&project=project-dev "
                     "| Check the system is online>\n"
                     "3. "
-                    "<https://console.cloud.google.com/logs/query;query=%0A;cursorTimestamp=2022-08-03T14:48:46.538301Z?referrer=search&project=project-dev "
+                    '<https://console.cloud.google.com/logs/query;query=resource.type:"gae_app"%20resource.labels.module_id:"app-name"%20severity:"WARNING"%20OR%20severity:"ERROR"%20OR%20severity:"CRITICAL"%20OR%20severity:"ALERT"%20OR%20severity:"EMERGENCY";cursorTimestamp=2022-08-03T14:48:46.538301Z?referrer=search&project=project-dev '
                     "| View the logs>\n"
                     "4. Follow the "
                     "<https://confluence.ons.gov.uk/pages/viewpage.action?pageId=98502389 "
