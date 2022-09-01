@@ -27,7 +27,7 @@ def test_create_from_processed_log_entry(processed_log_entry):
     )
 
     assert message == SlackMessage(
-        title="ERROR: Example error",
+        title=":alert: ERROR: Example error",
         fields={
             "Platform": "cloud_functions",
             "Application": "my-app",
@@ -74,7 +74,7 @@ def test_create_from_processed_log_with_no_severity(processed_log_entry):
         replace(processed_log_entry, severity=None), project_name="example-gcp-project"
     )
 
-    assert message.title == "UNKNOWN: Example error"
+    assert message.title == ":alert: UNKNOWN: Example error"
 
 
 def test_create_from_processed_log_with_no_platform(processed_log_entry):
@@ -121,7 +121,7 @@ def test_create_from_processed_log_with_message_containing_newlines(
         project_name="example-gcp-project",
     )
 
-    assert message.title == "ERROR: An error occurred"
+    assert message.title == ":alert: ERROR: An error occurred"
     assert message.content == (
         "**Error Message**\n"
         "An error occurred\n"
@@ -147,8 +147,8 @@ def test_create_from_processed_log_with_titles_over_150_characters(processed_log
     )
 
     assert message.title == (
-        "ERROR: This message creates a title over 150 characters long when combined with the severity "
-        "because it is really really really really really rea..."
+        ":alert: ERROR: This message creates a title over 150 characters long when combined with the severity "
+        "because it is really really really really re..."
     )
     assert message.content == (
         "**Error Message**\n"
