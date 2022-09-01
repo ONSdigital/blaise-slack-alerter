@@ -32,7 +32,7 @@ def test_successfully_converting_a_message_to_blocks():
     assert blocks == dict(
         blocks=[
             dict(
-                text=dict(text=":alert: hello world", type="plain_text"),
+                text=dict(text="hello world", type="plain_text"),
                 type="header",
             ),
             dict(
@@ -94,7 +94,7 @@ def test_successfully_converting_a_message_to_blocks_with_no_content():
     assert blocks == dict(
         blocks=[
             dict(
-                text=dict(text=":alert: hello world", type="plain_text"),
+                text=dict(text="hello world", type="plain_text"),
                 type="header",
             ),
             dict(
