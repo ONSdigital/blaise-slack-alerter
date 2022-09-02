@@ -95,7 +95,7 @@ def create_from_processed_log_entry(
 def _get_title(processed_log_entry: ProcessedLogEntry) -> Tuple[str, Optional[str]]:
     message_lines = processed_log_entry.message.split("\n")
 
-    title = f"{processed_log_entry.severity or 'UNKNOWN'}: {message_lines[0]}"
+    title = f":alert: {processed_log_entry.severity or 'UNKNOWN'}: {message_lines[0]}"
 
     full_message = processed_log_entry.message if len(message_lines) > 1 else None
 

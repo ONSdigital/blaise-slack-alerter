@@ -101,7 +101,7 @@ def test_send_raw_string_slack_alert(context):
         http_mock.request_history[0].text
     ) == convert_slack_message_to_blocks(
         SlackMessage(
-            title="UNKNOWN: This is a raw string message",
+            title=":alert: UNKNOWN: This is a raw string message",
             fields={
                 "Platform": "unknown",
                 "Application": "unknown",
@@ -174,7 +174,7 @@ def test_send_gce_instance_slack_alert(context):
         http_mock.request_history[0].text
     ) == convert_slack_message_to_blocks(
         SlackMessage(
-            title="ERROR: Error message from VM",
+            title=":alert: ERROR: Error message from VM",
             fields={
                 "Platform": "gce_instance",
                 "Application": "vm-mgmt",
@@ -263,7 +263,7 @@ def test_send_cloud_function_slack_alert(context):
         http_mock.request_history[0].text
     ) == convert_slack_message_to_blocks(
         SlackMessage(
-            title="ERROR: Example error message",
+            title=":alert: ERROR: Example error message",
             fields={
                 "Platform": "cloud_function",
                 "Application": "log-error",
@@ -366,7 +366,7 @@ def test_send_app_engine_slack_alert(caplog, log_matching):
         http_mock.request_history[0].text
     ) == convert_slack_message_to_blocks(
         SlackMessage(
-            title="ERROR: Example GAE Error",
+            title=":alert: ERROR: Example GAE Error",
             fields={
                 "Platform": "gae_app",
                 "Application": "app-name",

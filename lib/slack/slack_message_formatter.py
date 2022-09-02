@@ -5,7 +5,7 @@ def convert_slack_message_to_blocks(message: SlackMessage) -> dict:
     blocks = [
         dict(
             type="header",
-            text=dict(type="plain_text", text=f":alert: {message.title}"),
+            text=dict(type="plain_text", text=f"{message.title}"),
         ),
         dict(
             type="section",
