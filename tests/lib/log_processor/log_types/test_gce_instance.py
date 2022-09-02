@@ -33,6 +33,7 @@ def test_attempt_create_succeeds_with_complete_entry(log_entry):
         "resource.type": "gce_instance",
         "resource.labels.instance_id": "123123123",
     }
+    assert instance.most_important_values == ["description", "event_type"]
 
 
 def test_attempt_create_returns_none_if_resource_type_is_wrong(log_entry):

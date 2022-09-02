@@ -41,4 +41,5 @@ def attempt_create(entry: LogEntry) -> Optional[AppLogPayload]:
         platform="gce_instance",
         application=application,
         log_query=log_query,
+        most_important_values=["description", "event_type"],
     )

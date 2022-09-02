@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Any, Dict, cast, Callable, Optional, Union
+from typing import Any, Dict, cast, Callable, Optional, Union, List
 
 from dateutil.parser import parse, ParserError
 
@@ -20,6 +20,7 @@ class ProcessedLogEntry:
     log_name: Optional[str] = field(default=None)
     timestamp: Optional[datetime] = field(default=None)
     log_query: Dict[str, str] = field(default_factory=dict)
+    most_important_values: Optional[List[str]] = field(default=None)
 
 
 def create_processed_log_entry(
@@ -34,6 +35,7 @@ def create_processed_log_entry(
         platform=app_log_payload.platform,
         application=app_log_payload.application,
         log_query=app_log_payload.log_query,
+        most_important_values=app_log_payload.most_important_values,
     )
 
 

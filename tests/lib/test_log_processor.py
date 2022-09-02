@@ -25,6 +25,7 @@ def test_parse_log_entry_with_compute_engine_instance_log():
         application="my-vm",
         data=dict(extra_info="extra data"),
         log_query={"resource.type": "gce_instance"},
+        most_important_values=["description", "event_type"],
     )
 
 
