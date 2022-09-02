@@ -18,6 +18,7 @@ def processed_log_entry() -> ProcessedLogEntry:
         log_name="/log/my-log",
         timestamp=parse("2022-08-10T14:54:03.318939Z"),
         log_query={},
+        most_important_values=None,
     )
 
 
@@ -35,6 +36,37 @@ def test_create_from_processed_log_entry(processed_log_entry):
             "Project": "example-gcp-project",
         },
         content='{\n  "example_field": "example value"\n}',
+        footnote=(
+            "*Next Steps*\n"
+            "1. Add some :eyes: to show you are investigating\n"
+            "2. <https://console.cloud.google.com/monitoring/uptime?referrer=search&project=example-gcp-project | Check the system is online>\n"
+            '3. <https://console.cloud.google.com/logs/query;query=severity:"WARNING"%20OR%20severity:"ERROR"%20OR%20severity:"CRITICAL"%20OR%20severity:"ALERT"%20OR%20severity:"EMERGENCY";cursorTimestamp=2022-08-10T14:54:03.318939Z?referrer=search&project=example-gcp-project | View the logs>\n'
+            "4. Follow the <https://confluence.ons.gov.uk/pages/viewpage.action?pageId=98502389 | Managing Prod Alerts> process"
+        ),
+    )
+
+
+def test_create_from_processed_log_entry_with_most_important_fields(
+    processed_log_entry,
+):
+    message = create_from_processed_log_entry(
+        replace(
+            processed_log_entry,
+            data=dict(value1="Value One", value2="Value Two", value3="Value Three"),
+            most_important_values=["value3", "value1"],
+        ),
+        project_name="example-gcp-project",
+    )
+
+    assert message == SlackMessage(
+        title=":alert: ERROR: Example error",
+        fields={
+            "Platform": "cloud_functions",
+            "Application": "my-app",
+            "Log Time": "2022-08-10 14:54:03",
+            "Project": "example-gcp-project",
+        },
+        content="value3: Value Three\nvalue1: Value One",
         footnote=(
             "*Next Steps*\n"
             "1. Add some :eyes: to show you are investigating\n"

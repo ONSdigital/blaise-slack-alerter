@@ -113,6 +113,16 @@ def _get_content(processed_log_entry: ProcessedLogEntry, full_message: Optional[
         else json.dumps(processed_log_entry.data, indent=2)
     )
 
+    if processed_log_entry.most_important_values and isinstance(
+        processed_log_entry.data, dict
+    ):
+        content = "\n".join(
+            [
+                f"{value}: {processed_log_entry.data[value]}"
+                for value in processed_log_entry.most_important_values
+            ]
+        )
+
     if full_message:
         content = (
             "**Error Message**\n"
