@@ -84,12 +84,12 @@ def _create_content(
         processed_log_entry.data, dict
     ):
         important_values = [
-            f"{value}: {processed_log_entry.data[value]}"
+            f"{value}: {_get_value(processed_log_entry.data, value)}"
             for value in processed_log_entry.most_important_values
-            if value in processed_log_entry.data
+            if _get_value(processed_log_entry.data, value) is not None
         ]
 
-        if len(important_values) > 1:
+        if len(important_values) > 0:
             content = "\n".join(important_values)
 
     if full_message:
@@ -158,3 +158,11 @@ def _trim_length(content, max_chars):
     if len(content) > max_chars:
         content = f"{content[:max_chars]}...\n[truncated]"
     return content
+
+
+def _get_value(dictionary, path: str) -> Optional[Any]:
+    parts = path.split(".")
+    result = dictionary
+    for part in parts:
+        result = result.get(part, {})
+    return None if isinstance(result, dict) else result
