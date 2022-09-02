@@ -44,4 +44,14 @@ def attempt_create(entry: LogEntry) -> Optional[AppLogPayload]:
         platform="gae_app",
         application=application or "[unknown]",
         log_query=log_query,
+        most_important_values=[
+            "status",
+            "host",
+            "method",
+            "resource",
+            "ip",
+            "latency",
+            "responseSize",
+            "httpVersion",
+        ],
     )

@@ -198,6 +198,7 @@ class TestWithStructuredLog:
                     "resource.type": "gce_instance",
                     "resource.labels.instance_id": "89453598437598",
                 },
+                most_important_values=["description", "event_type"],
             )
         )
         alerter.send_alert.assert_called_with(message)
