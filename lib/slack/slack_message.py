@@ -116,12 +116,14 @@ def _get_content(processed_log_entry: ProcessedLogEntry, full_message: Optional[
     if processed_log_entry.most_important_values and isinstance(
         processed_log_entry.data, dict
     ):
-        content = "\n".join(
-            [
-                f"{value}: {processed_log_entry.data[value]}"
-                for value in processed_log_entry.most_important_values
-            ]
-        )
+        important_values = [
+            f"{value}: {processed_log_entry.data[value]}"
+            for value in processed_log_entry.most_important_values
+            if value in processed_log_entry.data
+        ]
+
+        if len(important_values) > 1:
+            content = "\n".join(important_values)
 
     if full_message:
         content = (
