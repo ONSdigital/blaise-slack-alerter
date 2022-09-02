@@ -98,10 +98,10 @@ def test_create_from_processed_log_entry_with_no_important_fields(
             "Project": "example-gcp-project",
         },
         content="{\n"
-                "  \"value1\": \"Value One\",\n"
-                "  \"value2\": \"Value Two\",\n"
-                "  \"value3\": \"Value Three\"\n"
-                "}",
+        '  "value1": "Value One",\n'
+        '  "value2": "Value Two",\n'
+        '  "value3": "Value Three"\n'
+        "}",
         footnote=(
             "*Next Steps*\n"
             "1. Add some :eyes: to show you are investigating\n"

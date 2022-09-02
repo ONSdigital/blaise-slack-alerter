@@ -181,18 +181,7 @@ def test_send_gce_instance_slack_alert(context):
                 "Log Time": "2022-08-02 19:06:42",
                 "Project": "project-dev",
             },
-            content=(
-                "{\n"
-                '  "channel": "application",\n'
-                '  "description": "Error description from VM",\n'
-                '  "event_category": "0",\n'
-                '  "event_id": "0",\n'
-                '  "event_type": "error",\n'
-                '  "record_number": "6569254",\n'
-                '  "source_name": "Blaise",\n'
-                "...\n"
-                "[truncated]"
-            ),
+            content="description: Error description from VM\n" "event_type: error",
             footnote=(
                 "*Next Steps*\n"
                 "1. Add some :eyes: to show you are investigating\n"
