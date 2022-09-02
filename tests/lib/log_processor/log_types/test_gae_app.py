@@ -43,6 +43,16 @@ def test_attempt_create_succeeds_with_complete_entry_with_message(log_entry):
         "resource.type": "gae_app",
         "resource.labels.module_id": "app-name",
     }
+    assert instance.most_important_values == [
+        "status",
+        "host",
+        "method",
+        "resource",
+        "ip",
+        "latency",
+        "responseSize",
+        "httpVersion",
+    ]
 
 
 def test_attempt_create_succeeds_with_complete_entry_with_message_and_line(log_entry):

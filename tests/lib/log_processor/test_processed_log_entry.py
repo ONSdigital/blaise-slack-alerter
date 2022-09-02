@@ -23,6 +23,7 @@ def test_create_processed_log_entry():
         data=dict(key="example_value"),
         platform="cloud_function",
         application="my_app",
+        most_important_values=["important_value"],
     )
     result = create_processed_log_entry(log_entry, app_log_payload)
 
@@ -34,6 +35,7 @@ def test_create_processed_log_entry():
         timestamp=datetime(2022, 7, 22, 20, 36, 21, 891133, tzinfo=tzutc()),
         platform="cloud_function",
         application="my_app",
+        most_important_values=["important_value"],
     )
 
 
