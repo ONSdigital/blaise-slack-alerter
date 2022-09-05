@@ -386,3 +386,111 @@ def test_send_app_engine_slack_alert(caplog, log_matching):
             ),
         )
     )
+
+
+def test_send_audit_log_slack_alert(caplog, log_matching):
+    audit_log_log_entry = {
+        "protoPayload": {
+            "@type": "type.googleapis.com/google.cloud.audit.AuditLog",
+            "status": {"code": 7, "message": "Permission Denied."},
+            "authenticationInfo": {},
+            "requestMetadata": {
+                "callerIp": "64.62.197.152",
+                "callerSuppliedUserAgent": "Mozilla/5.0",
+                "requestAttributes": {
+                    "path": "/",
+                    "host": "34.120.152.80",
+                    "time": "2022-09-02T10:51:18.717071832Z",
+                    "auth": {},
+                },
+                "destinationAttributes": {},
+            },
+            "serviceName": "iap.googleapis.com",
+            "methodName": "AuthorizeUser",
+            "authorizationInfo": [
+                {
+                    "resource": "projects/628324858917/iap_web/compute/services/2522895116060014104/versions/bs_0",
+                    "permission": "iap.webServiceVersions.accessViaIAP",
+                    "resourceAttributes": {
+                        "service": "iap.googleapis.com",
+                        "type": "iap.googleapis.com/WebServiceVersion",
+                    },
+                }
+            ],
+            "resourceName": "2522895116060014104",
+            "request": {
+                "httpRequest": {"url": "https://34.120.152.80/"},
+                "@type": "type.googleapis.com/cloud.security.gatekeeper.AuthorizeUserRequest",
+            },
+            "metadata": {
+                "device_state": "Unknown",
+                "oauth_client_id": "628324858917-ldlglltgesqgn64lq22anp9grbn4p6ev.apps.googleusercontent.com",
+                "device_id": "",
+                "request_id": "10649173555031673437",
+            },
+        },
+        "insertId": "yz4fb6d6tva",
+        "resource": {
+            "type": "gce_backend_service",
+            "labels": {
+                "location": "",
+                "project_id": "ons-blaise-v2-prod",
+                "backend_service_id": "2522895116060014104",
+            },
+        },
+        "timestamp": "2022-09-02T10:51:18.711181260Z",
+        "severity": "ERROR",
+        "logName": "projects/ons-blaise-v2-prod/logs/cloudaudit.googleapis.com%2Fdata_access",
+        "receiveTimestamp": "2022-09-02T10:51:20.159777496Z",
+    }
+
+    event = {
+        "@type": "type.googleapis.com/google.pubsub.v1.PubsubMessage",
+        "attributes": {
+            "logging.googleapis.com/timestamp": "2022-07-22T20:36:21.891133Z"
+        },
+        "data": base64.b64encode(json.dumps(audit_log_log_entry).encode("ascii")),
+    }
+
+    with requests_mock.Mocker() as http_mock:
+        http_mock.post("https://slack.co/webhook/1234")
+        response = send_slack_alert(event, context)
+
+    assert response == "Alert sent"
+
+    assert http_mock.call_count is 1
+    assert json.loads(
+        http_mock.request_history[0].text
+    ) == convert_slack_message_to_blocks(
+        SlackMessage(
+            title=":alert: ERROR: [AuditLog] Permission Denied.",
+            fields={
+                "Platform": "gce_backend_service",
+                "Application": "[unknown]",
+                "Log Time": "2022-09-02 10:51:20",
+                "Project": "project-dev",
+            },
+            content="serviceName: iap.googleapis.com\n"
+            "methodName: AuthorizeUser\n"
+            "requestMetadata.callerIp: 64.62.197.152\n"
+            "requestMetadata.callerSuppliedUserAgent: Mozilla/5.0\n"
+            "requestMetadata.requestAttributes.path: /\n"
+            "requestMetadata.requestAttributes.host: 34.120.152.80\n"
+            "requestMetadata.requestAttributes.time: 2022-09-02T10:51:18.717071832Z\n"
+            "request.httpRequest.url: https://34.120.152.80/",
+            footnote=(
+                "*Next Steps*\n"
+                "1. Add some :eyes: to show you are "
+                "investigating\n"
+                "2. "
+                "<https://console.cloud.google.com/monitoring/uptime?referrer=search&project=project-dev "
+                "| Check the system is online>\n"
+                "3. "
+                '<https://console.cloud.google.com/logs/query;query=protoPayload.@type:"type.googleapis.com/google.cloud.audit.AuditLog"%20severity:"WARNING"%20OR%20severity:"ERROR"%20OR%20severity:"CRITICAL"%20OR%20severity:"ALERT"%20OR%20severity:"EMERGENCY";cursorTimestamp=2022-09-02T10:51:20.159777Z?referrer=search&project=project-dev '
+                "| View the logs>\n"
+                "4. Follow the "
+                "<https://confluence.ons.gov.uk/pages/viewpage.action?pageId=98502389 "
+                "| Managing Prod Alerts> process"
+            ),
+        )
+    )
