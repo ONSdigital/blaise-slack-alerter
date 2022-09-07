@@ -392,56 +392,49 @@ def test_send_audit_log_slack_alert(caplog, log_matching):
     audit_log_log_entry = {
         "protoPayload": {
             "@type": "type.googleapis.com/google.cloud.audit.AuditLog",
-            "status": {"code": 7, "message": "Permission Denied."},
-            "authenticationInfo": {},
+            "status": {
+                "code": 3,
+                "message": "serving status cannot be changed for Automatic Scaling versions",
+            },
+            "authenticationInfo": {
+                "principalEmail": "concourse@ons-blaise-v2-prod.iam.gserviceaccount.com",
+                "serviceAccountKeyName": "//iam.googleapis.com/projects/ons-blaise-v2-prod/serviceAccounts/concourse@ons-blaise-v2-prod.iam.gserviceaccount.com/keys/0772af21bb3c6fdc858833af9590797c0ec0c5d5",
+            },
             "requestMetadata": {
-                "callerIp": "64.62.197.152",
-                "callerSuppliedUserAgent": "Mozilla/5.0",
+                "callerIp": "gce-internal-ip",
                 "requestAttributes": {
-                    "path": "/",
-                    "host": "34.120.152.80",
-                    "time": "2022-09-02T10:51:18.717071832Z",
+                    "time": "2022-09-06T21:32:11.279689Z",
                     "auth": {},
                 },
                 "destinationAttributes": {},
             },
-            "serviceName": "iap.googleapis.com",
-            "methodName": "AuthorizeUser",
+            "serviceName": "appengine.googleapis.com",
+            "methodName": "google.appengine.v1.Versions.UpdateVersion",
             "authorizationInfo": [
                 {
-                    "resource": "projects/628324858917/iap_web/compute/services/2522895116060014104/versions/bs_0",
-                    "permission": "iap.webServiceVersions.accessViaIAP",
-                    "resourceAttributes": {
-                        "service": "iap.googleapis.com",
-                        "type": "iap.googleapis.com/WebServiceVersion",
-                    },
+                    "resource": "apps/ons-blaise-v2-prod/services/default/versions/20210216t165030",
+                    "permission": "appengine.versions.update",
+                    "granted": True,
+                    "resourceAttributes": {},
                 }
             ],
-            "resourceName": "2522895116060014104",
-            "request": {
-                "httpRequest": {"url": "https://34.120.152.80/"},
-                "@type": "type.googleapis.com/cloud.security.gatekeeper.AuthorizeUserRequest",
-            },
-            "metadata": {
-                "device_state": "Unknown",
-                "oauth_client_id": "628324858917-ldlglltgesqgn64lq22anp9grbn4p6ev.apps.googleusercontent.com",
-                "device_id": "",
-                "request_id": "10649173555031673437",
-            },
+            "resourceName": "apps/ons-blaise-v2-prod/services/default/versions/20210216t165030",
+            "resourceLocation": {"currentLocations": ["europe-west2"]},
         },
-        "insertId": "yz4fb6d6tva",
+        "insertId": "-y4awqhd1brg",
         "resource": {
-            "type": "gce_backend_service",
+            "type": "gae_app",
             "labels": {
-                "location": "",
+                "zone": "",
                 "project_id": "ons-blaise-v2-prod",
-                "backend_service_id": "2522895116060014104",
+                "version_id": "20210216t165030",
+                "module_id": "default",
             },
         },
-        "timestamp": "2022-09-02T10:51:18.711181260Z",
+        "timestamp": "2022-09-06T21:32:11.237805Z",
         "severity": "ERROR",
-        "logName": "projects/ons-blaise-v2-prod/logs/cloudaudit.googleapis.com%2Fdata_access",
-        "receiveTimestamp": "2022-09-02T10:51:20.159777496Z",
+        "logName": "projects/ons-blaise-v2-prod/logs/cloudaudit.googleapis.com%2Factivity",
+        "receiveTimestamp": "2022-09-06T21:32:11.332410850Z",
     }
 
     event = {
@@ -463,21 +456,17 @@ def test_send_audit_log_slack_alert(caplog, log_matching):
         http_mock.request_history[0].text
     ) == convert_slack_message_to_blocks(
         SlackMessage(
-            title=":alert: ERROR: [AuditLog] Permission Denied.",
+            title=":alert: ERROR: [AuditLog] serving status cannot be changed for Automatic Scaling versions",
             fields={
-                "Platform": "gce_backend_service",
+                "Platform": "gae_app",
                 "Application": "[unknown]",
-                "Log Time": "2022-09-02 10:51:20",
+                "Log Time": "2022-09-06 21:32:11",
                 "Project": "project-dev",
             },
-            content="serviceName: iap.googleapis.com\n"
-            "methodName: AuthorizeUser\n"
-            "requestMetadata.callerIp: 64.62.197.152\n"
-            "requestMetadata.callerSuppliedUserAgent: Mozilla/5.0\n"
-            "requestMetadata.requestAttributes.path: /\n"
-            "requestMetadata.requestAttributes.host: 34.120.152.80\n"
-            "requestMetadata.requestAttributes.time: 2022-09-02T10:51:18.717071832Z\n"
-            "request.httpRequest.url: https://34.120.152.80/",
+            content="serviceName: appengine.googleapis.com\n"
+            "methodName: google.appengine.v1.Versions.UpdateVersion\n"
+            "requestMetadata.callerIp: gce-internal-ip\n"
+            "requestMetadata.requestAttributes.time: 2022-09-06T21:32:11.279689Z",
             footnote=(
                 "*Next Steps*\n"
                 "1. Add some :eyes: to show you are "
@@ -486,7 +475,7 @@ def test_send_audit_log_slack_alert(caplog, log_matching):
                 "<https://console.cloud.google.com/monitoring/uptime?referrer=search&project=project-dev "
                 "| Check the system is online>\n"
                 "3. "
-                '<https://console.cloud.google.com/logs/query;query=protoPayload.@type:"type.googleapis.com/google.cloud.audit.AuditLog"%20severity:"WARNING"%20OR%20severity:"ERROR"%20OR%20severity:"CRITICAL"%20OR%20severity:"ALERT"%20OR%20severity:"EMERGENCY";cursorTimestamp=2022-09-02T10:51:20.159777Z?referrer=search&project=project-dev '
+                '<https://console.cloud.google.com/logs/query;query=protoPayload.@type:"type.googleapis.com/google.cloud.audit.AuditLog"%20severity:"WARNING"%20OR%20severity:"ERROR"%20OR%20severity:"CRITICAL"%20OR%20severity:"ALERT"%20OR%20severity:"EMERGENCY";cursorTimestamp=2022-09-06T21:32:11.332410Z?referrer=search&project=project-dev '
                 "| View the logs>\n"
                 "4. Follow the "
                 "<https://confluence.ons.gov.uk/pages/viewpage.action?pageId=98502389 "
