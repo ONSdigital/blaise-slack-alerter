@@ -1,5 +1,6 @@
 from datetime import datetime
 from typing import List, Dict
+from urllib.parse import quote
 
 
 def create_log_query_link(
@@ -8,20 +9,13 @@ def create_log_query_link(
     cursor_timestamp: datetime,
     project_name: str,
 ) -> str:
-    query = " ".join(
-        [
-            " ".join([f'{name}:"{value}"' for name, value in fields.items()]),
-            " OR ".join([f'severity:"{severity}"' for severity in severities]),
-        ]
-    ).strip()
+    fields_query = " ".join([f'{name}:"{value}"' for name, value in fields.items()])
+    severity_query = f"severity=({' OR '.join(severities)})" if severities else ""
+    query = f"{fields_query} {severity_query}".strip()
 
     return (
         f"https://console.cloud.google.com/logs/query;"
-        f"query={_encode_spaces(query)};"
+        f"query={quote(query)};"
         f"cursorTimestamp={cursor_timestamp.strftime('%Y-%m-%dT%H:%M:%S.%fZ')}"
         f"?referrer=search&project={project_name}"
     )
-
-
-def _encode_spaces(input: str) -> str:
-    return input.replace(" ", "%20")
