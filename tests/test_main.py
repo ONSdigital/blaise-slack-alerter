@@ -2,6 +2,7 @@ import base64
 import json
 import logging
 import os
+from typing import Union
 
 import pytest
 import requests_mock
@@ -39,13 +40,20 @@ def context():
     return dict()
 
 
-def test_bad_pubsub_envelope(context):
-    event = {
+def create_event(data: Union[dict, str]) -> dict:
+    return {
         "@type": "type.googleapis.com/google.pubsub.v1.PubsubMessage",
         "attributes": {
             "logging.googleapis.com/timestamp": "2022-07-22T20:36:21.891133Z"
         },
+        "data": base64.b64encode(json.dumps(data).encode("ascii")),
     }
+
+
+def test_bad_pubsub_envelope(context):
+    event = create_event("")
+
+    del event["data"]
 
     with requests_mock.Mocker() as http_mock:
         http_mock.post("https://slack.co/webhook/1234")
@@ -80,15 +88,7 @@ def test_bad_pubsub_envelope(context):
 
 
 def test_send_raw_string_slack_alert(context):
-    event = {
-        "@type": "type.googleapis.com/google.pubsub.v1.PubsubMessage",
-        "attributes": {
-            "logging.googleapis.com/timestamp": "2022-07-22T20:36:21.891133Z"
-        },
-        "data": base64.b64encode(
-            json.dumps("This is a raw string message").encode("ascii")
-        ),
-    }
+    event = create_event("This is a raw string message")
 
     with requests_mock.Mocker() as http_mock:
         http_mock.post("https://slack.co/webhook/1234")
@@ -155,13 +155,7 @@ def test_send_gce_instance_slack_alert(context):
         "timestamp": "2022-08-02T19:06:38Z",
     }
 
-    event = {
-        "@type": "type.googleapis.com/google.pubsub.v1.PubsubMessage",
-        "attributes": {
-            "logging.googleapis.com/timestamp": "2022-07-22T20:36:21.891133Z"
-        },
-        "data": base64.b64encode(json.dumps(gce_instance_log_entry).encode("ascii")),
-    }
+    event = create_event(gce_instance_log_entry)
 
     with requests_mock.Mocker() as http_mock:
         http_mock.post("https://slack.co/webhook/1234")
@@ -233,13 +227,7 @@ def test_send_cloud_function_slack_alert(context):
         "traceSampled": True,
     }
 
-    event = {
-        "@type": "type.googleapis.com/google.pubsub.v1.PubsubMessage",
-        "attributes": {
-            "logging.googleapis.com/timestamp": "2022-07-22T20:36:21.891133Z"
-        },
-        "data": base64.b64encode(json.dumps(cloud_function_log_entry).encode("ascii")),
-    }
+    event = create_event(cloud_function_log_entry)
 
     with requests_mock.Mocker() as http_mock:
         http_mock.post("https://slack.co/webhook/1234")
@@ -336,13 +324,7 @@ def test_send_app_engine_slack_alert(caplog, log_matching):
         "traceSampled": True,
     }
 
-    event = {
-        "@type": "type.googleapis.com/google.pubsub.v1.PubsubMessage",
-        "attributes": {
-            "logging.googleapis.com/timestamp": "2022-07-22T20:36:21.891133Z"
-        },
-        "data": base64.b64encode(json.dumps(app_engine_log_entry).encode("ascii")),
-    }
+    event = create_event(app_engine_log_entry)
 
     with requests_mock.Mocker() as http_mock:
         http_mock.post("https://slack.co/webhook/1234")
@@ -437,13 +419,7 @@ def test_send_audit_log_slack_alert(caplog, log_matching):
         "receiveTimestamp": "2022-09-06T21:32:11.332410850Z",
     }
 
-    event = {
-        "@type": "type.googleapis.com/google.pubsub.v1.PubsubMessage",
-        "attributes": {
-            "logging.googleapis.com/timestamp": "2022-07-22T20:36:21.891133Z"
-        },
-        "data": base64.b64encode(json.dumps(audit_log_log_entry).encode("ascii")),
-    }
+    event = create_event(audit_log_log_entry)
 
     with requests_mock.Mocker() as http_mock:
         http_mock.post("https://slack.co/webhook/1234")
