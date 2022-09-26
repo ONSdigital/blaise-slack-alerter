@@ -25,7 +25,7 @@ def test_create_log_query_link_with_severities_but_no_fields():
 
     assert (
         link == f"https://console.cloud.google.com/logs/query;"
-        'query=severity:"ERROR"%20OR%20severity:"WARNING";'
+        "query=severity%3D%28ERROR%20OR%20WARNING%29;"
         f"cursorTimestamp=2022-10-24T00:00:00.000000Z"
         f"?referrer=search&project={project_name}"
     )
@@ -41,7 +41,7 @@ def test_create_log_query_link_with_fields_but_no_severities():
 
     assert (
         link == f"https://console.cloud.google.com/logs/query;"
-        'query=field1:"value1"%20field2:"value2";'
+        "query=field1%3A%22value1%22%20field2%3A%22value2%22;"
         f"cursorTimestamp=2022-10-24T00:00:00.000000Z"
         f"?referrer=search&project={project_name}"
     )
@@ -60,7 +60,7 @@ def test_create_log_query_link_with_severities_and_fields():
 
     assert (
         link == f"https://console.cloud.google.com/logs/query;"
-        'query=field1:"value1"%20field2:"value2"%20severity:"ERROR"%20OR%20severity:"WARNING";'
+        "query=field1%3A%22value1%22%20field2%3A%22value2%22%20severity%3D%28ERROR%20OR%20WARNING%29;"
         f"cursorTimestamp=2022-10-24T00:00:00.000000Z"
         f"?referrer=search&project={project_name}"
     )
