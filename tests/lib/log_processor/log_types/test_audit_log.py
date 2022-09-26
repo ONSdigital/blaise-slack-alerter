@@ -80,6 +80,20 @@ def test_attempt_create_succeeds_with_complete_entry(log_entry):
     ]
 
 
+def test_attempt_create_when_status_is_missing(log_entry):
+    del log_entry.payload["status"]
+    instance = attempt_create(log_entry)
+
+    assert instance.message == "[AuditLog] Unknown entry"
+
+
+def test_attempt_create_when_message_is_missing(log_entry):
+    del log_entry.payload["status"]["message"]
+    instance = attempt_create(log_entry)
+
+    assert instance.message == "[AuditLog] Unknown entry"
+
+
 def test_attempt_create_returns_none_if_payload_is_not_json(log_entry):
     instance = attempt_create(dataclasses.replace(log_entry, payload=""))
     assert instance is None
