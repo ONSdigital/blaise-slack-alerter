@@ -14,8 +14,12 @@ def attempt_create(entry: LogEntry) -> Optional[AppLogPayload]:
     ):
         return None
 
+    message = "Unknown entry"
+    if "status" in entry.payload and "message" in entry.payload["status"]:
+        message = entry.payload["status"]["message"]
+
     return AppLogPayload(
-        message=f"[AuditLog] {entry.payload['status']['message']}",
+        message=f"[AuditLog] {message}",
         data=entry.payload,
         platform=entry.resource_type,
         application="[unknown]",
