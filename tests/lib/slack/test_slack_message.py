@@ -1,14 +1,21 @@
 from dataclasses import replace
+from datetime import datetime
 
 import pytest
 from dateutil.parser import parse
 
+from lib.cloud_logging.log_query_link import create_log_query_link
 from lib.log_processor import ProcessedLogEntry
 from lib.slack.slack_message import create_from_processed_log_entry, SlackMessage
 
 
-@pytest.fixture
-def processed_log_entry() -> ProcessedLogEntry:
+@pytest.fixture()
+def log_timestamp() -> datetime:
+    return parse("2022-08-10T14:54:03.318939Z")
+
+
+@pytest.fixture()
+def processed_log_entry(log_timestamp) -> ProcessedLogEntry:
     return ProcessedLogEntry(
         message="Example error",
         data={"example_field": "example value"},
@@ -16,13 +23,23 @@ def processed_log_entry() -> ProcessedLogEntry:
         platform="cloud_functions",
         application="my-app",
         log_name="/log/my-log",
-        timestamp=parse("2022-08-10T14:54:03.318939Z"),
+        timestamp=log_timestamp,
         log_query={},
         most_important_values=None,
     )
 
 
-def test_create_from_processed_log_entry(processed_log_entry):
+@pytest.fixture()
+def log_query_link(log_timestamp):
+    return create_log_query_link(
+        fields={},
+        severities=["WARNING", "ERROR", "CRITICAL", "ALERT", "EMERGENCY"],
+        cursor_timestamp=log_timestamp,
+        project_name="example-gcp-project",
+    )
+
+
+def test_create_from_processed_log_entry(processed_log_entry, log_query_link):
     message = create_from_processed_log_entry(
         processed_log_entry, project_name="example-gcp-project"
     )
@@ -40,14 +57,14 @@ def test_create_from_processed_log_entry(processed_log_entry):
             "*Next Steps*\n"
             "1. Add some :eyes: to show you are investigating\n"
             "2. <https://console.cloud.google.com/monitoring/uptime?referrer=search&project=example-gcp-project | Check the system is online>\n"
-            "3. <https://console.cloud.google.com/logs/query;query=severity%3D%28WARNING%20OR%20ERROR%20OR%20CRITICAL%20OR%20ALERT%20OR%20EMERGENCY%29;cursorTimestamp=2022-08-10T14:54:03.318939Z?referrer=search&project=example-gcp-project | View the logs>\n"
+            f"3. <{log_query_link} | View the logs>\n"
             "4. Follow the <https://confluence.ons.gov.uk/pages/viewpage.action?pageId=98502389 | Managing Prod Alerts> process"
         ),
     )
 
 
 def test_create_from_processed_log_entry_with_most_important_fields(
-    processed_log_entry,
+    processed_log_entry, log_query_link
 ):
     message = create_from_processed_log_entry(
         replace(
@@ -73,14 +90,14 @@ def test_create_from_processed_log_entry_with_most_important_fields(
             "*Next Steps*\n"
             "1. Add some :eyes: to show you are investigating\n"
             "2. <https://console.cloud.google.com/monitoring/uptime?referrer=search&project=example-gcp-project | Check the system is online>\n"
-            "3. <https://console.cloud.google.com/logs/query;query=severity%3D%28WARNING%20OR%20ERROR%20OR%20CRITICAL%20OR%20ALERT%20OR%20EMERGENCY%29;cursorTimestamp=2022-08-10T14:54:03.318939Z?referrer=search&project=example-gcp-project | View the logs>\n"
+            f"3. <{log_query_link} | View the logs>\n"
             "4. Follow the <https://confluence.ons.gov.uk/pages/viewpage.action?pageId=98502389 | Managing Prod Alerts> process"
         ),
     )
 
 
 def test_create_from_processed_log_entry_with_most_important_field_not_found(
-    processed_log_entry,
+    processed_log_entry, log_query_link
 ):
     message = create_from_processed_log_entry(
         replace(
@@ -106,14 +123,14 @@ def test_create_from_processed_log_entry_with_most_important_field_not_found(
             "*Next Steps*\n"
             "1. Add some :eyes: to show you are investigating\n"
             "2. <https://console.cloud.google.com/monitoring/uptime?referrer=search&project=example-gcp-project | Check the system is online>\n"
-            "3. <https://console.cloud.google.com/logs/query;query=severity%3D%28WARNING%20OR%20ERROR%20OR%20CRITICAL%20OR%20ALERT%20OR%20EMERGENCY%29;cursorTimestamp=2022-08-10T14:54:03.318939Z?referrer=search&project=example-gcp-project | View the logs>\n"
+            f"3. <{log_query_link} | View the logs>\n"
             "4. Follow the <https://confluence.ons.gov.uk/pages/viewpage.action?pageId=98502389 | Managing Prod Alerts> process"
         ),
     )
 
 
 def test_create_from_processed_log_entry_with_no_important_fields(
-    processed_log_entry,
+    processed_log_entry, log_query_link
 ):
     message = create_from_processed_log_entry(
         replace(
@@ -141,7 +158,7 @@ def test_create_from_processed_log_entry_with_no_important_fields(
             "*Next Steps*\n"
             "1. Add some :eyes: to show you are investigating\n"
             "2. <https://console.cloud.google.com/monitoring/uptime?referrer=search&project=example-gcp-project | Check the system is online>\n"
-            "3. <https://console.cloud.google.com/logs/query;query=severity%3D%28WARNING%20OR%20ERROR%20OR%20CRITICAL%20OR%20ALERT%20OR%20EMERGENCY%29;cursorTimestamp=2022-08-10T14:54:03.318939Z?referrer=search&project=example-gcp-project | View the logs>\n"
+            f"3. <{log_query_link} | View the logs>\n"
             "4. Follow the <https://confluence.ons.gov.uk/pages/viewpage.action?pageId=98502389 | Managing Prod Alerts> process"
         ),
     )
@@ -156,9 +173,16 @@ def test_create_from_processed_log_with_string_data(processed_log_entry):
     assert message.content == "This data is a string"
 
 
-def test_create_from_processed_log_query_fields(processed_log_entry):
+def test_create_from_processed_log_query_fields(processed_log_entry, log_timestamp):
     message = create_from_processed_log_entry(
         replace(processed_log_entry, log_query=dict(field1="value1", field2="value2")),
+        project_name="example-gcp-project",
+    )
+
+    log_query_link = create_log_query_link(
+        fields=dict(field1="value1", field2="value2"),
+        severities=["WARNING", "ERROR", "CRITICAL", "ALERT", "EMERGENCY"],
+        cursor_timestamp=log_timestamp,
         project_name="example-gcp-project",
     )
 
@@ -166,7 +190,7 @@ def test_create_from_processed_log_query_fields(processed_log_entry):
         "*Next Steps*\n"
         "1. Add some :eyes: to show you are investigating\n"
         "2. <https://console.cloud.google.com/monitoring/uptime?referrer=search&project=example-gcp-project | Check the system is online>\n"
-        "3. <https://console.cloud.google.com/logs/query;query=field1%3A%22value1%22%20field2%3A%22value2%22%20severity%3D%28WARNING%20OR%20ERROR%20OR%20CRITICAL%20OR%20ALERT%20OR%20EMERGENCY%29;cursorTimestamp=2022-08-10T14:54:03.318939Z?referrer=search&project=example-gcp-project | View the logs>\n"
+        f"3. <{log_query_link} | View the logs>\n"
         "4. Follow the <https://confluence.ons.gov.uk/pages/viewpage.action?pageId=98502389 | Managing Prod Alerts> process"
     )
 
