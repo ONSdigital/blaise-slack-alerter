@@ -33,7 +33,7 @@ def processed_log_entry(log_timestamp) -> ProcessedLogEntry:
 def log_query_link(log_timestamp):
     return create_log_query_link(
         fields={},
-        severities=["WARNING", "ERROR", "CRITICAL", "ALERT", "EMERGENCY"],
+        severities=["WARNING", "ERROR", "CRITICAL", "ALERT", "EMERGENCY", "DEBUG"],
         cursor_timestamp=log_timestamp,
         project_name="example-gcp-project",
     )
@@ -181,7 +181,7 @@ def test_create_from_processed_log_query_fields(processed_log_entry, log_timesta
 
     log_query_link = create_log_query_link(
         fields=dict(field1="value1", field2="value2"),
-        severities=["WARNING", "ERROR", "CRITICAL", "ALERT", "EMERGENCY"],
+        severities=["WARNING", "ERROR", "CRITICAL", "ALERT", "EMERGENCY", "DEBUG"],
         cursor_timestamp=log_timestamp,
         project_name="example-gcp-project",
     )
