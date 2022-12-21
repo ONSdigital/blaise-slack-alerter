@@ -111,13 +111,7 @@ def _create_content(
 def _create_footnote(processed_log_entry: ProcessedLogEntry, project_name: str) -> str:
     uptime_url = f"https://console.cloud.google.com/monitoring/uptime?referrer=search&project={project_name}"
 
-    severities = [
-        "WARNING",
-        "ERROR",
-        "CRITICAL",
-        "ALERT",
-        "EMERGENCY",
-    ]
+    severities = ["WARNING", "ERROR", "CRITICAL", "ALERT", "EMERGENCY", "DEBUG"]
     log_link_url = (
         create_log_query_link(
             fields=processed_log_entry.log_query,
