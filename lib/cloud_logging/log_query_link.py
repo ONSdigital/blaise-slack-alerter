@@ -15,7 +15,7 @@ def create_log_query_link(
 
     return (
         f"https://console.cloud.google.com/logs/query;"
-        f"query={quote(query)};"
+        f"query={quote(query, safe='/@:')};"
         f"cursorTimestamp={cursor_timestamp.strftime('%Y-%m-%dT%H:%M:%S.%fZ')}"
         f"?referrer=search&project={project_name}"
     )

@@ -41,7 +41,7 @@ def test_create_log_query_link_with_fields_but_no_severities():
 
     assert (
         link == f"https://console.cloud.google.com/logs/query;"
-        "query=field1%3A%22value1%22%20field2%3A%22value2%22;"
+        "query=field1:%22value1%22%20field2:%22value2%22;"
         f"cursorTimestamp=2022-10-24T00:00:00.000000Z"
         f"?referrer=search&project={project_name}"
     )
@@ -60,7 +60,27 @@ def test_create_log_query_link_with_severities_and_fields():
 
     assert (
         link == f"https://console.cloud.google.com/logs/query;"
-        "query=field1%3A%22value1%22%20field2%3A%22value2%22%20severity%3D%28ERROR%20OR%20WARNING%29;"
+        "query=field1:%22value1%22%20field2:%22value2%22%20severity%3D%28ERROR%20OR%20WARNING%29;"
+        f"cursorTimestamp=2022-10-24T00:00:00.000000Z"
+        f"?referrer=search&project={project_name}"
+    )
+
+
+def test_create_log_query_link_with_at_symbol():
+    timestamp = datetime(2022, 10, 24)
+    project_name = "example-project"
+
+    link = create_log_query_link(
+        {"protoPayload.@type": "type.googleapis.com/google.cloud.audit.AuditLog"},
+        ["WARNING", "ERROR"],
+        timestamp,
+        project_name,
+    )
+
+    assert (
+        link == "https://console.cloud.google.com/logs/query;"
+        "query=protoPayload.@type:%22type.googleapis.com/google.cloud.audit.AuditLog%22%20"
+        "severity%3D%28WARNING%20OR%20ERROR%29;"
         f"cursorTimestamp=2022-10-24T00:00:00.000000Z"
         f"?referrer=search&project={project_name}"
     )
