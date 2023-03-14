@@ -12,7 +12,7 @@ def test_create_log_query_link_with_no_severities_or_fields():
     assert (
         link == f"https://console.cloud.google.com/logs/query;"
         f"query=;"
-        f"cursorTimestamp=2022-10-24T00:00:00.000000Z"
+        f"timeRange=2022-10-24T00:00:00.000000Z%2F2022-10-24T00:00:00.000000Z--PT1M"
         f"?referrer=search&project={project_name}"
     )
 
@@ -26,7 +26,7 @@ def test_create_log_query_link_with_severities_but_no_fields():
     assert (
         link == f"https://console.cloud.google.com/logs/query;"
         "query=severity%3D%28ERROR%20OR%20WARNING%29;"
-        f"cursorTimestamp=2022-10-24T00:00:00.000000Z"
+        f"timeRange=2022-10-24T00:00:00.000000Z%2F2022-10-24T00:00:00.000000Z--PT1M"
         f"?referrer=search&project={project_name}"
     )
 
@@ -42,7 +42,7 @@ def test_create_log_query_link_with_fields_but_no_severities():
     assert (
         link == f"https://console.cloud.google.com/logs/query;"
         "query=field1:%22value1%22%20field2:%22value2%22;"
-        f"cursorTimestamp=2022-10-24T00:00:00.000000Z"
+        f"timeRange=2022-10-24T00:00:00.000000Z%2F2022-10-24T00:00:00.000000Z--PT1M"
         f"?referrer=search&project={project_name}"
     )
 
@@ -61,7 +61,7 @@ def test_create_log_query_link_with_severities_and_fields():
     assert (
         link == f"https://console.cloud.google.com/logs/query;"
         "query=field1:%22value1%22%20field2:%22value2%22%20severity%3D%28ERROR%20OR%20WARNING%29;"
-        f"cursorTimestamp=2022-10-24T00:00:00.000000Z"
+        f"timeRange=2022-10-24T00:00:00.000000Z%2F2022-10-24T00:00:00.000000Z--PT1M"
         f"?referrer=search&project={project_name}"
     )
 
@@ -81,6 +81,6 @@ def test_create_log_query_link_with_at_symbol():
         link == "https://console.cloud.google.com/logs/query;"
         "query=protoPayload.@type:%22type.googleapis.com/google.cloud.audit.AuditLog%22%20"
         "severity%3D%28WARNING%20OR%20ERROR%29;"
-        f"cursorTimestamp=2022-10-24T00:00:00.000000Z"
+        f"timeRange=2022-10-24T00:00:00.000000Z%2F2022-10-24T00:00:00.000000Z--PT1M"
         f"?referrer=search&project={project_name}"
     )
