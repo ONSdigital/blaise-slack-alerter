@@ -24,6 +24,8 @@ In addition to this, you will need an **[Incoming Slack WebHook](https://api.sla
 CLOUD LOGGING -> LOG SINK -> PUBSUB TOPIC -> CLOUD FUNCTION -> SLACK WEBHOOK
 ```
 
+![Architecture Diagram](./architecture.jpg)
+
 ### Granting Sink Access To The PubSub Topic
 
 ```shell
