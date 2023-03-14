@@ -19,4 +19,3 @@ def create_log_query_link(
         f"timeRange={time_stamp}%2F{time_stamp}--PT1M"
         f"?referrer=search&project={project_name}"
     )
-    
