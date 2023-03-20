@@ -21,6 +21,12 @@ def attempt_create(entry: LogEntry) -> Optional[AppLogPayload]:
     application = "[unknown]"
 
     if "message" in entry.payload:
+        if (
+            "OSConfigAgent Error main.go:231: unexpected end of JSON input"
+            in entry.payload["message"]
+        ):
+            return None
+
         message = entry.payload["message"]
 
     if "computer_name" in entry.payload:
