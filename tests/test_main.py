@@ -191,6 +191,63 @@ def test_send_gce_instance_slack_alert(run_slack_alerter, get_webhook_payload):
     )
 
 
+def test_send_gce_instance_slack_alert_for_unexpected_json(
+    run_slack_alerter, get_webhook_payload
+):
+    gce_instance_log_entry = {
+        "jsonPayload": {
+            "computer_name": "vm-mgmt",
+            "description": "Error description from VM",
+            "event_type": "error",
+            "message": "2023-03-06T15:12:02.5712Z OSConfigAgent Error main.go:231: unexpected end of JSON input",
+        },
+        "receiveTimestamp": "2023-03-06T15:12:02.5712Z",
+        "resource": {
+            "labels": {
+                "instance_id": "89453598437598",
+            },
+            "type": "gce_instance",
+        },
+        "severity": "ERROR",
+    }
+    event = create_event(gce_instance_log_entry)
+
+    response = run_slack_alerter(event)
+
+    assert response == "Alert sent"
+    expected_log_query_link = create_log_query_link(
+        {
+            "resource.type": "gce_instance",
+            "resource.labels.instance_id": "89453598437598",
+        },
+        ["WARNING", "ERROR", "CRITICAL", "ALERT", "EMERGENCY", "DEBUG"],
+        parse("2023-03-06T15:12:02.5712Z"),
+        "project-dev",
+    )
+
+    assert get_webhook_payload() != convert_slack_message_to_blocks(
+        SlackMessage(
+            title=":alert: ERROR: Error message from VM",
+            fields={
+                "Platform": "gce_instance",
+                "Application": "vm-mgmt",
+                "Log Time": "2022-08-02 19:06:42",
+                "Project": "project-dev",
+            },
+            content="description: Error description from VM\n" "event_type: error",
+            footnote=(
+                "*Next Steps*\n"
+                "1. Add some :eyes: to show you are investigating\n"
+                "2. <https://console.cloud.google.com/monitoring/uptime?referrer=search&project=project-dev "
+                "| Check the system is online>\n"
+                f"3. <{expected_log_query_link} | View the logs>\n"
+                "4. Follow the <https://confluence.ons.gov.uk/pages/viewpage.action?pageId=98502389 "
+                "| Managing Prod Alerts> process"
+            ),
+        )
+    )
+
+
 def test_send_cloud_function_slack_alert(run_slack_alerter, get_webhook_payload):
     cloud_function_log_entry = {
         "receiveTimestamp": "2022-07-22T20:36:22.219592062Z",
