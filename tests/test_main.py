@@ -49,6 +49,14 @@ def http_mock():
 
 
 @pytest.fixture()
+def number_of_http_calls(http_mock):
+    def get():
+        return http_mock.call_count
+
+    return get
+
+
+@pytest.fixture()
 def run_slack_alerter(context, http_mock):
     def run(event):
         http_mock.post("https://slack.co/webhook/1234")
@@ -169,63 +177,6 @@ def test_send_gce_instance_slack_alert(run_slack_alerter, get_webhook_payload):
     )
 
     assert get_webhook_payload() == convert_slack_message_to_blocks(
-        SlackMessage(
-            title=":alert: ERROR: Error message from VM",
-            fields={
-                "Platform": "gce_instance",
-                "Application": "vm-mgmt",
-                "Log Time": "2022-08-02 19:06:42",
-                "Project": "project-dev",
-            },
-            content="description: Error description from VM\n" "event_type: error",
-            footnote=(
-                "*Next Steps*\n"
-                "1. Add some :eyes: to show you are investigating\n"
-                "2. <https://console.cloud.google.com/monitoring/uptime?referrer=search&project=project-dev "
-                "| Check the system is online>\n"
-                f"3. <{expected_log_query_link} | View the logs>\n"
-                "4. Follow the <https://confluence.ons.gov.uk/pages/viewpage.action?pageId=98502389 "
-                "| Managing Prod Alerts> process"
-            ),
-        )
-    )
-
-
-def test_send_gce_instance_slack_alert_for_unexpected_json(
-    run_slack_alerter, get_webhook_payload
-):
-    gce_instance_log_entry = {
-        "jsonPayload": {
-            "computer_name": "vm-mgmt",
-            "description": "Error description from VM",
-            "event_type": "error",
-            "message": "2023-03-06T15:12:02.5712Z OSConfigAgent Error main.go:231: unexpected end of JSON input",
-        },
-        "receiveTimestamp": "2023-03-06T15:12:02.5712Z",
-        "resource": {
-            "labels": {
-                "instance_id": "89453598437598",
-            },
-            "type": "gce_instance",
-        },
-        "severity": "ERROR",
-    }
-    event = create_event(gce_instance_log_entry)
-
-    response = run_slack_alerter(event)
-
-    assert response == "Alert sent"
-    expected_log_query_link = create_log_query_link(
-        {
-            "resource.type": "gce_instance",
-            "resource.labels.instance_id": "89453598437598",
-        },
-        ["WARNING", "ERROR", "CRITICAL", "ALERT", "EMERGENCY", "DEBUG"],
-        parse("2023-03-06T15:12:02.5712Z"),
-        "project-dev",
-    )
-
-    assert get_webhook_payload() != convert_slack_message_to_blocks(
         SlackMessage(
             title=":alert: ERROR: Error message from VM",
             fields={
@@ -484,3 +435,47 @@ def test_send_audit_log_slack_alert(
             ),
         )
     )
+
+
+def test_skip_data_delivery_json_error(
+    run_slack_alerter, number_of_http_calls
+):
+    example_log_entry = {
+        "insertId": "yhmlfg26ror8hccek",
+        "jsonPayload": {
+            "event_type": "error",
+            "event_category": "0",
+            "source_name": "OSConfigAgent",
+            "record_number": "1880074",
+            "user": "",
+            "channel": "application",
+            "description": "2023-02-25T03:46:49.1619Z OSConfigAgent Error main.go:231: unexpected end of JSON input\r\n",
+            "time_generated": "2023-02-25 03:46:49 +0000",
+            "computer_name": "blaise-gusty-data-entry-1",
+            "time_written": "2023-02-25 03:46:49 +0000",
+            "event_id": "882",
+            "string_inserts": [
+                "2023-02-25T03:46:49.1619Z OSConfigAgent Error main.go:231: unexpected end of JSON input"
+            ],
+            "message": "2023-02-25T03:46:49.1619Z OSConfigAgent Error main.go:231: unexpected end of JSON input\r\n",
+        },
+        "resource": {
+            "type": "gce_instance",
+            "labels": {
+                "instance_id": "458491889528639951",
+                "project_id": "ons-blaise-v2-prod",
+                "zone": "europe-west2-a",
+            },
+        },
+        "timestamp": "2023-02-25T03:46:49Z",
+        "severity": "ERROR",
+        "labels": {"compute.googleapis.com/resource_name": "blaise-gusty-data-entry-1"},
+        "logName": "projects/ons-blaise-v2-prod/logs/winevt.raw",
+        "receiveTimestamp": "2023-02-25T03:46:57.099633534Z",
+    }
+    event = create_event(example_log_entry)
+
+    response = run_slack_alerter(event)
+
+    assert response == "Alert skipped"
+    assert number_of_http_calls() == 0
