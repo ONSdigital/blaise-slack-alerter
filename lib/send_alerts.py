@@ -10,18 +10,17 @@ from lib.log_processor import (
     CreateAppLogPayloadFromLogEntry,
 )
 from lib.log_processor import process_log_entry
+from lib.filters.osconfig_agent_filter import osconfig_agent_filter
 
 
-def skip_log_entry(log_entry):
-    entry_data = log_entry.data
+def log_entry_skipped(log_entry: ProcessedLogEntry):
+    print(log_entry)
+    filters = [osconfig_agent_filter]
 
-    # Skip "OSConfigAgent Error: unexpected end of JSON input" logs
-    if log_entry.message == "Unknown JSON Error":
-        if (
-            "OSConfigAgent Error" in entry_data["description"]
-            and "unexpected end of JSON input" in entry_data["description"]
-        ):
+    for filter in filters:
+        if filter(log_entry):
             return True
+
     return False
 
 
@@ -47,7 +46,7 @@ def send_alerts(
         log_entry = parse_log_entry(log_data)
         processed_log_entry = process_log_entry(log_entry, app_log_payload_factories)
 
-    if skip_log_entry(processed_log_entry):
+    if log_entry_skipped(processed_log_entry):
         return "Alert skipped"
 
     logging.info(
