@@ -437,9 +437,7 @@ def test_send_audit_log_slack_alert(
     )
 
 
-def test_skip_data_delivery_json_error(
-    run_slack_alerter, number_of_http_calls
-):
+def test_skip_data_delivery_json_error(run_slack_alerter, number_of_http_calls):
     example_log_entry = {
         "insertId": "yhmlfg26ror8hccek",
         "jsonPayload": {
