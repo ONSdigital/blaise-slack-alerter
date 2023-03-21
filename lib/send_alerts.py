@@ -12,6 +12,19 @@ from lib.log_processor import (
 from lib.log_processor import process_log_entry
 
 
+def skip_log_entry(log_entry):
+    entry_data = log_entry.data
+
+    # Skip "OSConfigAgent Error: unexpected end of JSON input" logs
+    if log_entry.message == "Unknown JSON Error":
+        if (
+            "OSConfigAgent Error" in entry_data["description"]
+            and "unexpected end of JSON input" in entry_data["description"]
+        ):
+            return True
+    return False
+
+
 def send_alerts(
     event,
     alerter: Alerter,
@@ -33,6 +46,9 @@ def send_alerts(
     else:
         log_entry = parse_log_entry(log_data)
         processed_log_entry = process_log_entry(log_entry, app_log_payload_factories)
+
+    if skip_log_entry(processed_log_entry):
+        return "Alert skipped"
 
     logging.info(
         f"Sending message to Slack", extra=dict(textPayload=processed_log_entry.message)
