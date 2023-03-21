@@ -46,8 +46,14 @@ def test_log_data_is_dict_and_has_description():
 
     assert log_is_skipped == True
 
+def test_log_data_is_dict_but_no_description():
+    instance = mock_log_entry(data=dict(source_name="gcp"))
+    log_is_skipped = osconfig_agent_filter(instance)
 
-def test_log_data_is_not_dict_and_has_description():
+    assert log_is_skipped == True
+
+
+def test_log_data_is_not_dict_and_no_description():
     instance = mock_log_entry(data="no-relevant-data")
     log_is_skipped = osconfig_agent_filter(instance)
 
@@ -61,7 +67,7 @@ def test_log_data_description_has_target_text():
     assert log_is_skipped == True
 
 
-def test_log_data_description_does_not_have_target_text():
+def test_log_data_description_has_no_target_text():
     instance = mock_log_entry(
         data=dict(description="ERROR: there is no relevant data descrtiption")
     )
