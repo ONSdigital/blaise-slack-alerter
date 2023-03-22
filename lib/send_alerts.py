@@ -14,7 +14,6 @@ from lib.filters.osconfig_agent_filter import osconfig_agent_filter
 
 
 def log_entry_skipped(log_entry: ProcessedLogEntry):
-    print(log_entry)
     filters = [osconfig_agent_filter]
 
     for filter in filters:
