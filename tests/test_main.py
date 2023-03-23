@@ -49,6 +49,14 @@ def http_mock():
 
 
 @pytest.fixture()
+def number_of_http_calls(http_mock):
+    def get():
+        return http_mock.call_count
+
+    return get
+
+
+@pytest.fixture()
 def run_slack_alerter(context, http_mock):
     def run(event):
         http_mock.post("https://slack.co/webhook/1234")
@@ -427,3 +435,45 @@ def test_send_audit_log_slack_alert(
             ),
         )
     )
+
+
+def test_skip_data_delivery_json_error(run_slack_alerter, number_of_http_calls):
+    example_log_entry = {
+        "insertId": "yhmlfg26ror8hccek",
+        "jsonPayload": {
+            "event_type": "error",
+            "event_category": "0",
+            "source_name": "OSConfigAgent",
+            "record_number": "1880074",
+            "user": "",
+            "channel": "application",
+            "description": "2023-02-25T03:46:49.1619Z OSConfigAgent Error main.go:231: unexpected end of JSON input\r\n",
+            "time_generated": "2023-02-25 03:46:49 +0000",
+            "computer_name": "blaise-gusty-data-entry-1",
+            "time_written": "2023-02-25 03:46:49 +0000",
+            "event_id": "882",
+            "string_inserts": [
+                "2023-02-25T03:46:49.1619Z OSConfigAgent Error main.go:231: unexpected end of JSON input"
+            ],
+            "message": "2023-02-25T03:46:49.1619Z OSConfigAgent Error main.go:231: unexpected end of JSON input\r\n",
+        },
+        "resource": {
+            "type": "gce_instance",
+            "labels": {
+                "instance_id": "458491889528639951",
+                "project_id": "ons-blaise-v2-prod",
+                "zone": "europe-west2-a",
+            },
+        },
+        "timestamp": "2023-02-25T03:46:49Z",
+        "severity": "ERROR",
+        "labels": {"compute.googleapis.com/resource_name": "blaise-gusty-data-entry-1"},
+        "logName": "projects/ons-blaise-v2-prod/logs/winevt.raw",
+        "receiveTimestamp": "2023-02-25T03:46:57.099633534Z",
+    }
+    event = create_event(example_log_entry)
+
+    response = run_slack_alerter(event)
+
+    assert response == "Alert skipped"
+    assert number_of_http_calls() == 0
