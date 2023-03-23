@@ -10,6 +10,17 @@ from lib.log_processor import (
     CreateAppLogPayloadFromLogEntry,
 )
 from lib.log_processor import process_log_entry
+from lib.filters.osconfig_agent_filter import osconfig_agent_filter
+
+
+def log_entry_skipped(log_entry: ProcessedLogEntry):
+    filters = [osconfig_agent_filter]
+
+    for filter in filters:
+        if filter(log_entry):
+            return True
+
+    return False
 
 
 def send_alerts(
@@ -33,6 +44,9 @@ def send_alerts(
     else:
         log_entry = parse_log_entry(log_data)
         processed_log_entry = process_log_entry(log_entry, app_log_payload_factories)
+
+    if log_entry_skipped(processed_log_entry):
+        return "Alert skipped"
 
     logging.info(
         f"Sending message to Slack", extra=dict(textPayload=processed_log_entry.message)
