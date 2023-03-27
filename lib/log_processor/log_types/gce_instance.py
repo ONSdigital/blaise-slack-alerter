@@ -20,6 +20,12 @@ def attempt_create(entry: LogEntry) -> Optional[AppLogPayload]:
     message = "Unknown Error"
     application = "[unknown]"
 
+    log_query = {"resource.type": "gce_instance"}
+
+    if "instance_id" in entry.resource_labels:
+        application = entry.resource_labels["instance_id"]
+        log_query["resource.labels.instance_id"] = entry.resource_labels["instance_id"]
+
     if "message" in entry.payload:
         message = entry.payload["message"]
 
@@ -29,11 +35,6 @@ def attempt_create(entry: LogEntry) -> Optional[AppLogPayload]:
     data = copy(entry.payload)
     data.pop("message", None)
     data.pop("computer_name", None)
-
-    log_query = {"resource.type": "gce_instance"}
-
-    if "instance_id" in entry.resource_labels:
-        log_query["resource.labels.instance_id"] = entry.resource_labels["instance_id"]
 
     return AppLogPayload(
         message=message,

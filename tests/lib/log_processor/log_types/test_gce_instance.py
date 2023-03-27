@@ -48,8 +48,17 @@ def test_attempt_create_returns_unknown_error_if_message_is_missing(log_entry):
     assert instance.message == "Unknown Error"
 
 
-def test_attempt_create_returns_unknown_app_if_computer_name_is_missing(log_entry):
+def test_attempt_create_returns_instance_id_if_computer_name_is_missing(log_entry):
     del log_entry.payload["computer_name"]
+    instance = attempt_create(log_entry)
+    assert instance.application == "123123123"
+
+
+def test_attempt_create_returns_unknown_app_if_computer_name_and_instance_id_is_missing(
+    log_entry,
+):
+    del log_entry.payload["computer_name"]
+    del log_entry.resource_labels["instance_id"]
     instance = attempt_create(log_entry)
     assert instance.application == "[unknown]"
 
