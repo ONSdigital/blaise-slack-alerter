@@ -8,6 +8,10 @@ def parse_log_entry(raw: Dict[str, Any]) -> LogEntry:
 
     resource_type, resource_labels = parse_resource(raw)
 
+    labels = raw.get("labels", dict())
+    if type(labels) is not dict:
+        labels = dict()
+
     return LogEntry(
         resource_type=resource_type,
         resource_labels=resource_labels,
@@ -16,6 +20,7 @@ def parse_log_entry(raw: Dict[str, Any]) -> LogEntry:
         severity=raw.get("severity"),
         log_name=raw.get("logName"),
         timestamp=raw.get("receiveTimestamp"),
+        labels=labels,
     )
 
 
