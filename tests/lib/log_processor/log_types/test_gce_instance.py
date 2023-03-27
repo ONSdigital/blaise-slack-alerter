@@ -18,7 +18,7 @@ def log_entry() -> LogEntry:
         severity="ERROR",
         log_name="/logs/gce-example",
         timestamp="2022-08-01T11:25:38.670159583Z",
-        labels=dict(),
+        labels=dict(instance_name="my-instance-label"),
     )
 
 
@@ -49,16 +49,28 @@ def test_attempt_create_returns_unknown_error_if_message_is_missing(log_entry):
     assert instance.message == "Unknown Error"
 
 
-def test_attempt_create_returns_instance_id_if_computer_name_is_missing(log_entry):
+def test_attempt_create_returns_computer_name_label_if_computer_name_is_missing(
+    log_entry,
+):
     del log_entry.payload["computer_name"]
+    instance = attempt_create(log_entry)
+    assert instance.application == "my-instance-label"
+
+
+def test_attempt_create_returns_instance_id_if_computer_name_and_label_is_missing(
+    log_entry,
+):
+    del log_entry.payload["computer_name"]
+    del log_entry.labels["instance_name"]
     instance = attempt_create(log_entry)
     assert instance.application == "123123123"
 
 
-def test_attempt_create_returns_unknown_app_if_computer_name_and_instance_id_is_missing(
+def test_attempt_create_returns_unknown_app_if_computer_name_and_label_and_instance_id_is_missing(
     log_entry,
 ):
     del log_entry.payload["computer_name"]
+    del log_entry.labels["instance_name"]
     del log_entry.resource_labels["instance_id"]
     instance = attempt_create(log_entry)
     assert instance.application == "[unknown]"
