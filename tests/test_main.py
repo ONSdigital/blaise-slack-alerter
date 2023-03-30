@@ -477,3 +477,82 @@ def test_skip_data_delivery_json_error(run_slack_alerter, number_of_http_calls):
 
     assert response == "Alert skipped"
     assert number_of_http_calls() == 0
+
+
+# TODO: Remove after BLAIS5-3705 concludes
+def test_skip_osconfig_context_deadline_error(run_slack_alerter, number_of_http_calls):
+    example_log_entry = {
+        "insertId": "yoaqxbe4xao6uzfo3",
+        "jsonPayload": {
+            "source_name": "OSConfigAgent",
+            "description": "2023-03-30T16:12:02.8996+01:00 OSConfigAgent Error main.go:88: context deadline exceeded\r\n",
+            "event_category": "0",
+            "record_number": "2003189",
+            "event_id": "882",
+            "time_written": "2023-03-30 16:12:02 +0100",
+            "user": "",
+            "time_generated": "2023-03-30 16:12:02 +0100",
+            "event_type": "error",
+            "string_inserts": [
+                "2023-03-30T16:12:02.8996+01:00 OSConfigAgent Error main.go:88: context deadline exceeded"
+            ],
+            "channel": "application",
+            "message": "2023-03-30T16:12:02.8996+01:00 OSConfigAgent Error main.go:88: context deadline exceeded\r\n",
+            "computer_name": "restapi-1",
+        },
+        "resource": {
+            "type": "gce_instance",
+            "labels": {
+                "project_id": "ons-blaise-v2-dev",
+                "instance_id": "2017269846350558215",
+                "zone": "europe-west2-a",
+            },
+        },
+        "timestamp": "2023-03-30T15:12:02Z",
+        "severity": "ERROR",
+        "labels": {"compute.googleapis.com/resource_name": "restapi-1"},
+        "logName": "projects/ons-blaise-v2-dev/logs/winevt.raw",
+        "receiveTimestamp": "2023-03-30T15:12:07.299339599Z",
+    }
+    event = create_event(example_log_entry)
+
+    response = run_slack_alerter(event)
+
+    assert response == "Alert skipped"
+    assert number_of_http_calls() == 0
+
+
+# TODO: Remove after BLAIS5-3705 concludes
+def test_skip_context_deadline_error(run_slack_alerter, number_of_http_calls):
+    example_log_entry = {
+        "insertId": "1k1vvkyg14nxlhg",
+        "jsonPayload": {
+            "omitempty": "null",
+            "message": "context deadline exceeded",
+            "localTimestamp": "2023-03-30T16:12:02.8996+01:00",
+        },
+        "resource": {
+            "type": "gce_instance",
+            "labels": {
+                "project_id": "ons-blaise-v2-dev",
+                "instance_id": "2017269846350558215",
+                "zone": "europe-west2-a",
+            },
+        },
+        "timestamp": "2023-03-30T15:12:02.940142100Z",
+        "severity": "ERROR",
+        "labels": {"instance_name": "restapi-1"},
+        "logName": "projects/ons-blaise-v2-dev/logs/OSConfigAgent",
+        "sourceLocation": {
+            "file": "main.go",
+            "line": "88",
+            "function": "main.registerAgent",
+        },
+        "receiveTimestamp": "2023-03-30T15:12:03.960254682Z",
+    }
+    event = create_event(example_log_entry)
+
+    response = run_slack_alerter(event)
+
+    assert response == "Alert skipped"
+    assert number_of_http_calls() == 0

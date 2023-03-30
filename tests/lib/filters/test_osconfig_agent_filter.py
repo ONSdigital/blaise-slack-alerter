@@ -28,10 +28,8 @@ def processed_log_entry_unexpected_end_of_json() -> ProcessedLogEntry:
 @pytest.fixture()
 def processed_log_entry_context_deadline_exceeded() -> ProcessedLogEntry:
     return ProcessedLogEntry(
-        message="OSConfigAgent Error main.go:88: context deadline exceeded",
-        data=dict(
-            description="2023-02-25T03:46:49.1619Z OSConfigAgent Error main.go:88: context deadline exceeded\r\n"
-        ),
+        message="Error: context deadline exceeded",
+        data=dict(omitempty="null", localTimestamp="2023-03-30T16:12:02.8996+01:00"),
         severity="ERROR",
         platform="gce_instance",
         application="blaise-gusty-data-entry-1",
