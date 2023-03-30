@@ -479,7 +479,7 @@ def test_skip_data_delivery_json_error(run_slack_alerter, number_of_http_calls):
     assert number_of_http_calls() == 0
 
 
-# TODO: Remove after BLAIS5-3705 concludes
+# TODO: Review after BLAIS5-3705 concludes
 def test_skip_osconfig_context_deadline_error(run_slack_alerter, number_of_http_calls):
     example_log_entry = {
         "insertId": "yoaqxbe4xao6uzfo3",
@@ -522,7 +522,7 @@ def test_skip_osconfig_context_deadline_error(run_slack_alerter, number_of_http_
     assert number_of_http_calls() == 0
 
 
-# TODO: Remove after BLAIS5-3705 concludes
+# TODO: Review after BLAIS5-3705 concludes
 def test_skip_context_deadline_error(run_slack_alerter, number_of_http_calls):
     example_log_entry = {
         "insertId": "1k1vvkyg14nxlhg",

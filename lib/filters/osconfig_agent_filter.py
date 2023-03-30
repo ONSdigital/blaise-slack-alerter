@@ -8,7 +8,7 @@ def osconfig_agent_filter(log_entry: ProcessedLogEntry):
     if log_entry.platform != "gce_instance":
         return False
 
-    # TODO: Remove after BLAIS5-3705 concludes
+    # TODO: Review after BLAIS5-3705 concludes
     if (log_entry.message and "context deadline exceeded" in log_entry.message) or (
         type(entry_data) is dict
         and "description" in entry_data
