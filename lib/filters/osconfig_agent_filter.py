@@ -15,4 +15,12 @@ def osconfig_agent_filter(log_entry: ProcessedLogEntry):
     ):
         return True
 
+    if (
+        type(entry_data) is dict
+        and "description" in entry_data
+        and "OSConfigAgent Error" in entry_data["description"]
+        and "context deadline exceeded" in entry_data["description"]
+    ):
+        return True
+
     return False
