@@ -17,6 +17,7 @@ def test_create_processed_log_entry():
         severity="WARN",
         log_name="/example_log",
         timestamp="2022-07-22T20:36:21.891133Z",
+        labels=dict(),
     )
     app_log_payload = AppLogPayload(
         message="there was an error",
@@ -48,6 +49,7 @@ def test_create_processed_log_entry_when_timestamp_is_missing():
         severity="WARN",
         log_name="/example_log",
         timestamp=None,
+        labels=dict(),
     )
     app_log_payload = AppLogPayload(
         message="there was an error",
@@ -77,6 +79,7 @@ def test_create_processed_log_entry_when_timestamp_not_parseable():
         severity="WARN",
         log_name="/example_log",
         timestamp="this is not a datetime",
+        labels=dict(),
     )
     app_log_payload = AppLogPayload(
         message="there was an error",
