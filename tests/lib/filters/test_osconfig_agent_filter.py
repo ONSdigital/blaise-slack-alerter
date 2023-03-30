@@ -24,6 +24,7 @@ def processed_log_entry_unexpected_end_of_json() -> ProcessedLogEntry:
         },
     )
 
+
 # TODO: Review after BLAIS5-3705 concludes
 @pytest.fixture()
 def processed_log_entry_context_deadline_exceeded() -> ProcessedLogEntry:
