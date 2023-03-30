@@ -12,6 +12,7 @@ def test_parse_log_entry_without_payload_fields():
         log_name=None,
         timestamp=None,
         resource_labels=dict(),
+        labels=dict(),
     )
 
 
@@ -25,6 +26,7 @@ def test_parse_log_entry_with_text_payload_fields():
         log_name=None,
         timestamp=None,
         resource_labels=dict(),
+        labels=dict(),
     )
 
 
@@ -38,6 +40,7 @@ def test_parse_log_entry_with_json_payload_fields():
         log_name=None,
         timestamp=None,
         resource_labels=dict(),
+        labels=dict(),
     )
 
 
@@ -51,6 +54,7 @@ def test_parse_log_entry_with_proto_payload_fields():
         log_name=None,
         timestamp=None,
         resource_labels=dict(),
+        labels=dict(),
     )
 
 
@@ -66,6 +70,7 @@ def test_parse_log_entry_with_resource_type():
         log_name=None,
         timestamp=None,
         resource_labels=dict(),
+        labels=dict(),
     )
 
 
@@ -84,6 +89,7 @@ def test_parse_log_entry_with_resource_labels():
         severity=None,
         log_name=None,
         timestamp=None,
+        labels=dict(),
     )
 
 
@@ -97,6 +103,7 @@ def test_parse_log_entry_with_resource_not_a_dict():
         severity=None,
         log_name=None,
         timestamp=None,
+        labels=dict(),
     )
 
 
@@ -110,6 +117,7 @@ def test_parse_log_entry_with_resource_type_missing():
         severity=None,
         log_name=None,
         timestamp=None,
+        labels=dict(),
     )
 
 
@@ -123,6 +131,7 @@ def test_parse_log_entry_with_severity():
         severity="ERROR",
         log_name=None,
         timestamp=None,
+        labels=dict(),
     )
 
 
@@ -136,6 +145,7 @@ def test_parse_log_entry_with_log_name():
         severity=None,
         log_name="/logs/my-log",
         timestamp=None,
+        labels=dict(),
     )
 
 
@@ -154,4 +164,43 @@ def test_parse_log_entry_with_received_timestamp():
         severity=None,
         log_name=None,
         timestamp="2022-08-01T11:25:38.670159583Z",
+        labels=dict(),
+    )
+
+
+def test_parse_log_entry_with_labels():
+    entry = parse_log_entry(
+        dict(
+            textPayload="example error",
+            labels=dict(label_1="value-1", label_2="value-2"),
+        )
+    )
+    assert entry == LogEntry(
+        resource_type=None,
+        resource_labels=dict(),
+        payload_type=PayloadType.TEXT,
+        payload="example error",
+        severity=None,
+        log_name=None,
+        timestamp=None,
+        labels=dict(label_1="value-1", label_2="value-2"),
+    )
+
+
+def test_parse_log_entry_with_labels_that_are_not_a_dict():
+    entry = parse_log_entry(
+        dict(
+            textPayload="example error",
+            labels="not a dict",
+        )
+    )
+    assert entry == LogEntry(
+        resource_type=None,
+        resource_labels=dict(),
+        payload_type=PayloadType.TEXT,
+        payload="example error",
+        severity=None,
+        log_name=None,
+        timestamp=None,
+        labels=dict(),
     )

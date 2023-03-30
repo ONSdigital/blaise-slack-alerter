@@ -17,6 +17,7 @@ def test_parse_log_entry_with_compute_engine_instance_log():
         severity=None,
         log_name=None,
         timestamp=None,
+        labels=dict(my_label="my_value"),
     )
     processed = process_log_entry(log_entry, APP_LOG_PAYLOAD_FACTORIES)
     assert processed == ProcessedLogEntry(
@@ -41,6 +42,7 @@ def test_parse_log_entry_with_json_payload():
         severity=None,
         log_name=None,
         timestamp=None,
+        labels=dict(),
     )
     processed = process_log_entry(log_entry, APP_LOG_PAYLOAD_FACTORIES)
     assert processed == ProcessedLogEntry(
@@ -63,6 +65,7 @@ def test_parse_log_entry_with_text_payload():
         severity=None,
         log_name=None,
         timestamp=None,
+        labels=dict(),
     )
     processed = process_log_entry(log_entry, APP_LOG_PAYLOAD_FACTORIES)
     assert processed == ProcessedLogEntry(message="example error")
@@ -77,6 +80,7 @@ def test_parse_log_entry_with_no_text_or_json_payload():
         severity=None,
         log_name=None,
         timestamp=None,
+        labels=dict(),
     )
     processed = process_log_entry(log_entry, APP_LOG_PAYLOAD_FACTORIES)
     assert processed == ProcessedLogEntry(
@@ -93,6 +97,7 @@ def test_parse_log_entry_with_severity():
         severity="ERROR",
         log_name=None,
         timestamp=None,
+        labels=dict(),
     )
     processed = process_log_entry(log_entry, APP_LOG_PAYLOAD_FACTORIES)
     assert processed == ProcessedLogEntry(message="example error", severity="ERROR")
@@ -107,6 +112,7 @@ def test_parse_log_entry_with_log_name():
         severity=None,
         log_name="/logs/my-log",
         timestamp=None,
+        labels=dict(),
     )
     processed = process_log_entry(log_entry, APP_LOG_PAYLOAD_FACTORIES)
     assert processed == ProcessedLogEntry(
@@ -123,6 +129,7 @@ def test_parse_log_entry_with_received_timestamp():
         severity=None,
         log_name=None,
         timestamp="2022-08-01T11:25:38.670159583Z",
+        labels=dict(),
     )
     processed = process_log_entry(log_entry, APP_LOG_PAYLOAD_FACTORIES)
     assert processed == ProcessedLogEntry(
