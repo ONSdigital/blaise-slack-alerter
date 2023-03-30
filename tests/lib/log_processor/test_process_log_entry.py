@@ -22,6 +22,7 @@ def log_entry():
         severity="ERROR",
         log_name="/example_log",
         timestamp="NOW",
+        labels=dict(),
     )
 
 

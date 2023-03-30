@@ -19,6 +19,7 @@ def log_entry() -> LogEntry:
         severity="ERROR",
         log_name="/logs/gae-example",
         timestamp="2022-08-01T11:25:38.670159583Z",
+        labels=dict(),
     )
 
 

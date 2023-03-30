@@ -13,6 +13,7 @@ class PayloadType(Enum):
 class LogEntry:
     resource_type: Optional[str]
     resource_labels: Dict[str, str]
+    labels: Dict[str, str]
     payload_type: PayloadType
     payload: Union[str, Dict[str, Any]]
     severity: Optional[str]
