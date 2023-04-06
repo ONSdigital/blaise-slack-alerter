@@ -25,34 +25,6 @@ def processed_log_entry_unexpected_end_of_json() -> ProcessedLogEntry:
     )
 
 
-# TODO: Review after BLAIS5-3705 concludes
-@pytest.fixture()
-def processed_log_entry_context_deadline_exceeded() -> ProcessedLogEntry:
-    return ProcessedLogEntry(
-        message="Error: context deadline exceeded",
-        data=dict(omitempty="null", localTimestamp="2023-03-30T16:12:02.8996+01:00"),
-        severity="ERROR",
-        platform="gce_instance",
-        application="blaise-gusty-data-entry-1",
-        log_name="/logs/gce-example",
-        timestamp=datetime.datetime(2023, 2, 25, 3, 46, 57, 99633),
-        log_query={
-            "resource.type": "gce_instance",
-            "resource.labels.instance_id": "458491889528639951",
-        },
-    )
-
-
-def test_log_is_from_gce_instance_when_context_deadline_exceeded(
-    processed_log_entry_context_deadline_exceeded: ProcessedLogEntry,
-):
-    log_is_skipped = osconfig_agent_filter(
-        processed_log_entry_context_deadline_exceeded
-    )
-
-    assert log_is_skipped == True
-
-
 def test_log_is_from_gce_instance_when_unexpected_end_of_json(
     processed_log_entry_unexpected_end_of_json: ProcessedLogEntry,
 ):
