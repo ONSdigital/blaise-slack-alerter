@@ -3,7 +3,6 @@ from lib.log_processor import ProcessedLogEntry
 
 def osconfig_agent_filter(log_entry: ProcessedLogEntry):
     entry_data = log_entry.data
-    print(log_entry)
 
     if log_entry.platform != "gce_instance":
         return False
