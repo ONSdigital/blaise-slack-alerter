@@ -2,14 +2,13 @@ from lib.log_processor import ProcessedLogEntry
 
 
 def auditlog_filter(log_entry: ProcessedLogEntry) -> bool:
-    if type(log_entry.data) is not dict:
+    if not isinstance(log_entry.data, dict):
         return False
 
-    if (
-        log_entry.data.get("@type") == "type.googleapis.com/google.cloud.audit.AuditLog"
-        and log_entry.data.get("methodName", "").startswith("storage.")
-    ):
-        return True
+    if log_entry.data.get("@type") != "type.googleapis.com/google.cloud.audit.AuditLog":
+        return False
 
-    return False
+    if not log_entry.data.get("methodName", "").startswith("storage."):
+        return False
 
+    return True
