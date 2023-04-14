@@ -477,3 +477,56 @@ def test_skip_data_delivery_json_error(run_slack_alerter, number_of_http_calls):
 
     assert response == "Alert skipped"
     assert number_of_http_calls() == 0
+
+
+def test_skip_audit_logs_error(run_slack_alerter, number_of_http_calls):
+    example_log_entry = {
+        "protoPayload": {
+            "@type": "type.googleapis.com/google.cloud.audit.AuditLog",
+            "status": {"code": 7},
+            "authenticationInfo": {
+                "principalEmail": "pipeline-bucket-reader@ons-blaise-v2-shared.iam.gserviceaccount.com",
+                "serviceAccountKeyName": "//iam.googleapis.com/projects/ons-blaise-v2-shared/serviceAccounts/pipeline-bucket-reader@ons-blaise-v2-shared.iam.gserviceaccount.com/keys/221e50eb36c76f17c5f6883a5a0bb29c1535ba8a",
+            },
+            "requestMetadata": {
+                "callerIp": "10.6.0.52",
+                "callerSuppliedUserAgent": "apitools Python/3.7.9 gsutil/5.3 (win32) analytics/enabled interactive/False command/cp google-cloud-sdk/360.0.0,gzip(gfe)",
+                "callerNetwork": "//compute.googleapis.com/projects/ons-blaise-v2-prod/global/networks/__unknown__",
+                "requestAttributes": {
+                    "time": "2023-04-14T00:42:09.609760345Z",
+                    "auth": {},
+                },
+                "destinationAttributes": {},
+            },
+            "serviceName": "storage.googleapis.com",
+            "methodName": "storage.objects.list",
+            "authorizationInfo": [
+                {
+                    "resource": "projects/_/buckets/ons-blaise-v2-prod-winvm-data",
+                    "permission": "storage.objects.list",
+                    "resourceAttributes": {},
+                }
+            ],
+            "resourceName": "projects/_/buckets/ons-blaise-v2-prod-winvm-data",
+            "resourceLocation": {"currentLocations": ["europe-west2"]},
+        },
+        "insertId": "pt5jaee3fznz",
+        "resource": {
+            "type": "gcs_bucket",
+            "labels": {
+                "location": "europe-west2",
+                "bucket_name": "ons-blaise-v2-prod-winvm-data",
+                "project_id": "ons-blaise-v2-prod",
+            },
+        },
+        "timestamp": "2023-04-14T00:42:09.598152915Z",
+        "severity": "ERROR",
+        "logName": "projects/ons-blaise-v2-prod/logs/cloudaudit.googleapis.com%2Fdata_access",
+        "receiveTimestamp": "2023-04-14T00:42:11.064730027Z",
+    }
+    event = create_event(example_log_entry)
+
+    response = run_slack_alerter(event)
+
+    assert response == "Alert skipped"
+    assert number_of_http_calls() == 0
