@@ -530,3 +530,45 @@ def test_skip_audit_logs_error(run_slack_alerter, number_of_http_calls):
 
     assert response == "Alert skipped"
     assert number_of_http_calls() == 0
+
+
+def test_skip_agent_connect_error(run_slack_alerter, number_of_http_calls):
+    example_log_entry = {
+        "insertId": "qysctppk7v9cttt1g",
+        "jsonPayload": {
+            "event_id": "100",
+            "event_category": "0",
+            "time_generated": "2023-06-06 15:36:14 +0100",
+            "user": "",
+            "time_written": "2023-06-06 15:36:14 +0100",
+            "message": "2023-06-06 14:36:14Z: Agent connect error: The HTTP request timed out after 00:01:00.. Retrying until reconnected.\r\n",
+            "channel": "application",
+            "computer_name": "data-delivery",
+            "event_type": "error",
+            "string_inserts": [
+                "2023-06-06 14:36:14Z: Agent connect error: The HTTP request timed out after 00:01:00.. Retrying until reconnected."
+            ],
+            "description": "2023-06-06 14:36:14Z: Agent connect error: The HTTP request timed out after 00:01:00.. Retrying until reconnected.\r\n",
+            "record_number": "1807900",
+            "source_name": "VstsAgentService",
+        },
+        "resource": {
+            "type": "gce_instance",
+            "labels": {
+                "instance_id": "9047556346870592737",
+                "project_id": "ons-blaise-v2-prod",
+                "zone": "europe-west2-a",
+            },
+        },
+        "timestamp": "2023-06-06T14:36:14Z",
+        "severity": "ERROR",
+        "labels": {"compute.googleapis.com/resource_name": "data-delivery"},
+        "logName": "projects/ons-blaise-v2-prod/logs/winevt.raw",
+        "receiveTimestamp": "2023-06-06T14:36:21.643430478Z",
+    }
+    event = create_event(example_log_entry)
+
+    response = run_slack_alerter(event)
+
+    assert response == "Alert skipped"
+    assert number_of_http_calls() == 0
