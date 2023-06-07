@@ -7,7 +7,7 @@ from lib.filters.agent_connect_filter import agent_connect_filter
 
 
 @pytest.fixture()
-def processed_log_entry_unexpected_end_of_json() -> ProcessedLogEntry:
+def processed_log_entry_agent_connect_error() -> ProcessedLogEntry:
     return ProcessedLogEntry(
         message="Agent Connect Error main.go:231: unexpected end of JSON input",
         data=dict(
@@ -25,70 +25,70 @@ def processed_log_entry_unexpected_end_of_json() -> ProcessedLogEntry:
     )
 
 
-def test_log_is_from_gce_instance_when_unexpected_end_of_json(
-    processed_log_entry_unexpected_end_of_json: ProcessedLogEntry,
+def test_log_is_from_gce_instance_when_agent_connect_error(
+    processed_log_entry_agent_connect_error: ProcessedLogEntry,
 ):
-    log_is_skipped = agent_connect_filter(processed_log_entry_unexpected_end_of_json)
+    log_is_skipped = agent_connect_filter(processed_log_entry_agent_connect_error)
 
     assert log_is_skipped == True
 
 
-def test_log_is_not_from_gce_instance_when_unexpected_end_of_json(
-    processed_log_entry_unexpected_end_of_json: ProcessedLogEntry,
+def test_log_is_not_from_gce_instance_when_agent_connect_error(
+    processed_log_entry_agent_connect_error: ProcessedLogEntry,
 ):
-    processed_log_entry_unexpected_end_of_json = dataclasses.replace(
-        processed_log_entry_unexpected_end_of_json, platform="not_gce_instance"
+    processed_log_entry_agent_connect_error = dataclasses.replace(
+        processed_log_entry_agent_connect_error, platform="not_gce_instance"
     )
-    log_is_skipped = agent_connect_filter(processed_log_entry_unexpected_end_of_json)
+    log_is_skipped = agent_connect_filter(processed_log_entry_agent_connect_error)
 
     assert log_is_skipped == False
 
 
-def test_log_data_is_dict_and_has_description_when_unexpected_end_of_json(
-    processed_log_entry_unexpected_end_of_json: ProcessedLogEntry,
+def test_log_data_is_dict_and_has_description_when_agent_connect_error(
+    processed_log_entry_agent_connect_error: ProcessedLogEntry,
 ):
-    log_is_skipped = agent_connect_filter(processed_log_entry_unexpected_end_of_json)
+    log_is_skipped = agent_connect_filter(processed_log_entry_agent_connect_error)
 
     assert log_is_skipped == True
 
 
-def test_log_data_is_dict_but_no_description_when_unexpected_end_of_json(
-    processed_log_entry_unexpected_end_of_json: ProcessedLogEntry,
+def test_log_data_is_dict_but_no_description_when_agent_connect_error(
+    processed_log_entry_agent_connect_error: ProcessedLogEntry,
 ):
-    processed_log_entry_unexpected_end_of_json = dataclasses.replace(
-        processed_log_entry_unexpected_end_of_json, data=dict(source_name="gcp")
+    processed_log_entry_agent_connect_error = dataclasses.replace(
+        processed_log_entry_agent_connect_error, data=dict(source_name="gcp")
     )
-    log_is_skipped = agent_connect_filter(processed_log_entry_unexpected_end_of_json)
+    log_is_skipped = agent_connect_filter(processed_log_entry_agent_connect_error)
 
     assert log_is_skipped == False
 
 
-def test_log_data_is_not_dict_and_no_description_when_unexpected_end_of_json(
-    processed_log_entry_unexpected_end_of_json: ProcessedLogEntry,
+def test_log_data_is_not_dict_and_no_description_when_agent_connect_error(
+    processed_log_entry_agent_connect_error: ProcessedLogEntry,
 ):
-    processed_log_entry_unexpected_end_of_json = dataclasses.replace(
-        processed_log_entry_unexpected_end_of_json, data="no-relevant-data"
+    processed_log_entry_agent_connect_error = dataclasses.replace(
+        processed_log_entry_agent_connect_error, data="no-relevant-data"
     )
-    log_is_skipped = agent_connect_filter(processed_log_entry_unexpected_end_of_json)
+    log_is_skipped = agent_connect_filter(processed_log_entry_agent_connect_error)
 
     assert log_is_skipped == False
 
 
-def test_log_data_description_has_target_text_when_unexpected_end_of_json(
-    processed_log_entry_unexpected_end_of_json: ProcessedLogEntry,
+def test_log_data_description_has_target_text_when_agent_connect_error(
+    processed_log_entry_agent_connect_error: ProcessedLogEntry,
 ):
-    log_is_skipped = agent_connect_filter(processed_log_entry_unexpected_end_of_json)
+    log_is_skipped = agent_connect_filter(processed_log_entry_agent_connect_error)
 
     assert log_is_skipped == True
 
 
-def test_log_data_description_has_no_target_text_when_unexpected_end_of_json(
-    processed_log_entry_unexpected_end_of_json: ProcessedLogEntry,
+def test_log_data_description_has_no_target_text_when_agent_connect_error(
+    processed_log_entry_agent_connect_error: ProcessedLogEntry,
 ):
-    processed_log_entry_unexpected_end_of_json = dataclasses.replace(
-        processed_log_entry_unexpected_end_of_json,
+    processed_log_entry_agent_connect_error = dataclasses.replace(
+        processed_log_entry_agent_connect_error,
         data=dict(description="ERROR: there is no relevant data descrtiption"),
     )
-    log_is_skipped = agent_connect_filter(processed_log_entry_unexpected_end_of_json)
+    log_is_skipped = agent_connect_filter(processed_log_entry_agent_connect_error)
 
     assert log_is_skipped == False
