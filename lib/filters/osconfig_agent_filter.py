@@ -7,12 +7,13 @@ def osconfig_agent_filter(log_entry: ProcessedLogEntry):
     if log_entry.platform != "gce_instance":
         return False
 
-    if (
-        type(entry_data) is dict
-        and "description" in entry_data
-        and "OSConfigAgent Error" in entry_data["description"]
-        and "unexpected end of JSON input" in entry_data["description"]
-    ):
-        return True
+    if not isinstance(entry_data, dict) or "description" not in entry_data:
+        return False
 
-    return False
+    if (
+        "OSConfigAgent Error" not in entry_data["description"]
+        and "unexpected end of JSON input" not in entry_data["description"]
+    ):
+        return False
+
+    return True
