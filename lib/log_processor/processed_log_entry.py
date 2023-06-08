@@ -52,4 +52,5 @@ def _parse_datetime(entry: LogEntry) -> Optional[datetime]:
 
 
 def _convert_to_bst(datetime):
+    # TODO: Keep tzinfo for tests so that we can distinguish between BST and UTC
     return datetime.astimezone(pytz.timezone("Europe/London")).replace(tzinfo=None)
