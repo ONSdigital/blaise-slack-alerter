@@ -44,7 +44,7 @@ def create_processed_log_entry(
 def _parse_datetime(entry: LogEntry) -> Optional[datetime]:
     try:
         return (
-            _convert_to_bst(parse(entry.timestamp), "Europe/London")
+            _convert_to_bst(parse(entry.timestamp))
             if entry.timestamp is not None
             else None
         )
@@ -52,8 +52,5 @@ def _parse_datetime(entry: LogEntry) -> Optional[datetime]:
         return None
 
 
-def _convert_to_bst(dt, timezone):
-    tz = pytz.timezone(timezone)
-    converted_dt = dt.astimezone(tz)
-    converted_dt = converted_dt.replace(tzinfo=None)
-    return converted_dt
+def _convert_to_bst(datetime):
+    return datetime.astimezone(pytz.timezone("Europe/London")).replace(tzinfo=None)
