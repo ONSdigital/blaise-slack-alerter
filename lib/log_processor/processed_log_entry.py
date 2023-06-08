@@ -1,8 +1,10 @@
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Any, Dict, cast, Callable, Optional, Union, List
+import pytz
 
 from dateutil.parser import parse, ParserError
+import dateutil.tz
 
 from lib.cloud_logging import LogEntry
 from lib.log_processor.app_log_payload import AppLogPayload
@@ -42,5 +44,25 @@ def create_processed_log_entry(
 def _parse_datetime(entry: LogEntry) -> Optional[datetime]:
     try:
         return parse(entry.timestamp) if entry.timestamp is not None else None
+    except ParserError:
+        return None
+
+def _convert_to_bst(timestamp):
+    try:
+        datetime_utc = datetime.strptime(
+            timestamp.strftime("%Y-%m-%dT%H:%M:%S.%fZ"), "%Y-%m-%dT%H:%M:%S.%fZ"
+        )
+        utc_timezone = pytz.timezone("UTC")
+        bst_timezone = pytz.timezone("Europe/London")
+
+        datetime_bst = datetime_utc.replace(tzinfo=utc_timezone).astimezone(
+            bst_timezone
+        )
+
+        if datetime_bst.dst() != timedelta(0):
+            datetime_bst = datetime_bst - datetime_bst.dst()
+
+        return datetime_bst
+
     except ParserError:
         return None
