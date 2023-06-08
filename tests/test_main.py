@@ -172,7 +172,7 @@ def test_send_gce_instance_slack_alert(run_slack_alerter, get_webhook_payload):
             "resource.labels.instance_id": "89453598437598",
         },
         ["WARNING", "ERROR", "CRITICAL", "ALERT", "EMERGENCY", "DEBUG"],
-        parse("2022-08-02T19:06:42.275819Z"),
+        parse("2022-08-02T20:06:42.275819Z").replace(tzinfo=None),
         "project-dev",
     )
 
@@ -182,7 +182,7 @@ def test_send_gce_instance_slack_alert(run_slack_alerter, get_webhook_payload):
             fields={
                 "Platform": "gce_instance",
                 "Application": "vm-mgmt",
-                "Log Time": "2022-08-02 19:06:42",
+                "Log Time": "2022-08-02 20:06:42",
                 "Project": "project-dev",
             },
             content="description: Error description from VM\n" "event_type: error",
@@ -222,7 +222,7 @@ def test_send_cloud_function_slack_alert(run_slack_alerter, get_webhook_payload)
             "resource.labels.function_name": "log-error",
         },
         ["WARNING", "ERROR", "CRITICAL", "ALERT", "EMERGENCY", "DEBUG"],
-        parse("2022-07-22T20:36:22.219592Z"),
+        parse("2022-07-22T21:36:22.219592Z").replace(tzinfo=None),
         "project-dev",
     )
 
@@ -232,7 +232,7 @@ def test_send_cloud_function_slack_alert(run_slack_alerter, get_webhook_payload)
             fields={
                 "Platform": "cloud_function",
                 "Application": "log-error",
-                "Log Time": "2022-07-22 20:36:22",
+                "Log Time": "2022-07-22 21:36:22",
                 "Project": "project-dev",
             },
             content="",
@@ -336,7 +336,7 @@ def test_send_app_engine_slack_alert(
     expected_log_query_link = create_log_query_link(
         {"resource.type": "gae_app", "resource.labels.module_id": "app-name"},
         ["WARNING", "ERROR", "CRITICAL", "ALERT", "EMERGENCY", "DEBUG"],
-        parse("2022-08-03T14:48:46.538301Z"),
+        parse("2022-08-03T15:48:46.538301Z").replace(tzinfo=None),
         "project-dev",
     )
     assert get_webhook_payload() == convert_slack_message_to_blocks(
@@ -345,7 +345,7 @@ def test_send_app_engine_slack_alert(
             fields={
                 "Platform": "gae_app",
                 "Application": "app-name",
-                "Log Time": "2022-08-03 14:48:46",
+                "Log Time": "2022-08-03 15:48:46",
                 "Project": "project-dev",
             },
             content="status: 500\n"
@@ -404,7 +404,7 @@ def test_send_audit_log_slack_alert(
     expected_log_query_link = create_log_query_link(
         {"protoPayload.@type": "type.googleapis.com/google.cloud.audit.AuditLog"},
         ["WARNING", "ERROR", "CRITICAL", "ALERT", "EMERGENCY", "DEBUG"],
-        parse("2022-09-06T21:32:11.332410850Z"),
+        parse("2022-09-06T22:32:11.332410850Z").replace(tzinfo=None),
         "project-dev",
     )
 
@@ -414,7 +414,7 @@ def test_send_audit_log_slack_alert(
             fields={
                 "Platform": "gae_app",
                 "Application": "[unknown]",
-                "Log Time": "2022-09-06 21:32:11",
+                "Log Time": "2022-09-06 22:32:11",
                 "Project": "project-dev",
             },
             content="serviceName: appengine.googleapis.com\n"

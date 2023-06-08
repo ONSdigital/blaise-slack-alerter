@@ -134,5 +134,5 @@ def test_parse_log_entry_with_received_timestamp():
     processed = process_log_entry(log_entry, APP_LOG_PAYLOAD_FACTORIES)
     assert processed == ProcessedLogEntry(
         message="example error",
-        timestamp=parse("2022-08-01T12:25:38.670159583Z").replace(tzinfo=None)
+        timestamp=parse("2022-08-01T12:25:38.670159583Z").replace(tzinfo=None),
     )
