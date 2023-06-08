@@ -1,7 +1,7 @@
 from lib.log_processor import ProcessedLogEntry
 
 
-def osconfig_agent_filter(log_entry: ProcessedLogEntry):
+def agent_connect_filter(log_entry: ProcessedLogEntry) -> bool:
     entry_data = log_entry.data
 
     if log_entry.platform != "gce_instance":
@@ -11,8 +11,8 @@ def osconfig_agent_filter(log_entry: ProcessedLogEntry):
         return False
 
     if (
-        "OSConfigAgent Error" not in entry_data["description"]
-        and "unexpected end of JSON input" not in entry_data["description"]
+        "Agent connect error: The HTTP request timed out after 00:01:00.. Retrying until reconnected."
+        not in entry_data["description"]
     ):
         return False
 
