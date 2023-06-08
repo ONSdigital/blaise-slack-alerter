@@ -4,7 +4,6 @@ from typing import Any, Dict, cast, Callable, Optional, Union, List
 import pytz
 
 from dateutil.parser import parse, ParserError
-import dateutil.tz
 
 from lib.cloud_logging import LogEntry
 from lib.log_processor.app_log_payload import AppLogPayload
