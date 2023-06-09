@@ -69,7 +69,7 @@ def _create_title(processed_log_entry: ProcessedLogEntry) -> Tuple[str, Optional
 
 def _create_log_time_in_local_timezone(processed_log_entry):
     return (
-        _convert_timestamp_to_london_timezone(processed_log_entry.timestamp).strftime(
+        _convert_time_to_london_timezone(processed_log_entry.timestamp).strftime(
             "%Y-%m-%d %H:%M:%S"
         )
         if processed_log_entry.timestamp is not None
@@ -77,7 +77,7 @@ def _create_log_time_in_local_timezone(processed_log_entry):
     )
 
 
-def _convert_timestamp_to_london_timezone(timestamp: datetime) -> datetime:
+def _convert_time_to_london_timezone(timestamp: datetime) -> datetime:
     return timestamp.astimezone(pytz.timezone("Europe/London"))
 
 
