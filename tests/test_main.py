@@ -173,7 +173,7 @@ def test_send_gce_instance_slack_alert(run_slack_alerter, get_webhook_payload):
             "resource.labels.instance_id": "89453598437598",
         },
         ["WARNING", "ERROR", "CRITICAL", "ALERT", "EMERGENCY", "DEBUG"],
-        parse("2022-08-02T19:06:42.275819Z").astimezone(pytz.timezone("Europe/London")),
+        parse("2022-08-02T19:06:42.275819Z"),
         "project-dev",
     )
 
@@ -223,7 +223,7 @@ def test_send_cloud_function_slack_alert(run_slack_alerter, get_webhook_payload)
             "resource.labels.function_name": "log-error",
         },
         ["WARNING", "ERROR", "CRITICAL", "ALERT", "EMERGENCY", "DEBUG"],
-        parse("2022-07-22T20:36:22.219592Z").astimezone(pytz.timezone("Europe/London")),
+        parse("2022-07-22T20:36:22.219592Z"),
         "project-dev",
     )
 
@@ -337,7 +337,7 @@ def test_send_app_engine_slack_alert(
     expected_log_query_link = create_log_query_link(
         {"resource.type": "gae_app", "resource.labels.module_id": "app-name"},
         ["WARNING", "ERROR", "CRITICAL", "ALERT", "EMERGENCY", "DEBUG"],
-        parse("2022-08-03T14:48:46.538301Z").astimezone(pytz.timezone("Europe/London")),
+        parse("2022-08-03T14:48:46.538301Z"),
         "project-dev",
     )
     assert get_webhook_payload() == convert_slack_message_to_blocks(
@@ -405,9 +405,7 @@ def test_send_audit_log_slack_alert(
     expected_log_query_link = create_log_query_link(
         {"protoPayload.@type": "type.googleapis.com/google.cloud.audit.AuditLog"},
         ["WARNING", "ERROR", "CRITICAL", "ALERT", "EMERGENCY", "DEBUG"],
-        parse("2022-09-06T21:32:11.332410850Z").astimezone(
-            pytz.timezone("Europe/London")
-        ),
+        parse("2022-09-06T21:32:11.332410850Z"),
         "project-dev",
     )
 

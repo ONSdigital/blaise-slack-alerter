@@ -135,27 +135,5 @@ def test_parse_log_entry_with_received_timestamp():
     processed = process_log_entry(log_entry, APP_LOG_PAYLOAD_FACTORIES)
     assert processed == ProcessedLogEntry(
         message="example error",
-        timestamp=parse("2022-08-01T11:25:38.670159583Z").astimezone(
-            pytz.timezone("Europe/London")
-        ),
-    )
-
-
-def test_parse_log_entry_with_received_timestamp_in_gmt():
-    log_entry = LogEntry(
-        resource_type=None,
-        resource_labels=dict(),
-        payload_type=PayloadType.TEXT,
-        payload="example error",
-        severity=None,
-        log_name=None,
-        timestamp="2022-01-01T11:25:38.670159583Z",
-        labels=dict(),
-    )
-    processed = process_log_entry(log_entry, APP_LOG_PAYLOAD_FACTORIES)
-    assert processed == ProcessedLogEntry(
-        message="example error",
-        timestamp=parse("2022-01-01T11:25:38.670159583Z").astimezone(
-            pytz.timezone("Europe/London")
-        ),
+        timestamp=parse("2022-08-01T11:25:38.670159583Z"),
     )
