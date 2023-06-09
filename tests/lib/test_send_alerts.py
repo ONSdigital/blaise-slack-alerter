@@ -5,6 +5,7 @@ from unittest.mock import Mock
 
 import pytest
 from dateutil.parser import parse
+import pytz
 
 from lib import send_alerts
 from lib.alerter import Alerter
@@ -193,7 +194,9 @@ class TestWithStructuredLog:
                 platform="gce_instance",
                 application="vm-mgmt",
                 log_name="projects/secret-project/logs/winevt.raw",
-                timestamp=parse("2022-08-02T19:06:42.275819947Z"),
+                timestamp=parse("2022-08-02T19:06:42.275819947Z").astimezone(
+                    pytz.timezone("Europe/London")
+                ),
                 log_query={
                     "resource.type": "gce_instance",
                     "resource.labels.instance_id": "89453598437598",
