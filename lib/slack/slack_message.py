@@ -2,6 +2,10 @@ import json
 from dataclasses import dataclass
 from typing import Dict, Any, Tuple, Optional
 
+from dateutil.parser import parse
+from datetime import datetime
+import pytz
+
 from lib.cloud_logging.log_query_link import create_log_query_link
 from lib.log_processor import ProcessedLogEntry
 
@@ -41,7 +45,7 @@ def create_from_processed_log_entry(
         fields={
             "Platform": processed_log_entry.platform or "unknown",
             "Application": processed_log_entry.application or "unknown",
-            "Log Time": _create_log_time(processed_log_entry),
+            "Log Time": _create_log_time_in_local_timezone(processed_log_entry),
             "Project": project_name,
         },
         content=_create_content(processed_log_entry, full_message),
@@ -63,12 +67,18 @@ def _create_title(processed_log_entry: ProcessedLogEntry) -> Tuple[str, Optional
     return title, full_message
 
 
-def _create_log_time(processed_log_entry):
+def _create_log_time_in_local_timezone(processed_log_entry):
     return (
-        processed_log_entry.timestamp.strftime("%Y-%m-%d %H:%M:%S")
+        _convert_time_to_london_timezone(processed_log_entry.timestamp).strftime(
+            "%Y-%m-%d %H:%M:%S"
+        )
         if processed_log_entry.timestamp is not None
         else "unknown"
     )
+
+
+def _convert_time_to_london_timezone(timestamp: datetime) -> datetime:
+    return timestamp.astimezone(pytz.timezone("Europe/London"))
 
 
 def _create_content(
