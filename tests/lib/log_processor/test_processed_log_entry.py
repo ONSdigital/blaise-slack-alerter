@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from dateutil.tz import tzutc
+from dateutil.parser import parse
 import pytz
 
 from lib.cloud_logging import LogEntry, PayloadType
@@ -34,7 +34,7 @@ def test_create_processed_log_entry():
         data=dict(key="example_value"),
         severity="WARN",
         log_name="/example_log",
-        timestamp=datetime(2022, 7, 22, 21, 36, 21, 891133).astimezone(
+        timestamp=parse("2022-07-22T20:36:21.891133Z").astimezone(
             pytz.timezone("Europe/London")
         ),
         platform="cloud_function",
