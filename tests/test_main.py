@@ -173,7 +173,7 @@ def test_send_gce_instance_slack_alert(run_slack_alerter, get_webhook_payload):
             "resource.labels.instance_id": "89453598437598",
         },
         ["WARNING", "ERROR", "CRITICAL", "ALERT", "EMERGENCY", "DEBUG"],
-        parse("2022-08-02T20:06:42.275819Z").replace(tzinfo=None),
+        parse("2022-08-02T19:06:42.275819Z").astimezone(pytz.timezone("Europe/London")),
         "project-dev",
     )
 
