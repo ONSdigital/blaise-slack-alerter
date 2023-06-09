@@ -1,6 +1,7 @@
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Any, Dict, cast, Callable, Optional, Union, List
+import pytz
 
 from dateutil.parser import parse, ParserError
 
@@ -41,6 +42,14 @@ def create_processed_log_entry(
 
 def _parse_datetime(entry: LogEntry) -> Optional[datetime]:
     try:
-        return parse(entry.timestamp) if entry.timestamp is not None else None
+        return (
+            _convert_to_london_timezone(parse(entry.timestamp))
+            if entry.timestamp is not None
+            else None
+        )
     except ParserError:
         return None
+
+
+def _convert_to_london_timezone(datetime: datetime) -> datetime:
+    return datetime.astimezone(pytz.timezone("Europe/London"))
