@@ -140,45 +140,7 @@ def test_create_from_processed_log_entry_with_most_important_fields(
             "4. Follow the <https://confluence.ons.gov.uk/pages/viewpage.action?pageId=98502389 | Managing Prod Alerts> process"
         ),
     )
-
-
-# def test_create_from_processed_log_entry_with_timestamp_in_gmt(
-#     processed_log_entry, log_timestamp_gmt, log_query_link
-# ):
-#     print("BEFORE", f"{processed_log_entry}\n")
-#     message = create_from_processed_log_entry(
-#         replace(
-#             processed_log_entry,
-#             data=dict(
-#                 value1=dict(inner="Value One"), value2="Value Two", value3="Value Three"
-#             ),
-#             most_important_values=["value3", "value1.inner"],
-#             timestamp=log_timestamp_gmt,
-#         ),
-#         project_name="example-gcp-project",
-#     )
-
-#     print("AFTER:", f"{message}\n")
-
-#     assert message == SlackMessage(
-#         title=":alert: ERROR: Example error",
-#         fields={
-#             "Platform": "cloud_functions",
-#             "Application": "my-app",
-#             "Log Time": "2022-01-10 14:54:03",
-#             "Project": "example-gcp-project",
-#         },
-#         content="value3: Value Three\nvalue1.inner: Value One",
-#         footnote=(
-#             "*Next Steps*\n"
-#             "1. Add some :eyes: to show you are investigating\n"
-#             "2. <https://console.cloud.google.com/monitoring/uptime?referrer=search&project=example-gcp-project | Check the system is online>\n"
-#             f"3. <{log_query_link} | View the logs>\n"
-#             "4. Follow the <https://confluence.ons.gov.uk/pages/viewpage.action?pageId=98502389 | Managing Prod Alerts> process"
-#         ),
-#     )
-
-
+    
 def test_create_from_processed_log_entry_with_most_important_field_not_found(
     processed_log_entry, log_query_link
 ):
