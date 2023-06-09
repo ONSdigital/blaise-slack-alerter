@@ -1,4 +1,5 @@
 from dateutil.parser import parse
+import pytz
 
 from lib.cloud_logging import LogEntry, PayloadType
 from lib.log_processor import ProcessedLogEntry
@@ -134,7 +135,9 @@ def test_parse_log_entry_with_received_timestamp():
     processed = process_log_entry(log_entry, APP_LOG_PAYLOAD_FACTORIES)
     assert processed == ProcessedLogEntry(
         message="example error",
-        timestamp=parse("2022-08-01T12:25:38.670159583Z").replace(tzinfo=None),
+        timestamp=parse("2022-08-01T11:25:38.670159583Z").astimezone(
+            pytz.timezone("Europe/London")
+        ),
     )
 
 
@@ -152,5 +155,7 @@ def test_parse_log_entry_with_received_timestamp_in_gmt():
     processed = process_log_entry(log_entry, APP_LOG_PAYLOAD_FACTORIES)
     assert processed == ProcessedLogEntry(
         message="example error",
-        timestamp=parse("2022-01-01T11:25:38.670159583Z").replace(tzinfo=None),
+        timestamp=parse("2022-01-01T11:25:38.670159583Z").astimezone(
+            pytz.timezone("Europe/London")
+        ),
     )
