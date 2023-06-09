@@ -140,7 +140,8 @@ def test_create_from_processed_log_entry_with_most_important_fields(
             "4. Follow the <https://confluence.ons.gov.uk/pages/viewpage.action?pageId=98502389 | Managing Prod Alerts> process"
         ),
     )
-    
+
+
 def test_create_from_processed_log_entry_with_most_important_field_not_found(
     processed_log_entry, log_query_link
 ):
