@@ -24,6 +24,7 @@ def processed_log_entry_osconfig_error() -> ProcessedLogEntry:
         },
     )
 
+
 @pytest.fixture()
 def processed_log_entry_unexpected_end_of_json() -> ProcessedLogEntry:
     return ProcessedLogEntry(
@@ -39,6 +40,7 @@ def processed_log_entry_unexpected_end_of_json() -> ProcessedLogEntry:
             "resource.labels.instance_id": "458491889528639951",
         },
     )
+
 
 # TODO: I think it will be good to rewrite the unit tests for this filter because we've changed the logic a bit
 
