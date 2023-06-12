@@ -32,10 +32,10 @@ def osconfig_agent_filter(log_entry: ProcessedLogEntry):
     # if the log_entry.log_name contains "OSConfigAgent"
     # or if the log_entry.message contains "OSConfigAgent Error"
     # NOTE: In this conditional, if take the OSConfigAgent Error log as an example and go through this.
-    # We should find OSConfigAgent Error in the log_entry.message but not in log_entry.log_name
+    # We should find that the text "OSConfigAgent Error" is in the log_entry.message but not in log_entry.log_name
     # (we get something else, e.g. projects/ons-blaise-v2-prod/logs/winevt.raw)
     # If so the overall statement should evaluate to False as {True and False} is False,
-    # which means we ultimately pass over all of the conditionals and return True. With how we've set up the filters,
+    # which means at this point we ultimately pass over all of the conditionals and return True. With how we've set up the filters,
     # returning True from a filter function means that the log is skipped and returning False means that the log is sent.
     if (
         "OSConfigAgent Error" not in log_entry.message
