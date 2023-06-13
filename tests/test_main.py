@@ -531,3 +531,44 @@ def test_skip_audit_logs_error(run_slack_alerter, number_of_http_calls):
 
     assert response == "Alert skipped"
     assert number_of_http_calls() == 0
+
+
+def test_skip_osconfig_agent_unexpected_end_of_json_input_error(
+    run_slack_alerter, number_of_http_calls
+):
+    null = None
+    example_log_entry = {
+        "insertId": "ak4u0bf38r70c",
+        "jsonPayload": {
+            "localTimestamp": "2023-05-18T13:22:14.1873+01:00",
+            "omitempty": null,
+            "message": "unexpected end of JSON input",
+        },
+        "resource": {
+            "type": "gce_instance",
+            "labels": {
+                "zone": "europe-west2-a",
+                "instance_id": "2340080223918060770",
+                "project_id": "ons-blaise-v2-prod",
+            },
+        },
+        "timestamp": "2023-05-18T12:22:14.230839200Z",
+        "severity": "ERROR",
+        "labels": {
+            "instance_name": "restapi-3",
+            "agent_version": "20230330.00.0+win@1",
+        },
+        "logName": "projects/ons-blaise-v2-prod/logs/OSConfigAgent",
+        "sourceLocation": {
+            "file": "main.go",
+            "line": "231",
+            "function": "main.runTaskLoop",
+        },
+        "receiveTimestamp": "2023-05-18T12:22:16.434926842Z",
+    }
+    event = create_event(example_log_entry)
+
+    response = run_slack_alerter(event)
+
+    assert response == "Alert skipped"
+    assert number_of_http_calls() == 0
