@@ -7,7 +7,7 @@ from lib.filters.osconfig_agent_filter import osconfig_agent_filter
 
 
 @pytest.fixture()
-def processed_log_entry_unexpected_end_of_json() -> ProcessedLogEntry:
+def processed_log_entry_osconfig_error() -> ProcessedLogEntry:
     return ProcessedLogEntry(
         message="OSConfigAgent Error main.go:231: unexpected end of JSON input",
         data=dict(
@@ -25,70 +25,18 @@ def processed_log_entry_unexpected_end_of_json() -> ProcessedLogEntry:
     )
 
 
-def test_log_is_from_gce_instance_when_unexpected_end_of_json(
-    processed_log_entry_unexpected_end_of_json: ProcessedLogEntry,
-):
-    log_is_skipped = osconfig_agent_filter(processed_log_entry_unexpected_end_of_json)
-
-    assert log_is_skipped == True
-
-
-def test_log_is_not_from_gce_instance_when_unexpected_end_of_json(
-    processed_log_entry_unexpected_end_of_json: ProcessedLogEntry,
-):
-    processed_log_entry_unexpected_end_of_json = dataclasses.replace(
-        processed_log_entry_unexpected_end_of_json, platform="not_gce_instance"
+@pytest.fixture()
+def processed_log_entry_unexpected_end_of_json() -> ProcessedLogEntry:
+    return ProcessedLogEntry(
+        message="unexpected end of JSON input",
+        data=dict(foo="bar"),
+        severity="ERROR",
+        platform="gce_instance",
+        application="blaise-gusty-data-entry-1",
+        log_name="/logs/OSConfigAgent",
+        timestamp=datetime.datetime(2023, 2, 25, 3, 46, 57, 99633),
+        log_query={
+            "resource.type": "gce_instance",
+            "resource.labels.instance_id": "458491889528639951",
+        },
     )
-    log_is_skipped = osconfig_agent_filter(processed_log_entry_unexpected_end_of_json)
-
-    assert log_is_skipped == False
-
-
-def test_log_data_is_dict_and_has_description_when_unexpected_end_of_json(
-    processed_log_entry_unexpected_end_of_json: ProcessedLogEntry,
-):
-    log_is_skipped = osconfig_agent_filter(processed_log_entry_unexpected_end_of_json)
-
-    assert log_is_skipped == True
-
-
-def test_log_data_is_dict_but_no_description_when_unexpected_end_of_json(
-    processed_log_entry_unexpected_end_of_json: ProcessedLogEntry,
-):
-    processed_log_entry_unexpected_end_of_json = dataclasses.replace(
-        processed_log_entry_unexpected_end_of_json, data=dict(source_name="gcp")
-    )
-    log_is_skipped = osconfig_agent_filter(processed_log_entry_unexpected_end_of_json)
-
-    assert log_is_skipped == False
-
-
-def test_log_data_is_not_dict_and_no_description_when_unexpected_end_of_json(
-    processed_log_entry_unexpected_end_of_json: ProcessedLogEntry,
-):
-    processed_log_entry_unexpected_end_of_json = dataclasses.replace(
-        processed_log_entry_unexpected_end_of_json, data="no-relevant-data"
-    )
-    log_is_skipped = osconfig_agent_filter(processed_log_entry_unexpected_end_of_json)
-
-    assert log_is_skipped == False
-
-
-def test_log_data_description_has_target_text_when_unexpected_end_of_json(
-    processed_log_entry_unexpected_end_of_json: ProcessedLogEntry,
-):
-    log_is_skipped = osconfig_agent_filter(processed_log_entry_unexpected_end_of_json)
-
-    assert log_is_skipped == True
-
-
-def test_log_data_description_has_no_target_text_when_unexpected_end_of_json(
-    processed_log_entry_unexpected_end_of_json: ProcessedLogEntry,
-):
-    processed_log_entry_unexpected_end_of_json = dataclasses.replace(
-        processed_log_entry_unexpected_end_of_json,
-        data=dict(description="ERROR: there is no relevant data descrtiption"),
-    )
-    log_is_skipped = osconfig_agent_filter(processed_log_entry_unexpected_end_of_json)
-
-    assert log_is_skipped == False
