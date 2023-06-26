@@ -146,17 +146,6 @@ def test_log_message_is_not_skipped_when_it_does_not_contain_osconfig_error(
 
 
 def test_log_message_is_not_skipped_when_it_does_not_contain_unexpected_end_of_json(
-    processed_log_entry_osconfig_error: processed_log_entry_osconfig_error,
-):
-    processed_log_entry_unexpected_end_of_json = dataclasses.replace(
-        processed_log_entry_osconfig_error, message="foo"
-    )
-    log_is_skipped = osconfig_agent_filter(processed_log_entry_unexpected_end_of_json)
-
-    assert log_is_skipped is False
-
-
-def test_log_message_is_not_skipped_when_it_does_not_contain_unexpected_end_of_json(
     processed_log_entry_unexpected_end_of_json: processed_log_entry_unexpected_end_of_json,
 ):
     processed_log_entry_unexpected_end_of_json = dataclasses.replace(
