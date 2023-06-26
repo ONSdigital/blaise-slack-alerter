@@ -202,7 +202,7 @@ def test_log_message_is_skipped_when_log_message_contains_osconfig_agent_error(
     assert log_is_skipped is True
 
 
-def test_log_message_is_skipped_when_log_message_contains_osconfig_agent_error(
+def test_log_message_is_skipped_when_log_message_contains_unexpected_end_of_json_error(
     processed_log_entry_unexpected_end_of_json: ProcessedLogEntry,
 ):
     log_is_skipped = osconfig_agent_filter(processed_log_entry_unexpected_end_of_json)
@@ -221,7 +221,7 @@ def test_log_message_is_not_skipped_when_log_message_and_log_name_contain_osconf
     assert log_is_skipped is False
 
 
-def test_log_message_is_not_skipped_when_log_message_and_log_name_contain_osconfig_agent_error(
+def test_log_message_is_not_skipped_when_log_message_and_log_name_contain_unexpected_end_of_json_error(
     processed_log_entry_unexpected_end_of_json: ProcessedLogEntry,
 ):
     processed_log_entry_unexpected_end_of_json = dataclasses.replace(
