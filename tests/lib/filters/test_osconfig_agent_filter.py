@@ -155,6 +155,7 @@ def test_log_message_is_not_skipped_when_it_does_not_contain_unexpected_end_of_j
 
     assert log_is_skipped is False
 
+
 def test_log_message_is_not_skipped_when_it_does_not_contain_unexpected_end_of_json(
     processed_log_entry_unexpected_end_of_json: processed_log_entry_unexpected_end_of_json,
 ):
