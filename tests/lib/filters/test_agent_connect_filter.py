@@ -30,7 +30,7 @@ def test_log_is_from_gce_instance_when_agent_connect_error(
 ):
     log_is_skipped = agent_connect_filter(processed_log_entry_agent_connect_error)
 
-    assert log_is_skipped == True
+    assert log_is_skipped is True
 
 
 def test_log_is_not_from_gce_instance_when_agent_connect_error(
@@ -41,15 +41,15 @@ def test_log_is_not_from_gce_instance_when_agent_connect_error(
     )
     log_is_skipped = agent_connect_filter(processed_log_entry_agent_connect_error)
 
-    assert log_is_skipped == False
+    assert log_is_skipped is False
 
 
-def test_log_data_is_dict_and_has_description_when_agent_connect_error(
+def test_log_data_is_dict_and_has_description_when_agent_connect_errr(
     processed_log_entry_agent_connect_error: ProcessedLogEntry,
 ):
     log_is_skipped = agent_connect_filter(processed_log_entry_agent_connect_error)
 
-    assert log_is_skipped == True
+    assert log_is_skipped is True
 
 
 def test_log_data_is_dict_but_no_description_when_agent_connect_error(
@@ -60,7 +60,7 @@ def test_log_data_is_dict_but_no_description_when_agent_connect_error(
     )
     log_is_skipped = agent_connect_filter(processed_log_entry_agent_connect_error)
 
-    assert log_is_skipped == False
+    assert log_is_skipped is False
 
 
 def test_log_data_is_not_dict_and_no_description_when_agent_connect_error(
@@ -71,7 +71,7 @@ def test_log_data_is_not_dict_and_no_description_when_agent_connect_error(
     )
     log_is_skipped = agent_connect_filter(processed_log_entry_agent_connect_error)
 
-    assert log_is_skipped == False
+    assert log_is_skipped is False
 
 
 def test_log_data_description_has_target_text_when_agent_connect_error(
@@ -79,7 +79,7 @@ def test_log_data_description_has_target_text_when_agent_connect_error(
 ):
     log_is_skipped = agent_connect_filter(processed_log_entry_agent_connect_error)
 
-    assert log_is_skipped == True
+    assert log_is_skipped is True
 
 
 def test_log_data_description_has_no_target_text_when_agent_connect_error(
@@ -91,4 +91,4 @@ def test_log_data_description_has_no_target_text_when_agent_connect_error(
     )
     log_is_skipped = agent_connect_filter(processed_log_entry_agent_connect_error)
 
-    assert log_is_skipped == False
+    assert log_is_skipped is False
