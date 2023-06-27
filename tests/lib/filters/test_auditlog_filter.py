@@ -42,7 +42,7 @@ def test_log_is_skipped_when_methodname_contains_storage(
     cast(dict, process_log_entry.data)["methodName"] = method_name
     log_is_skipped = auditlog_filter(process_log_entry)
 
-    assert log_is_skipped == True
+    assert log_is_skipped is True
 
 
 def test_log_is_not_skipped_when_methodname_does_not_contain_storage(
@@ -51,7 +51,7 @@ def test_log_is_not_skipped_when_methodname_does_not_contain_storage(
     cast(dict, process_log_entry.data)["methodName"] = "method"
     log_is_skipped = auditlog_filter(process_log_entry)
 
-    assert log_is_skipped == False
+    assert log_is_skipped is False
 
 
 def test_log_is_not_skipped_when_type_is_not_auditlog(
@@ -60,7 +60,7 @@ def test_log_is_not_skipped_when_type_is_not_auditlog(
     cast(dict, process_log_entry.data)["@type"] = "not_audit_log"
     log_is_skipped = auditlog_filter(process_log_entry)
 
-    assert log_is_skipped == False
+    assert log_is_skipped is False
 
 
 def test_log_is_not_skipped_when_methjod_name_does_not_exist(
@@ -69,4 +69,4 @@ def test_log_is_not_skipped_when_methjod_name_does_not_exist(
     del cast(dict, process_log_entry.data)["methodName"]
     log_is_skipped = auditlog_filter(process_log_entry)
 
-    assert log_is_skipped == False
+    assert log_is_skipped is False
