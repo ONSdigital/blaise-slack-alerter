@@ -616,7 +616,9 @@ def test_skip_agent_connect_error(run_slack_alerter, number_of_http_calls):
     assert number_of_http_calls() == 0
 
 
-def test_skip_rproxy_lookupEffectiveGuestPolicies_error(run_slack_alerter, number_of_http_calls):
+def test_skip_rproxy_lookupEffectiveGuestPolicies_error(
+    run_slack_alerter, number_of_http_calls
+):
     null = None
     example_log_entry = {
         "insertId": "i1tjpyftm0qks",
