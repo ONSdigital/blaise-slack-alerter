@@ -616,11 +616,8 @@ def test_skip_agent_connect_error(run_slack_alerter, number_of_http_calls):
     assert number_of_http_calls() == 0
 
 
-def test_skip_rproxy_lookupEffectiveGuestPolicies_error(
-    run_slack_alerter, number_of_http_calls
-):
+def test_skip_rproxy_lookupEffectiveGuestPolicies_error(run_slack_alerter, number_of_http_calls):
     null = None
-
     example_log_entry = {
         "insertId": "i1tjpyftm0qks",
         "jsonPayload": {
@@ -646,6 +643,7 @@ def test_skip_rproxy_lookupEffectiveGuestPolicies_error(
         "receiveTimestamp": "2023-09-28T08:45:36.225541583Z",
     }
     event = create_event(example_log_entry)
+
     response = run_slack_alerter(event)
 
     assert response == "Alert skipped"
