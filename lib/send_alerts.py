@@ -7,16 +7,24 @@ from lib.cloud_functions import InvalidCloudFunctionEvent, parse_event
 from lib.cloud_logging import parse_log_entry
 from lib.filters.auditlog_filter import auditlog_filter
 from lib.filters.agent_connect_filter import agent_connect_filter
+from lib.filters.osconfig_agent_filter import osconfig_agent_filter
+from lib.filters.rproxy_lookupEffectiveGuestPolicies_filter import (
+    rproxy_lookupEffectiveGuestPolicies_filter,
+)
 from lib.log_processor import (
     ProcessedLogEntry,
     CreateAppLogPayloadFromLogEntry,
 )
 from lib.log_processor import process_log_entry
-from lib.filters.osconfig_agent_filter import osconfig_agent_filter
 
 
 def log_entry_skipped(log_entry: ProcessedLogEntry):
-    filters = [osconfig_agent_filter, auditlog_filter, agent_connect_filter]
+    filters = [
+        osconfig_agent_filter,
+        auditlog_filter,
+        agent_connect_filter,
+        rproxy_lookupEffectiveGuestPolicies_filter,
+    ]
 
     for filter in filters:
         if filter(log_entry):
