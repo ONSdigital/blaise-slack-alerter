@@ -614,3 +614,39 @@ def test_skip_agent_connect_error(run_slack_alerter, number_of_http_calls):
 
     assert response == "Alert skipped"
     assert number_of_http_calls() == 0
+
+
+def test_skip_rproxy_lookupEffectiveGuestPolicies_error(
+    run_slack_alerter, number_of_http_calls
+):
+    null = None
+
+    example_log_entry = {
+        "insertId": "i1tjpyftm0qks",
+        "jsonPayload": {
+            "message": 'Error running LookupEffectiveGuestPolicies: error calling LookupEffectiveGuestPolicies: code: "NotFound", message: "Requested entity was not found.", details: []',
+            "localTimestamp": "2023-09-28T08:45:35.1241Z",
+            "omitempty": null,
+        },
+        "resource": {
+            "type": "gce_instance",
+            "labels": {
+                "zone": "europe-west2-a",
+            },
+        },
+        "timestamp": "2023-09-28T08:45:35.136331729Z",
+        "severity": "ERROR",
+        "labels": {"instance_name": "rproxy-b0bd8e4b", "agent_version": "20230403.00"},
+        "logName": "projects/ons-blaise-v2-prod/logs/OSConfigAgent",
+        "sourceLocation": {
+            "file": "policies.go",
+            "line": "49",
+            "function": "github.com/GoogleCloudPlatform/osconfig/policies.run",
+        },
+        "receiveTimestamp": "2023-09-28T08:45:36.225541583Z",
+    }
+    event = create_event(example_log_entry)
+    response = run_slack_alerter(event)
+
+    assert response == "Alert skipped"
+    assert number_of_http_calls() == 0
