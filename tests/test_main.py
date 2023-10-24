@@ -650,3 +650,86 @@ def test_skip_rproxy_lookupEffectiveGuestPolicies_error(
 
     assert response == "Alert skipped"
     assert number_of_http_calls() == 0
+
+
+def test_skip_watching_metadata_invalid_character_error(
+    run_slack_alerter, number_of_http_calls
+):
+    null = None
+    example_log_entry = {
+        "insertId": "19s550gfh2251m",
+        "jsonPayload": {
+            "localTimestamp": "2023-09-18T15:12:28.8451+01:00",
+            "message": "Error watching metadata: invalid character '<' looking for beginning of value",
+            "omitempty": null,
+        },
+        "resource": {
+            "type": "gce_instance",
+            "labels": {
+                "project_id": "ons-blaise-v2-prod",
+                "instance_id": "5203162520768539890",
+                "zone": "europe-west2-a",
+            },
+        },
+        "timestamp": "2023-09-18T14:12:28.853979600Z",
+        "severity": "ERROR",
+        "labels": {"instance_name": "blaise-gusty-data-entry-4"},
+        "logName": "projects/ons-blaise-v2-prod/logs/GCEGuestAgent",
+        "sourceLocation": {
+            "file": "metadata.go",
+            "line": "74",
+            "function": "github.com/GoogleCloudPlatform/guest-agent/google_guest_agent/events/metadata.(*Watcher).Run",
+        },
+        "receiveTimestamp": "2023-09-18T14:12:29.912569518Z",
+    }
+    event = create_event(example_log_entry)
+
+    response = run_slack_alerter(event)
+
+    assert response == "Alert skipped"
+    assert number_of_http_calls() == 0
+
+
+def test_skip_watching_metadata_invalid_character_second_version_error(
+    run_slack_alerter, number_of_http_calls
+):
+    null = None
+    example_log_entry = {
+        "insertId": "hohgijl11degyrvc0",
+        "jsonPayload": {
+            "user": "",
+            "event_id": "882",
+            "message": "2023/10/10 23:06:39 GCEGuestAgent: Error watching metadata: invalid character '<' looking for beginning of value\r\n",
+            "time_written": "2023-10-10 23:06:39 +0100",
+            "time_generated": "2023-10-10 23:06:39 +0100",
+            "event_type": "error",
+            "string_inserts": [
+                "2023/10/10 23:06:39 GCEGuestAgent: Error watching metadata: invalid character '<' looking for beginning of value"
+            ],
+            "channel": "application",
+            "source_name": "GCEGuestAgent",
+            "record_number": "2884381",
+            "computer_name": "blaise-gusty-data-entry-1",
+            "description": "2023/10/10 23:06:39 GCEGuestAgent: Error watching metadata: invalid character '<' looking for beginning of value\r\n",
+            "event_category": "0",
+        },
+        "resource": {
+            "type": "gce_instance",
+            "labels": {
+                "project_id": "ons-blaise-v2-prod",
+                "instance_id": "458491889528639951",
+                "zone": "europe-west2-a",
+            },
+        },
+        "timestamp": "2023-10-10T22:06:39Z",
+        "severity": "ERROR",
+        "labels": {"compute.googleapis.com/resource_name": "blaise-gusty-data-entry-1"},
+        "logName": "projects/ons-blaise-v2-prod/logs/winevt.raw",
+        "receiveTimestamp": "2023-10-10T22:06:45.651910670Z",
+    }
+    event = create_event(example_log_entry)
+
+    response = run_slack_alerter(event)
+
+    assert response == "Alert skipped"
+    assert number_of_http_calls() == 0
