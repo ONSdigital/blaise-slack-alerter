@@ -11,6 +11,9 @@ from lib.filters.osconfig_agent_filter import osconfig_agent_filter
 from lib.filters.rproxy_lookupEffectiveGuestPolicies_filter import (
     rproxy_lookupEffectiveGuestPolicies_filter,
 )
+from lib.filters.watching_metadata_invalid_character_filter import (
+    watching_metadata_invalid_character_filter,
+)
 from lib.log_processor import (
     ProcessedLogEntry,
     CreateAppLogPayloadFromLogEntry,
@@ -24,6 +27,7 @@ def log_entry_skipped(log_entry: ProcessedLogEntry):
         auditlog_filter,
         agent_connect_filter,
         rproxy_lookupEffectiveGuestPolicies_filter,
+        watching_metadata_invalid_character_filter,
     ]
 
     for filter in filters:
