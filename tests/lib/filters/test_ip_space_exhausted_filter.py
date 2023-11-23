@@ -23,7 +23,7 @@ def processed_log_entry_IP_space_exhausted() -> ProcessedLogEntry:
     )
 
 
-def test_log_is_from_gce_instance_when_IP_space_exhausted(
+def test_log_is_IP_space_exhausted(
     processed_log_entry_IP_space_exhausted: ProcessedLogEntry,
 ):
     log_is_skipped = ip_space_exhausted_filter(processed_log_entry_IP_space_exhausted)
@@ -31,7 +31,18 @@ def test_log_is_from_gce_instance_when_IP_space_exhausted(
     assert log_is_skipped is True
 
 
-def test_log_is_not_from_gce_instance_when_IP_space_exhausted(
+def test_log_platform_is_not_a_string(
+    processed_log_entry_IP_space_exhausted: ProcessedLogEntry,
+):
+    processed_log_entry_IP_space_exhausted = dataclasses.replace(
+        processed_log_entry_IP_space_exhausted, platform=123
+    )
+    log_is_skipped = ip_space_exhausted_filter(processed_log_entry_IP_space_exhausted)
+
+    assert log_is_skipped is False
+
+
+def test_log_platform_not_gce_instance_in_IP_space_exhausted(
     processed_log_entry_IP_space_exhausted: ProcessedLogEntry,
 ):
     processed_log_entry_IP_space_exhausted = dataclasses.replace(
@@ -42,50 +53,22 @@ def test_log_is_not_from_gce_instance_when_IP_space_exhausted(
     assert log_is_skipped is False
 
 
-def test_log_data_is_dict_and_has_description_when_IP_space_exhausted(
-    processed_log_entry_IP_space_exhausted: ProcessedLogEntry,
-):
-    log_is_skipped = ip_space_exhausted_filter(processed_log_entry_IP_space_exhausted)
-
-    assert log_is_skipped is True
-
-
-def test_log_data_is_dict_but_no_description_when_IP_space_exhausted(
+def test_log_message_is_not_a_string_in_IP_space_exhausted(
     processed_log_entry_IP_space_exhausted: ProcessedLogEntry,
 ):
     processed_log_entry_IP_space_exhausted = dataclasses.replace(
-        processed_log_entry_IP_space_exhausted, data=dict(source_name="gcp")
+        processed_log_entry_IP_space_exhausted, message=123
     )
     log_is_skipped = ip_space_exhausted_filter(processed_log_entry_IP_space_exhausted)
 
     assert log_is_skipped is False
 
 
-def test_log_data_is_not_dict_and_no_description_when_IP_space_exhausted(
+def test_IP_space_exhausted_is_not_in_message(
     processed_log_entry_IP_space_exhausted: ProcessedLogEntry,
 ):
     processed_log_entry_IP_space_exhausted = dataclasses.replace(
-        processed_log_entry_IP_space_exhausted, data="no-relevant-data"
-    )
-    log_is_skipped = ip_space_exhausted_filter(processed_log_entry_IP_space_exhausted)
-
-    assert log_is_skipped is False
-
-
-def test_log_data_description_has_target_text_when_IP_space_exhausted(
-    processed_log_entry_IP_space_exhausted: ProcessedLogEntry,
-):
-    log_is_skipped = ip_space_exhausted_filter(processed_log_entry_IP_space_exhausted)
-
-    assert log_is_skipped is True
-
-
-def test_log_data_description_has_no_target_text_when_IP_space_exausted(
-    processed_log_entry_IP_space_exhausted: ProcessedLogEntry,
-):
-    processed_log_entry_IP_space_exhausted = dataclasses.replace(
-        processed_log_entry_IP_space_exhausted,
-        data=dict(description="ERROR: there is no relevant data description"),
+        processed_log_entry_IP_space_exhausted, message="IP_SPACE_is_not_EXHAUSTED"
     )
     log_is_skipped = ip_space_exhausted_filter(processed_log_entry_IP_space_exhausted)
 
