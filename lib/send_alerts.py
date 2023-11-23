@@ -8,6 +8,7 @@ from lib.cloud_logging import parse_log_entry
 from lib.filters.auditlog_filter import auditlog_filter
 from lib.filters.agent_connect_filter import agent_connect_filter
 from lib.filters.osconfig_agent_filter import osconfig_agent_filter
+from lib.filters.ip_space_exhausted_filter import ip_space_exhausted_filter
 from lib.filters.rproxy_lookupEffectiveGuestPolicies_filter import (
     rproxy_lookupEffectiveGuestPolicies_filter,
 )
@@ -28,6 +29,7 @@ def log_entry_skipped(log_entry: ProcessedLogEntry):
         agent_connect_filter,
         rproxy_lookupEffectiveGuestPolicies_filter,
         watching_metadata_invalid_character_filter,
+        ip_space_exhausted_filter,
     ]
 
     for filter in filters:
