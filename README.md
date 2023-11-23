@@ -72,11 +72,15 @@ Linting errors can usually be fixed quickly with `make format`.
 3. Run tests using `make format test` - the test you just created should fail!
 4. Navigate to the `lib/filters` dir and create a new `.py` file 
 5. Add new functionality to the newly created file (see `osconfig_agent_filter.py` for an example)
-5. Navigate to the `tests/lib/filters` dir and create a new `test_XX.py` file
-6. Create unit tests that test the actual filter functionality (again, check `test_osconfig_agent_filter.py` for an example). You will need to change the fixture!
-7. In `send_alerts.py`, import the function you just created and add it to the filter array `[]` in the `log_entry_skipped` function
+6. Navigate to the `tests/lib/filters` dir and create a new `test_XX.py` file
+7. Create unit tests that test the actual filter functionality (again, check `test_osconfig_agent_filter.py` for an example). You will need to change the fixture!
+8. In `send_alerts.py`, import the function you just created and add it to the filter array `[]` in the `log_entry_skipped` function
 ```python
 def log_entry_skipped(log_entry: ProcessedLogEntry):
-    filters = [osconfig_agent_filter, auditlog_filter, agent_connect_filter]
+    filters = [
+        osconfig_agent_filter, 
+        auditlog_filter, 
+        agent_connect_filter,
+        ... etc]
 ```
-8. Run `make format test` - if all pass, push it up!
+9. Run `make format test` - if all pass, push it up!
