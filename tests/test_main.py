@@ -734,6 +734,7 @@ def test_skip_watching_metadata_invalid_character_second_version_error(
     assert response == "Alert skipped"
     assert number_of_http_calls() == 0
 
+
 def test_skip_watching_ip_space_exhausted_error(
     run_slack_alerter, number_of_http_calls
 ):
