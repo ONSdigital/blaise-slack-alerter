@@ -733,3 +733,68 @@ def test_skip_watching_metadata_invalid_character_second_version_error(
 
     assert response == "Alert skipped"
     assert number_of_http_calls() == 0
+
+def test_skip_watching_ip_space_exhausted_error(
+    run_slack_alerter, number_of_http_calls
+):
+    example_log_entry = {
+        "protoPayload": {
+            "@type": "type.googleapis.com/google.cloud.audit.AuditLog",
+            "status": {
+                "code": 8,
+                "message": "IP_SPACE_EXHAUSTED",
+                "details": [
+                    {
+                        "@type": "type.googleapis.com/google.protobuf.Struct",
+                        "value": {
+                            "ipSpaceExhausted": {
+                                "networkOrSubnetworkResource": {
+                                    "resourceType": "SUBNETWORK",
+                                    "resourceName": "aet-europewest2-vpcconnect-sbnt",
+                                    "project": {"canonicalProjectId": "628324858917"},
+                                    "scope": {
+                                        "scopeType": "REGION",
+                                        "scopeName": "europe-west2",
+                                    },
+                                }
+                            }
+                        },
+                    }
+                ],
+            },
+            "authenticationInfo": {
+                "principalEmail": "628324858917@cloudservices.gserviceaccount.com"
+            },
+            "requestMetadata": {
+                "callerSuppliedUserAgent": "GCE Managed Instance Group for Tesseract"
+            },
+            "serviceName": "compute.googleapis.com",
+            "methodName": "v1.compute.instances.insert",
+            "resourceName": "projects/628324858917/zones/europe-west2-b/instances/aet-europewest2-vpcconnect-2t8s",
+            "request": {"@type": "type.googleapis.com/compute.instances.insert"},
+        },
+        "insertId": "-mqmnq7c67w",
+        "resource": {
+            "type": "gce_instance",
+            "labels": {
+                "zone": "europe-west2-b",
+                "instance_id": "8585884535477906154",
+                "project_id": "ons-blaise-v2-prod",
+            },
+        },
+        "timestamp": "2023-09-14T23:15:40.216920Z",
+        "severity": "ERROR",
+        "logName": "projects/ons-blaise-v2-prod/logs/cloudaudit.googleapis.com%2Factivity",
+        "operation": {
+            "id": "operation-1694733317846-60559d9663528-e8055062-e3b64477",
+            "producer": "compute.googleapis.com",
+            "last": True,
+        },
+        "receiveTimestamp": "2023-09-14T23:15:41.197750677Z",
+    }
+    event = create_event(example_log_entry)
+
+    response = run_slack_alerter(event)
+
+    assert response == "Alert skipped"
+    assert number_of_http_calls() == 0

@@ -9,7 +9,7 @@ from lib.filters.ip_space_exhausted_filter import ip_space_exhausted_filter
 @pytest.fixture()
 def processed_log_entry_IP_space_exhausted() -> ProcessedLogEntry:
     return ProcessedLogEntry(
-        message="foo",
+        message="IP_SPACE_EXHAUSTED",
         data=dict(description="2023-06-06 14:36:14Z: IP_SPACE_EXHAUSTED\r\n"),
         severity="ERROR",
         platform="gce_instance",
@@ -85,7 +85,7 @@ def test_log_data_description_has_no_target_text_when_IP_space_exausted(
 ):
     processed_log_entry_IP_space_exhausted = dataclasses.replace(
         processed_log_entry_IP_space_exhausted,
-        data=dict(description="ERROR: there is no relevant data descrtiption"),
+        data=dict(description="ERROR: there is no relevant data description"),
     )
     log_is_skipped = ip_space_exhausted_filter(processed_log_entry_IP_space_exhausted)
 
