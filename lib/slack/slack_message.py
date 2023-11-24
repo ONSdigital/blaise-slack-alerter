@@ -117,22 +117,24 @@ def _create_content(
     return content
 
 
-def _populate_log_link_url(processed_log_entry: ProcessedLogEntry, project_name: str) -> str:
+def _populate_log_link_url(
+    processed_log_entry: ProcessedLogEntry, project_name: str
+) -> str:
     if not processed_log_entry.timestamp:
-        return None
+        return ""
 
     severities = ["WARNING", "ERROR", "CRITICAL", "ALERT", "EMERGENCY", "DEBUG"]
-    return (
-        create_log_query_link(
-            fields=processed_log_entry.log_query,
-            severities=severities,
-            cursor_timestamp=processed_log_entry.timestamp,
-            project_name=project_name,
-        )
+    return create_log_query_link(
+        fields=processed_log_entry.log_query,
+        severities=severities,
+        cursor_timestamp=processed_log_entry.timestamp,
+        project_name=project_name,
     )
 
 
-def _populate_investigate_line(processed_log_entry: ProcessedLogEntry, project_name: str) -> str:
+def _populate_investigate_line(
+    processed_log_entry: ProcessedLogEntry, project_name: str
+) -> str:
     log_link_url = _populate_log_link_url(processed_log_entry, project_name)
 
     if not log_link_url:
@@ -142,8 +144,14 @@ def _populate_investigate_line(processed_log_entry: ProcessedLogEntry, project_n
 
 
 def _is_data_delivery_alert(processed_log_entry: ProcessedLogEntry) -> bool:
-    if processed_log_entry.application in ("data-delivery", "NiFiEncryptFunction", "publishMsg", "nifi-receipt"):
+    if processed_log_entry.application in (
+        "data-delivery",
+        "NiFiEncryptFunction",
+        "publishMsg",
+        "nifi-receipt",
+    ):
         return True
+    return False
 
 
 def _populate_instructions_line(processed_log_entry: ProcessedLogEntry):
@@ -151,7 +159,9 @@ def _populate_instructions_line(processed_log_entry: ProcessedLogEntry):
         data_delivery_playbook_link = "https://confluence.ons.gov.uk/display/QSS/Troubleshooting+Playbook+-+Data+Delivery"
         return f"4. Follow the <{data_delivery_playbook_link} | Data Delivery Troubleshooting Playbook> process"
 
-    managing_alerts_link = "https://confluence.ons.gov.uk/pages/viewpage.action?pageId=98502389"
+    managing_alerts_link = (
+        "https://confluence.ons.gov.uk/pages/viewpage.action?pageId=98502389"
+    )
     return f"4. Follow the <{managing_alerts_link} | Managing Prod Alerts> process"
 
 
