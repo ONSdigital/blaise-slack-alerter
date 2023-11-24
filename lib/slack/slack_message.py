@@ -142,7 +142,7 @@ def _create_footnote(processed_log_entry: ProcessedLogEntry, project_name: str) 
     )
 
     instructions = f"4. Follow the <{managing_alerts_link} | Managing Prod Alerts> process"
-    if processed_log_entry.application == "data-delivery":
+    if processed_log_entry.application in ("data-delivery", "NiFiEncryptFunction", "publishMsg", "nifi-receipt"):
         instructions = f"4. Follow the <https://confluence.ons.gov.uk/display/QSS/Troubleshooting+Playbook+-+Data+Delivery | Data Delivery Troubleshooting Playbook> process"
 
     return (
