@@ -141,12 +141,16 @@ def _create_footnote(processed_log_entry: ProcessedLogEntry, project_name: str) 
         "https://confluence.ons.gov.uk/pages/viewpage.action?pageId=98502389"
     )
 
+    instructions = f"4. Follow the <{managing_alerts_link} | Managing Prod Alerts> process"
+    if processed_log_entry.application == "data-delivery":
+        instructions = f"4. Follow the <https://confluence.ons.gov.uk/display/QSS/Troubleshooting+Playbook+-+Data+Delivery | Data Delivery Troubleshooting Playbook> process"
+
     return (
         "*Next Steps*\n"
         "1. Add some :eyes: to show you are investigating\n"
         f"2. <{uptime_url} | Check the system is online>\n"
         f"{log_action_line}\n"
-        f"4. Follow the <{managing_alerts_link} | Managing Prod Alerts> process"
+        f"{instructions}"
     )
 
 

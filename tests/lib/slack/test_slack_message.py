@@ -6,7 +6,7 @@ from dateutil.parser import parse
 
 from lib.cloud_logging.log_query_link import create_log_query_link
 from lib.log_processor import ProcessedLogEntry
-from lib.slack.slack_message import create_from_processed_log_entry, SlackMessage
+from lib.slack.slack_message import create_from_processed_log_entry, SlackMessage, _create_footnote
 
 
 @pytest.fixture()
@@ -27,6 +27,21 @@ def processed_log_entry(log_timestamp) -> ProcessedLogEntry:
         severity="ERROR",
         platform="cloud_functions",
         application="my-app",
+        log_name="/log/my-log",
+        timestamp=log_timestamp,
+        log_query={},
+        most_important_values=None,
+    )
+
+
+@pytest.fixture()
+def processed_data_delivery_log_entry(log_timestamp) -> ProcessedLogEntry:
+    return ProcessedLogEntry(
+        message="Example error",
+        data={"example_field": "example value"},
+        severity="ERROR",
+        platform="cloud_functions",
+        application="data-delivery",
         log_name="/log/my-log",
         timestamp=log_timestamp,
         log_query={},
@@ -472,3 +487,38 @@ def test_create_from_processed_log_with_content_over_10_lines_including_extra_co
         "...\n"
         "[truncated]"
     )
+
+
+def test_create_footnote_returns_default_instructions(processed_log_entry):
+    # arrange
+    project_name = "foobar"
+
+    # act
+    result = _create_footnote(processed_log_entry, project_name)
+
+    # assert
+    assert result == (
+        '*Next Steps*\n'
+        '1. Add some :eyes: to show you are investigating\n'
+        '2. <https://console.cloud.google.com/monitoring/uptime?referrer=search&project=foobar | Check the system is online>\n'
+        '3. <https://console.cloud.google.com/logs/query;query=severity%3D%28WARNING%20OR%20ERROR%20OR%20CRITICAL%20OR%20ALERT%20OR%20EMERGENCY%20OR%20DEBUG%29;timeRange=2022-08-10T14:54:03.318939Z%2F2022-08-10T14:54:03.318939Z--PT1M?referrer=search&project=foobar | View the logs>\n'
+        '4. Follow the <https://confluence.ons.gov.uk/pages/viewpage.action?pageId=98502389 | Managing Prod Alerts> process'
+    )
+
+
+def test_create_footnote_returns_data_delivery_instructions(processed_data_delivery_log_entry):
+    # arrange
+    project_name = "foobar"
+
+    # act
+    result = _create_footnote(processed_data_delivery_log_entry, project_name)
+
+    # assert
+    assert result == (
+        '*Next Steps*\n'
+        '1. Add some :eyes: to show you are investigating\n'
+        '2. <https://console.cloud.google.com/monitoring/uptime?referrer=search&project=foobar | Check the system is online>\n'
+        '3. <https://console.cloud.google.com/logs/query;query=severity%3D%28WARNING%20OR%20ERROR%20OR%20CRITICAL%20OR%20ALERT%20OR%20EMERGENCY%20OR%20DEBUG%29;timeRange=2022-08-10T14:54:03.318939Z%2F2022-08-10T14:54:03.318939Z--PT1M?referrer=search&project=foobar | View the logs>\n'
+        '4. Follow the <https://confluence.ons.gov.uk/display/QSS/Troubleshooting+Playbook+-+Data+Delivery | Data Delivery Troubleshooting Playbook> process'
+    )
+
