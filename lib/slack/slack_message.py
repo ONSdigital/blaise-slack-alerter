@@ -117,33 +117,48 @@ def _create_content(
     return content
 
 
-def _create_footnote(processed_log_entry: ProcessedLogEntry, project_name: str) -> str:
-    uptime_url = f"https://console.cloud.google.com/monitoring/uptime?referrer=search&project={project_name}"
+def _populate_log_link_url(processed_log_entry: ProcessedLogEntry, project_name: str) -> str:
+    if not processed_log_entry.timestamp:
+        return None
 
     severities = ["WARNING", "ERROR", "CRITICAL", "ALERT", "EMERGENCY", "DEBUG"]
-    log_link_url = (
+    return (
         create_log_query_link(
             fields=processed_log_entry.log_query,
             severities=severities,
             cursor_timestamp=processed_log_entry.timestamp,
             project_name=project_name,
         )
-        if processed_log_entry.timestamp
-        else None
-    )
-    investigate = (
-        f"3. <{log_link_url} | View the logs>"
-        if log_link_url is not None
-        else "3. Determine the cause of the error"
     )
 
-    managing_alerts_link = (
-        "https://confluence.ons.gov.uk/pages/viewpage.action?pageId=98502389"
-    )
 
-    instructions = f"4. Follow the <{managing_alerts_link} | Managing Prod Alerts> process"
+def _populate_investigate_line(processed_log_entry: ProcessedLogEntry, project_name: str) -> str:
+    log_link_url = _populate_log_link_url(processed_log_entry, project_name)
+
+    if not log_link_url:
+        return "3. Determine the cause of the error"
+
+    return f"3. <{log_link_url} | View the logs>"
+
+
+def _is_data_delivery_alert(processed_log_entry: ProcessedLogEntry) -> bool:
     if processed_log_entry.application in ("data-delivery", "NiFiEncryptFunction", "publishMsg", "nifi-receipt"):
-        instructions = f"4. Follow the <https://confluence.ons.gov.uk/display/QSS/Troubleshooting+Playbook+-+Data+Delivery | Data Delivery Troubleshooting Playbook> process"
+        return True
+
+
+def _populate_instructions_line(processed_log_entry: ProcessedLogEntry):
+    if _is_data_delivery_alert(processed_log_entry):
+        data_delivery_playbook_link = "https://confluence.ons.gov.uk/display/QSS/Troubleshooting+Playbook+-+Data+Delivery"
+        return f"4. Follow the <{data_delivery_playbook_link} | Data Delivery Troubleshooting Playbook> process"
+
+    managing_alerts_link = "https://confluence.ons.gov.uk/pages/viewpage.action?pageId=98502389"
+    return f"4. Follow the <{managing_alerts_link} | Managing Prod Alerts> process"
+
+
+def _create_footnote(processed_log_entry: ProcessedLogEntry, project_name: str) -> str:
+    uptime_url = f"https://console.cloud.google.com/monitoring/uptime?referrer=search&project={project_name}"
+    investigate = _populate_investigate_line(processed_log_entry, project_name)
+    instructions = _populate_instructions_line(processed_log_entry)
 
     return (
         "*Next Steps*\n"
