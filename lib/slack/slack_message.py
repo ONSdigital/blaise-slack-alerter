@@ -131,7 +131,7 @@ def _create_footnote(processed_log_entry: ProcessedLogEntry, project_name: str) 
         if processed_log_entry.timestamp
         else None
     )
-    log_action_line = (
+    investigate = (
         f"3. <{log_link_url} | View the logs>"
         if log_link_url is not None
         else "3. Determine the cause of the error"
@@ -149,7 +149,7 @@ def _create_footnote(processed_log_entry: ProcessedLogEntry, project_name: str) 
         "*Next Steps*\n"
         "1. Add some :eyes: to show you are investigating\n"
         f"2. <{uptime_url} | Check the system is online>\n"
-        f"{log_action_line}\n"
+        f"{investigate}\n"
         f"{instructions}"
     )
 
