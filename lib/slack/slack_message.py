@@ -2,7 +2,6 @@ import json
 from dataclasses import dataclass
 from typing import Dict, Any, Tuple, Optional
 
-from dateutil.parser import parse
 from datetime import datetime
 import pytz
 
