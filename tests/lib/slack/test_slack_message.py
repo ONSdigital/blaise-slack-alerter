@@ -1,3 +1,4 @@
+import dataclasses
 from dataclasses import replace
 from datetime import datetime
 
@@ -31,21 +32,6 @@ def processed_log_entry(log_timestamp) -> ProcessedLogEntry:
         severity="ERROR",
         platform="cloud_functions",
         application="my-app",
-        log_name="/log/my-log",
-        timestamp=log_timestamp,
-        log_query={},
-        most_important_values=None,
-    )
-
-
-@pytest.fixture()
-def processed_data_delivery_log_entry(log_timestamp) -> ProcessedLogEntry:
-    return ProcessedLogEntry(
-        message="Example error",
-        data={"example_field": "example value"},
-        severity="ERROR",
-        platform="cloud_functions",
-        application="data-delivery",
         log_name="/log/my-log",
         timestamp=log_timestamp,
         log_query={},
@@ -510,13 +496,14 @@ def test_create_footnote_returns_default_instructions(processed_log_entry):
     )
 
 
-def test_create_footnote_returns_data_delivery_instructions(
-    processed_data_delivery_log_entry,
-):
+def test_create_footnote_returns_data_delivery_instructions(processed_log_entry):
     # arrange
     project_name = "foobar"
 
     # act
+    processed_data_delivery_log_entry = dataclasses.replace(
+        processed_log_entry, application="data-delivery"
+    )
     result = _create_footnote(processed_data_delivery_log_entry, project_name)
 
     # assert
