@@ -154,10 +154,29 @@ def _is_data_delivery_alert(processed_log_entry: ProcessedLogEntry) -> bool:
     return False
 
 
+def _is_totalmobile_alert(processed_log_entry: ProcessedLogEntry) -> bool:
+    totalmobile_errors = [
+        "Totalmobile",
+        "Could not find questionnaire",
+        "Could not find case",
+        "bts-create-totalmobile-jobs-processor",
+    ]
+
+    if any(match in processed_log_entry.message for match in totalmobile_errors):
+        return True
+    return False
+
+
 def _populate_instructions_line(processed_log_entry: ProcessedLogEntry):
     if _is_data_delivery_alert(processed_log_entry):
         data_delivery_playbook_link = "https://confluence.ons.gov.uk/display/QSS/Troubleshooting+Playbook+-+Data+Delivery"
         return f"4. Follow the <{data_delivery_playbook_link} | Data Delivery Troubleshooting Playbook>"
+
+    if _is_totalmobile_alert(processed_log_entry):
+        totalmobile_playbook_link = (
+            "https://confluence.ons.gov.uk/pages/viewpage.action?pageId=173124107"
+        )
+        return f"4. Follow the <{totalmobile_playbook_link} | BTS/Totalmobile Troubleshooting Playbook>"
 
     managing_alerts_link = (
         "https://confluence.ons.gov.uk/pages/viewpage.action?pageId=98502389"

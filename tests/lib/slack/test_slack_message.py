@@ -562,3 +562,34 @@ def test_create_footnote_returns_data_delivery_instructions_without_view_the_log
         "3. Determine the cause of the error\n"
         "4. Follow the <https://confluence.ons.gov.uk/display/QSS/Troubleshooting+Playbook+-+Data+Delivery | Data Delivery Troubleshooting Playbook>"
     )
+
+
+@pytest.mark.parametrize(
+    "totalmobile_errors",
+    [
+        "Unable to delete job reference LMS6666-FO0.123456 from Totalmobile",
+        "Could not find questionnaire LMS6666-FO0 in Blaise",
+        "Could not find case 123456 for questionnaire LMS6666-FO0 in Blaise",
+        "ERROR: Exception on / [POST] for bts-create-totalmobile-jobs-processor",
+    ],
+)
+def test_create_footnote_returns_totalmobile_instructions_with_view_the_logs_line(
+    processed_log_entry, totalmobile_errors
+):
+    # arrange
+    project_name = "foobar"
+    processed_totalmobile_log_entry = dataclasses.replace(
+        processed_log_entry, message=totalmobile_errors
+    )
+
+    # act
+    result = _create_footnote(processed_totalmobile_log_entry, project_name)
+
+    # assert
+    assert result == (
+        "*Next Steps*\n"
+        "1. Add some :eyes: to show you are investigating\n"
+        "2. <https://console.cloud.google.com/monitoring/uptime?referrer=search&project=foobar | Check the system is online>\n"
+        "3. <https://console.cloud.google.com/logs/query;query=severity%3D%28WARNING%20OR%20ERROR%20OR%20CRITICAL%20OR%20ALERT%20OR%20EMERGENCY%20OR%20DEBUG%29;timeRange=2022-08-10T14:54:03.318939Z%2F2022-08-10T14:54:03.318939Z--PT1M?referrer=search&project=foobar | View the logs>\n"
+        "4. Follow the <https://confluence.ons.gov.uk/pages/viewpage.action?pageId=173124107 | BTS/Totalmobile Troubleshooting Playbook>"
+    )
