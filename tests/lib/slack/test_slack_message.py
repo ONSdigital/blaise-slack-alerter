@@ -479,7 +479,9 @@ def test_create_from_processed_log_with_content_over_10_lines_including_extra_co
     )
 
 
-def test_create_footnote_returns_default_instructions(processed_log_entry):
+def test_create_footnote_returns_default_instructions_with_view_the_logs_line(
+    processed_log_entry,
+):
     # arrange
     project_name = "foobar"
 
@@ -492,6 +494,28 @@ def test_create_footnote_returns_default_instructions(processed_log_entry):
         "1. Add some :eyes: to show you are investigating\n"
         "2. <https://console.cloud.google.com/monitoring/uptime?referrer=search&project=foobar | Check the system is online>\n"
         "3. <https://console.cloud.google.com/logs/query;query=severity%3D%28WARNING%20OR%20ERROR%20OR%20CRITICAL%20OR%20ALERT%20OR%20EMERGENCY%20OR%20DEBUG%29;timeRange=2022-08-10T14:54:03.318939Z%2F2022-08-10T14:54:03.318939Z--PT1M?referrer=search&project=foobar | View the logs>\n"
+        "4. Follow the <https://confluence.ons.gov.uk/pages/viewpage.action?pageId=98502389 | Managing Prod Alerts> process"
+    )
+
+
+def test_create_footnote_returns_default_instructions_without_view_the_logs_line(
+    processed_log_entry,
+):
+    # arrange
+    project_name = "foobar"
+    processed_log_entry_without_timestamp = dataclasses.replace(
+        processed_log_entry, timestamp=None
+    )
+
+    # act
+    result = _create_footnote(processed_log_entry_without_timestamp, project_name)
+
+    # assert
+    assert result == (
+        "*Next Steps*\n"
+        "1. Add some :eyes: to show you are investigating\n"
+        "2. <https://console.cloud.google.com/monitoring/uptime?referrer=search&project=foobar | Check the system is online>\n"
+        "3. Determine the cause of the error\n"
         "4. Follow the <https://confluence.ons.gov.uk/pages/viewpage.action?pageId=98502389 | Managing Prod Alerts> process"
     )
 
