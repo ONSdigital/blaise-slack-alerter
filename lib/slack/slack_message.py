@@ -157,7 +157,7 @@ def _is_data_delivery_alert(processed_log_entry: ProcessedLogEntry) -> bool:
 def _populate_instructions_line(processed_log_entry: ProcessedLogEntry):
     if _is_data_delivery_alert(processed_log_entry):
         data_delivery_playbook_link = "https://confluence.ons.gov.uk/display/QSS/Troubleshooting+Playbook+-+Data+Delivery"
-        return f"4. Follow the <{data_delivery_playbook_link} | Data Delivery Troubleshooting Playbook> process"
+        return f"4. Follow the <{data_delivery_playbook_link} | Data Delivery Troubleshooting Playbook>"
 
     managing_alerts_link = (
         "https://confluence.ons.gov.uk/pages/viewpage.action?pageId=98502389"
