@@ -169,19 +169,12 @@ def _is_totalmobile_alert(processed_log_entry: ProcessedLogEntry) -> bool:
 
 def _populate_instructions_line(processed_log_entry: ProcessedLogEntry):
     if _is_data_delivery_alert(processed_log_entry):
-        data_delivery_playbook_link = "https://confluence.ons.gov.uk/display/QSS/Troubleshooting+Playbook+-+Data+Delivery"
-        return f"4. Follow the <{data_delivery_playbook_link} | Data Delivery Troubleshooting Playbook>"
+        return f"4. Follow the <https://confluence.ons.gov.uk/display/QSS/Troubleshooting+Playbook+-+Data+Delivery | Data Delivery Troubleshooting Playbook>"
 
     if _is_totalmobile_alert(processed_log_entry):
-        totalmobile_playbook_link = (
-            "https://confluence.ons.gov.uk/pages/viewpage.action?pageId=173124107"
-        )
-        return f"4. Follow the <{totalmobile_playbook_link} | BTS/Totalmobile Troubleshooting Playbook>"
+        return f"4. Follow the <https://confluence.ons.gov.uk/pages/viewpage.action?pageId=173124107 | BTS/Totalmobile Troubleshooting Playbook>"
 
-    managing_alerts_link = (
-        "https://confluence.ons.gov.uk/pages/viewpage.action?pageId=98502389"
-    )
-    return f"4. Follow the <{managing_alerts_link} | Managing Prod Alerts> process"
+    return f"4. Follow the <https://confluence.ons.gov.uk/pages/viewpage.action?pageId=98502389 | Managing Prod Alerts> process"
 
 
 def _create_footnote(processed_log_entry: ProcessedLogEntry, project_name: str) -> str:
