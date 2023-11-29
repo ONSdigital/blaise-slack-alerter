@@ -520,13 +520,22 @@ def test_create_footnote_returns_default_instructions_without_view_the_logs_line
     )
 
 
+@pytest.mark.parametrize(
+    "data_delivery_application",
+    [
+        "data-delivery",
+        "NiFiEncryptFunction",
+        "publishMsg",
+        "nifi-receipt",
+    ],
+)
 def test_create_footnote_returns_data_delivery_instructions_with_view_the_logs_line(
-    processed_log_entry,
+    processed_log_entry, data_delivery_application
 ):
     # arrange
     project_name = "foobar"
     processed_data_delivery_log_entry = dataclasses.replace(
-        processed_log_entry, application="data-delivery"
+        processed_log_entry, application=data_delivery_application
     )
 
     # act
@@ -542,13 +551,22 @@ def test_create_footnote_returns_data_delivery_instructions_with_view_the_logs_l
     )
 
 
+@pytest.mark.parametrize(
+    "data_delivery_application",
+    [
+        "data-delivery",
+        "NiFiEncryptFunction",
+        "publishMsg",
+        "nifi-receipt",
+    ],
+)
 def test_create_footnote_returns_data_delivery_instructions_without_view_the_logs_line(
-    processed_log_entry,
+    processed_log_entry, data_delivery_application
 ):
     # arrange
     project_name = "foobar"
     processed_data_delivery_log_entry = dataclasses.replace(
-        processed_log_entry, application="data-delivery", timestamp=None
+        processed_log_entry, application=data_delivery_application, timestamp=None
     )
 
     # act
