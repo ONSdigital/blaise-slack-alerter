@@ -547,7 +547,7 @@ def test_create_footnote_returns_data_delivery_instructions_with_view_the_logs_l
         "1. Add some :eyes: to show you are investigating\n"
         "2. <https://console.cloud.google.com/monitoring/uptime?referrer=search&project=foobar | Check the system is online>\n"
         "3. <https://console.cloud.google.com/logs/query;query=severity%3D%28WARNING%20OR%20ERROR%20OR%20CRITICAL%20OR%20ALERT%20OR%20EMERGENCY%20OR%20DEBUG%29;timeRange=2022-08-10T14:54:03.318939Z%2F2022-08-10T14:54:03.318939Z--PT1M?referrer=search&project=foobar | View the logs>\n"
-        "4. Follow the <https://confluence.ons.gov.uk/display/QSS/Troubleshooting+Playbook+-+Data+Delivery | Data Delivery Troubleshooting Playbook>"
+        "4. <https://confluence.ons.gov.uk/display/QSS/Troubleshooting+Playbook+-+Data+Delivery | View the Data Delivery Troubleshooting Playbook>"
     )
 
 
@@ -578,7 +578,7 @@ def test_create_footnote_returns_data_delivery_instructions_without_view_the_log
         "1. Add some :eyes: to show you are investigating\n"
         "2. <https://console.cloud.google.com/monitoring/uptime?referrer=search&project=foobar | Check the system is online>\n"
         "3. Determine the cause of the error\n"
-        "4. Follow the <https://confluence.ons.gov.uk/display/QSS/Troubleshooting+Playbook+-+Data+Delivery | Data Delivery Troubleshooting Playbook>"
+        "4. <https://confluence.ons.gov.uk/display/QSS/Troubleshooting+Playbook+-+Data+Delivery | View the Data Delivery Troubleshooting Playbook>"
     )
 
 
@@ -609,7 +609,7 @@ def test_create_footnote_returns_totalmobile_instructions_with_view_the_logs_lin
         "1. Add some :eyes: to show you are investigating\n"
         "2. <https://console.cloud.google.com/monitoring/uptime?referrer=search&project=foobar | Check the system is online>\n"
         "3. <https://console.cloud.google.com/logs/query;query=severity%3D%28WARNING%20OR%20ERROR%20OR%20CRITICAL%20OR%20ALERT%20OR%20EMERGENCY%20OR%20DEBUG%29;timeRange=2022-08-10T14:54:03.318939Z%2F2022-08-10T14:54:03.318939Z--PT1M?referrer=search&project=foobar | View the logs>\n"
-        "4. Follow the <https://confluence.ons.gov.uk/pages/viewpage.action?pageId=173124107 | BTS/Totalmobile Troubleshooting Playbook>"
+        "4. <https://confluence.ons.gov.uk/pages/viewpage.action?pageId=173124107 | View the BTS/Totalmobile Troubleshooting Playbook>"
     )
 
 
@@ -640,7 +640,7 @@ def test_create_footnote_returns_totalmobile_instructions_without_view_the_logs_
         "1. Add some :eyes: to show you are investigating\n"
         "2. <https://console.cloud.google.com/monitoring/uptime?referrer=search&project=foobar | Check the system is online>\n"
         "3. Determine the cause of the error\n"
-        "4. Follow the <https://confluence.ons.gov.uk/pages/viewpage.action?pageId=173124107 | BTS/Totalmobile Troubleshooting Playbook>"
+        "4. <https://confluence.ons.gov.uk/pages/viewpage.action?pageId=173124107 | View the BTS/Totalmobile Troubleshooting Playbook>"
     )
 
 
@@ -662,7 +662,7 @@ def test_create_footnote_returns_nisra_instructions_with_view_the_logs_line(
         "1. Add some :eyes: to show you are investigating\n"
         "2. <https://console.cloud.google.com/monitoring/uptime?referrer=search&project=foobar | Check the system is online>\n"
         "3. <https://console.cloud.google.com/logs/query;query=severity%3D%28WARNING%20OR%20ERROR%20OR%20CRITICAL%20OR%20ALERT%20OR%20EMERGENCY%20OR%20DEBUG%29;timeRange=2022-08-10T14:54:03.318939Z%2F2022-08-10T14:54:03.318939Z--PT1M?referrer=search&project=foobar | View the logs>\n"
-        "4. Follow the <https://confluence.ons.gov.uk/display/QSS/Troubleshooting+Playbook+-+NISRA | NISRA Troubleshooting Playbook>"
+        "4. <https://confluence.ons.gov.uk/display/QSS/Troubleshooting+Playbook+-+NISRA | View the NISRA Troubleshooting Playbook>"
     )
 
 
@@ -684,5 +684,5 @@ def test_create_footnote_returns_nisra_instructions_without_view_the_logs_line(
         "1. Add some :eyes: to show you are investigating\n"
         "2. <https://console.cloud.google.com/monitoring/uptime?referrer=search&project=foobar | Check the system is online>\n"
         "3. Determine the cause of the error\n"
-        "4. Follow the <https://confluence.ons.gov.uk/display/QSS/Troubleshooting+Playbook+-+NISRA | NISRA Troubleshooting Playbook>"
+        "4. <https://confluence.ons.gov.uk/display/QSS/Troubleshooting+Playbook+-+NISRA | View the NISRA Troubleshooting Playbook>"
     )
