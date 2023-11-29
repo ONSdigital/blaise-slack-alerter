@@ -181,7 +181,7 @@ def _populate_instructions_line(processed_log_entry: ProcessedLogEntry):
         return f"4. Follow the <https://confluence.ons.gov.uk/pages/viewpage.action?pageId=173124107 | BTS/Totalmobile Troubleshooting Playbook>"
 
     if _is_nisra_alert(processed_log_entry):
-        return "4. Follow the https://confluence.ons.gov.uk/display/QSS/Troubleshooting+Playbook+-+NISRA | NISRA Troubleshooting Playbook>"
+        return "4. Follow the <https://confluence.ons.gov.uk/display/QSS/Troubleshooting+Playbook+-+NISRA | NISRA Troubleshooting Playbook>"
 
     return f"4. Follow the <https://confluence.ons.gov.uk/pages/viewpage.action?pageId=98502389 | Managing Prod Alerts> process"
 
