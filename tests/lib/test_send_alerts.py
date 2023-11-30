@@ -147,12 +147,12 @@ class TestWithStructuredLog:
                 "user": "",
             },
             "labels": {"compute.googleapis.com/resource_name": "vm-mgmt"},
-            "logName": "projects/secret-project/logs/winevt.raw",
+            "logName": "projects/ons-blaise-v2-preprod/logs/winevt.raw",
             "receiveTimestamp": "2022-08-02T19:06:42.275819947Z",
             "resource": {
                 "labels": {
                     "instance_id": "89453598437598",
-                    "project_id": "secret-project",
+                    "project_id": "ons-blaise-v2-preprod",
                     "zone": "europe-west2-a",
                 },
                 "type": "gce_instance",
@@ -193,7 +193,7 @@ class TestWithStructuredLog:
                 severity="ERROR",
                 platform="gce_instance",
                 application="vm-mgmt",
-                log_name="projects/secret-project/logs/winevt.raw",
+                log_name="projects/ons-blaise-v2-preprod/logs/winevt.raw",
                 timestamp=parse("2022-08-02T19:06:42.275819947Z").astimezone(
                     pytz.timezone("Europe/London")
                 ),

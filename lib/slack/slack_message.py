@@ -144,25 +144,46 @@ def _populate_investigate_line(
 
 
 def _is_data_delivery_alert(processed_log_entry: ProcessedLogEntry) -> bool:
-    if processed_log_entry.application in (
+    if processed_log_entry.application not in (
         "data-delivery",
         "NiFiEncryptFunction",
         "publishMsg",
         "nifi-receipt",
     ):
-        return True
-    return False
+        return False
+    return True
+
+
+def _is_totalmobile_alert(processed_log_entry: ProcessedLogEntry) -> bool:
+    totalmobile_errors = [
+        "Totalmobile",
+        "Could not find questionnaire",
+        "Could not find case",
+        "bts-create-totalmobile-jobs-processor",
+    ]
+
+    if not any(match in processed_log_entry.message for match in totalmobile_errors):
+        return False
+    return True
+
+
+def _is_nisra_alert(processed_log_entry: ProcessedLogEntry) -> bool:
+    if processed_log_entry.application != "nisra-case-mover-trigger":
+        return False
+    return True
 
 
 def _populate_instructions_line(processed_log_entry: ProcessedLogEntry):
     if _is_data_delivery_alert(processed_log_entry):
-        data_delivery_playbook_link = "https://confluence.ons.gov.uk/display/QSS/Troubleshooting+Playbook+-+Data+Delivery"
-        return f"4. Follow the <{data_delivery_playbook_link} | Data Delivery Troubleshooting Playbook> process"
+        return f"4. <https://confluence.ons.gov.uk/display/QSS/Troubleshooting+Playbook+-+Data+Delivery | View the Data Delivery Troubleshooting Playbook>"
 
-    managing_alerts_link = (
-        "https://confluence.ons.gov.uk/pages/viewpage.action?pageId=98502389"
-    )
-    return f"4. Follow the <{managing_alerts_link} | Managing Prod Alerts> process"
+    if _is_totalmobile_alert(processed_log_entry):
+        return f"4. <https://confluence.ons.gov.uk/pages/viewpage.action?pageId=173124107 | View the BTS/Totalmobile Troubleshooting Playbook>"
+
+    if _is_nisra_alert(processed_log_entry):
+        return "4. <https://confluence.ons.gov.uk/display/QSS/Troubleshooting+Playbook+-+NISRA | View the NISRA Troubleshooting Playbook>"
+
+    return f"4. Follow the <https://confluence.ons.gov.uk/pages/viewpage.action?pageId=98502389 | Managing Prod Alerts> process"
 
 
 def _create_footnote(processed_log_entry: ProcessedLogEntry, project_name: str) -> str:
