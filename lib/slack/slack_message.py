@@ -144,14 +144,14 @@ def _populate_investigate_line(
 
 
 def _is_data_delivery_alert(processed_log_entry: ProcessedLogEntry) -> bool:
-    if processed_log_entry.application in (
+    if processed_log_entry.application not in (
         "data-delivery",
         "NiFiEncryptFunction",
         "publishMsg",
         "nifi-receipt",
     ):
-        return True
-    return False
+        return False
+    return True
 
 
 def _is_totalmobile_alert(processed_log_entry: ProcessedLogEntry) -> bool:
@@ -162,15 +162,15 @@ def _is_totalmobile_alert(processed_log_entry: ProcessedLogEntry) -> bool:
         "bts-create-totalmobile-jobs-processor",
     ]
 
-    if any(match in processed_log_entry.message for match in totalmobile_errors):
-        return True
-    return False
+    if not any(match in processed_log_entry.message for match in totalmobile_errors):
+        return False
+    return True
 
 
 def _is_nisra_alert(processed_log_entry: ProcessedLogEntry) -> bool:
-    if processed_log_entry.application == "nisra-case-mover-trigger":
-        return True
-    return False
+    if processed_log_entry.application != "nisra-case-mover-trigger":
+        return False
+    return True
 
 
 def _populate_instructions_line(processed_log_entry: ProcessedLogEntry):
