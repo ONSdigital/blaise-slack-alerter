@@ -666,13 +666,21 @@ def test_create_footnote_returns_nisra_instructions_with_view_the_logs_line(
     )
 
 
+@pytest.mark.parametrize(
+    "nisra_applications",
+    [
+        "nisra-case-mover",
+        "nisra-case-mover-trigger",
+    ],
+)
+# nisra-case-mover
 def test_create_footnote_returns_nisra_instructions_without_view_the_logs_line(
-    processed_log_entry,
+    processed_log_entry, nisra_applications
 ):
     # arrange
     project_name = "foobar"
     processed_totalmobile_log_entry = dataclasses.replace(
-        processed_log_entry, application="nisra-case-mover-trigger", timestamp=None
+        processed_log_entry, application=nisra_applications, timestamp=None
     )
 
     # act
