@@ -10,12 +10,12 @@ def is_formal_environment(log_name):
         "ons-blaise-v2-prod",
     ]
 
-    if any(
+    if not any(
         formal_environment == project_name for formal_environment in formal_environments
     ):
-        return True
+        return False
 
-    return False
+    return True
 
 
 def sandbox_filter(log_entry: ProcessedLogEntry) -> bool:
