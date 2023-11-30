@@ -801,7 +801,9 @@ def test_skip_watching_ip_space_exhausted_error(
     assert number_of_http_calls() == 0
 
 
-def test_skip_sandbox_alerts_except_training(run_slack_alerter, number_of_http_calls):
+def test_skip_sandbox_alerts_skips_alerts_for_sandboxes(
+    run_slack_alerter, number_of_http_calls
+):
     # arrange
     example_log_entry = {
         "insertId": "65675a1e000906c02cfcdb54",
@@ -843,3 +845,49 @@ def test_skip_sandbox_alerts_except_training(run_slack_alerter, number_of_http_c
     # assert
     assert response == "Alert skipped"
     assert number_of_http_calls() == 0
+
+
+def test_skip_sandbox_alerts_does_not_skip_alerts_for_formal_environments(
+    run_slack_alerter, number_of_http_calls
+):
+    # arrange
+    example_log_entry = {
+        "insertId": "65675a1e000906c02cfcdb54",
+        "jsonPayload": {
+            "logName": "projects/ons-blaise-v2-dev/logs/%40google-cloud%2Fprofiler",
+            "message": "Successfully collected profile HEAP.",
+            "resource": {
+                "type": "gae_app",
+                "labels": {
+                    "version_id": "20231129t144628",
+                    "module_id": "dqs-ui",
+                    "zone": "europe-west2-1",
+                },
+            },
+            "timestamp": "2023-11-29T15:34:54.591Z",
+        },
+        "resource": {
+            "type": "gae_app",
+            "labels": {
+                "module_id": "dqs-ui",
+                "zone": "europe-west2-1",
+                "project_id": "ons-blaise-v2-dev",
+                "version_id": "20231129t144628",
+            },
+        },
+        "timestamp": "2023-11-29T15:34:54.591552Z",
+        "severity": "DEBUG",
+        "labels": {
+            "clone_id": "0087599d4250c01bc120294e520c07b780b217e53173b5358cac87748d40d22082f17f1f7fa68823b4a41fe1f57308d3702a9095b6b347e32e672d8952a88afb65"
+        },
+        "logName": "projects/ons-blaise-v2-dev/logs/stdout",
+        "receiveTimestamp": "2023-11-29T15:34:54.921342975Z",
+    }
+    event = create_event(example_log_entry)
+
+    # act
+    response = run_slack_alerter(event)
+
+    # assert
+    assert response != "Alert skipped"
+    assert number_of_http_calls() == 1
