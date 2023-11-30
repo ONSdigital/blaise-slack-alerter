@@ -2,7 +2,7 @@ import pytest
 import datetime
 
 from lib.log_processor import ProcessedLogEntry
-from lib.filters.sandbox_filter import sandbox_filter, is_sandbox_environment
+from lib.filters.sandbox_filter import sandbox_filter, is_formal_environment
 
 
 @pytest.fixture()
@@ -53,15 +53,15 @@ def test_log_is_skipped_for_sandbox_environment(
     assert log_is_skipped is True
 
 
-def test_is_sandbox_environment_returns_true_for_sandbox_environment():
+def test_is_formal_environment_returns_false_for_sandbox_environment():
     # arrange
     log_name_example = "projects/ons-blaise-v2-dev-jw09/logs/stdout"
 
     # act
-    result = is_sandbox_environment(log_name_example)
+    result = is_formal_environment(log_name_example)
 
     # assert
-    assert result is True
+    assert result is False
 
 
 @pytest.mark.parametrize(
@@ -73,11 +73,11 @@ def test_is_sandbox_environment_returns_true_for_sandbox_environment():
         "projects/ons-blaise-v2-prod/logs/stdout",
     ],
 )
-def test_is_sandbox_environment_returns_false_for_formal_environment(
+def test_is_formal_environment_returns_true_for_formal_environment(
     formal_log_name_example,
 ):
     # act
-    result = is_sandbox_environment(formal_log_name_example)
+    result = is_formal_environment(formal_log_name_example)
 
     # assert
-    assert result is False
+    assert result is True
