@@ -1,15 +1,18 @@
 from lib.log_processor import ProcessedLogEntry
 
 
-def is_sandbox_environment(project_name):
+def is_sandbox_environment(log_name):
+    project_name = log_name.split("/")[1]
     formal_environments = [
-        # "ons-blaise-v2-dev",
+        "ons-blaise-v2-dev",
         "ons-blaise-v2-dev-training",
         "ons-blaise-v2-preprod",
         "ons-blaise-v2-prod",
     ]
 
-    if any(match in project_name for match in formal_environments):
+    if any(
+        formal_environment == project_name for formal_environment in formal_environments
+    ):
         return False
 
     return True

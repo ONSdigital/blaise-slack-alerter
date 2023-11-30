@@ -67,7 +67,7 @@ def test_is_sandbox_environment_returns_true_for_sandbox_environment():
 @pytest.mark.parametrize(
     "formal_log_name_example",
     [
-        # "projects/ons-blaise-v2-dev/logs/stdout",
+        "projects/ons-blaise-v2-dev/logs/stdout",
         "projects/ons-blaise-v2-dev-training/logs/stdout",
         "projects/ons-blaise-v2-preprod/logs/stdout",
         "projects/ons-blaise-v2-prod/logs/stdout",
