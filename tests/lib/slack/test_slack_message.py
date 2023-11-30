@@ -583,7 +583,7 @@ def test_create_footnote_returns_data_delivery_instructions_without_view_the_log
 
 
 @pytest.mark.parametrize(
-    "totalmobile_errors",
+    "totalmobile_error",
     [
         "Unable to delete job reference LMS6666-FO0.123456 from Totalmobile",
         "Could not find questionnaire LMS6666-FO0 in Blaise",
@@ -592,12 +592,12 @@ def test_create_footnote_returns_data_delivery_instructions_without_view_the_log
     ],
 )
 def test_create_footnote_returns_totalmobile_instructions_with_view_the_logs_line(
-    processed_log_entry, totalmobile_errors
+    processed_log_entry, totalmobile_error
 ):
     # arrange
     project_name = "foobar"
     processed_totalmobile_log_entry = dataclasses.replace(
-        processed_log_entry, message=totalmobile_errors
+        processed_log_entry, message=totalmobile_error
     )
 
     # act
@@ -614,7 +614,7 @@ def test_create_footnote_returns_totalmobile_instructions_with_view_the_logs_lin
 
 
 @pytest.mark.parametrize(
-    "totalmobile_errors",
+    "totalmobile_error",
     [
         "Unable to delete job reference LMS6666-FO0.123456 from Totalmobile",
         "Could not find questionnaire LMS6666-FO0 in Blaise",
@@ -623,12 +623,12 @@ def test_create_footnote_returns_totalmobile_instructions_with_view_the_logs_lin
     ],
 )
 def test_create_footnote_returns_totalmobile_instructions_without_view_the_logs_line(
-    processed_log_entry, totalmobile_errors
+    processed_log_entry, totalmobile_error
 ):
     # arrange
     project_name = "foobar"
     processed_totalmobile_log_entry = dataclasses.replace(
-        processed_log_entry, message=totalmobile_errors, timestamp=None
+        processed_log_entry, message=totalmobile_error, timestamp=None
     )
 
     # act
@@ -667,7 +667,7 @@ def test_create_footnote_returns_nisra_instructions_with_view_the_logs_line(
 
 
 @pytest.mark.parametrize(
-    "nisra_applications",
+    "nisra_application",
     [
         "nisra-case-mover",
         "nisra-case-mover-trigger",
@@ -675,12 +675,12 @@ def test_create_footnote_returns_nisra_instructions_with_view_the_logs_line(
 )
 # nisra-case-mover
 def test_create_footnote_returns_nisra_instructions_without_view_the_logs_line(
-    processed_log_entry, nisra_applications
+    processed_log_entry, nisra_application
 ):
     # arrange
     project_name = "foobar"
     processed_totalmobile_log_entry = dataclasses.replace(
-        processed_log_entry, application=nisra_applications, timestamp=None
+        processed_log_entry, application=nisra_application, timestamp=None
     )
 
     # act
