@@ -25,13 +25,13 @@ from lib.log_processor import process_log_entry
 
 def log_entry_skipped(log_entry: ProcessedLogEntry):
     filters = [
-        sandbox_filter,
         osconfig_agent_filter,
         auditlog_filter,
         agent_connect_filter,
         rproxy_lookupEffectiveGuestPolicies_filter,
         watching_metadata_invalid_character_filter,
         ip_space_exhausted_filter,
+        sandbox_filter,
     ]
 
     for filter in filters:

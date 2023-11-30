@@ -801,7 +801,7 @@ def test_skip_watching_ip_space_exhausted_error(
     assert number_of_http_calls() == 0
 
 
-def test_skip_sandbox_alerts_except_training():
+def test_skip_sandbox_alerts_except_training(run_slack_alerter, number_of_http_calls):
     # arrange
     example_log_entry = {
         "insertId": "65675a1e000906c02cfcdb54",

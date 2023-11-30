@@ -8,27 +8,29 @@ from lib.filters.sandbox_filter import sandbox_filter
 @pytest.fixture()
 def processed_log_entry() -> ProcessedLogEntry:
     return ProcessedLogEntry(
-        message="Foo",
+        message='Successfully collected profile HEAP.',
         data={
-            "resource": {
-                "type": "gae_app",
-                "labels": {
-                    "module_id": "dqs-ui",
-                    "zone": "europe-west2-1",
-                    "project_id": "ons-blaise-v2-dev-jw09",
-                    "version_id": "20231129t144628",
-                },
-            }
+            'logName': 'projects/ons-blaise-v2-dev-jw09/logs/%40google-cloud%2Fprofiler',
+            'resource': {
+                'type': 'gae_app',
+                'labels': {
+                    'version_id': '20231129t144628',
+                    'module_id': 'dqs-ui',
+                    'zone': 'europe-west2-1'
+                }
+            },
+            'timestamp': '2023-11-29T15:34:54.591Z'
         },
-        severity="ERROR",
-        platform="Bar",
-        application="Foobar",
-        log_name="barfoo",
-        timestamp=datetime.datetime(2023, 2, 25, 3, 46, 57, 99633),
+        severity='DEBUG',
+        platform='gae_app',
+        application='dqs-ui',
+        log_name='projects/ons-blaise-v2-dev-jw09/logs/stdout',
+        timestamp=datetime.datetime(2023, 11, 29, 15, 34, 54, 591),
         log_query={
-            "foo": "bar",
+            'resource.type': 'gae_app',
+            'resource.labels.module_id': 'dqs-ui'
         },
-    )
+        most_important_values=['status', 'host', 'method', 'resource', 'ip', 'latency', 'responseSize', 'httpVersion'])
 
 
 def test_log_is_skipped_for_sandbox_environment(
