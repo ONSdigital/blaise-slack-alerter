@@ -673,7 +673,6 @@ def test_create_footnote_returns_nisra_instructions_with_view_the_logs_line(
         "nisra-case-mover-trigger",
     ],
 )
-# nisra-case-mover
 def test_create_footnote_returns_nisra_instructions_without_view_the_logs_line(
     processed_log_entry, nisra_application
 ):
