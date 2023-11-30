@@ -44,7 +44,7 @@ def test_log_is_not_from_gce_instance_when_agent_connect_error(
     assert log_is_skipped is False
 
 
-def test_log_data_is_dict_and_has_description_when_agent_connect_errr(
+def test_log_data_is_dict_and_has_description_when_agent_connect_error(
     processed_log_entry_agent_connect_error: ProcessedLogEntry,
 ):
     log_is_skipped = agent_connect_filter(processed_log_entry_agent_connect_error)
