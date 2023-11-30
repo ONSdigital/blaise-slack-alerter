@@ -1,3 +1,4 @@
+import dataclasses
 from dataclasses import replace
 from datetime import datetime
 
@@ -31,21 +32,6 @@ def processed_log_entry(log_timestamp) -> ProcessedLogEntry:
         severity="ERROR",
         platform="cloud_functions",
         application="my-app",
-        log_name="/log/my-log",
-        timestamp=log_timestamp,
-        log_query={},
-        most_important_values=None,
-    )
-
-
-@pytest.fixture()
-def processed_data_delivery_log_entry(log_timestamp) -> ProcessedLogEntry:
-    return ProcessedLogEntry(
-        message="Example error",
-        data={"example_field": "example value"},
-        severity="ERROR",
-        platform="cloud_functions",
-        application="data-delivery",
         log_name="/log/my-log",
         timestamp=log_timestamp,
         log_query={},
@@ -493,7 +479,9 @@ def test_create_from_processed_log_with_content_over_10_lines_including_extra_co
     )
 
 
-def test_create_footnote_returns_default_instructions(processed_log_entry):
+def test_create_footnote_returns_default_instructions_with_view_the_logs_line(
+    processed_log_entry,
+):
     # arrange
     project_name = "foobar"
 
@@ -510,11 +498,45 @@ def test_create_footnote_returns_default_instructions(processed_log_entry):
     )
 
 
-def test_create_footnote_returns_data_delivery_instructions(
-    processed_data_delivery_log_entry,
+def test_create_footnote_returns_default_instructions_without_view_the_logs_line(
+    processed_log_entry,
 ):
     # arrange
     project_name = "foobar"
+    processed_log_entry_without_timestamp = dataclasses.replace(
+        processed_log_entry, timestamp=None
+    )
+
+    # act
+    result = _create_footnote(processed_log_entry_without_timestamp, project_name)
+
+    # assert
+    assert result == (
+        "*Next Steps*\n"
+        "1. Add some :eyes: to show you are investigating\n"
+        "2. <https://console.cloud.google.com/monitoring/uptime?referrer=search&project=foobar | Check the system is online>\n"
+        "3. Determine the cause of the error\n"
+        "4. Follow the <https://confluence.ons.gov.uk/pages/viewpage.action?pageId=98502389 | Managing Prod Alerts> process"
+    )
+
+
+@pytest.mark.parametrize(
+    "data_delivery_application",
+    [
+        "data-delivery",
+        "NiFiEncryptFunction",
+        "publishMsg",
+        "nifi-receipt",
+    ],
+)
+def test_create_footnote_returns_data_delivery_instructions_with_view_the_logs_line(
+    processed_log_entry, data_delivery_application
+):
+    # arrange
+    project_name = "foobar"
+    processed_data_delivery_log_entry = dataclasses.replace(
+        processed_log_entry, application=data_delivery_application
+    )
 
     # act
     result = _create_footnote(processed_data_delivery_log_entry, project_name)
@@ -525,5 +547,142 @@ def test_create_footnote_returns_data_delivery_instructions(
         "1. Add some :eyes: to show you are investigating\n"
         "2. <https://console.cloud.google.com/monitoring/uptime?referrer=search&project=foobar | Check the system is online>\n"
         "3. <https://console.cloud.google.com/logs/query;query=severity%3D%28WARNING%20OR%20ERROR%20OR%20CRITICAL%20OR%20ALERT%20OR%20EMERGENCY%20OR%20DEBUG%29;timeRange=2022-08-10T14:54:03.318939Z%2F2022-08-10T14:54:03.318939Z--PT1M?referrer=search&project=foobar | View the logs>\n"
-        "4. Follow the <https://confluence.ons.gov.uk/display/QSS/Troubleshooting+Playbook+-+Data+Delivery | Data Delivery Troubleshooting Playbook> process"
+        "4. <https://confluence.ons.gov.uk/display/QSS/Troubleshooting+Playbook+-+Data+Delivery | View the Data Delivery Troubleshooting Playbook>"
+    )
+
+
+@pytest.mark.parametrize(
+    "data_delivery_application",
+    [
+        "data-delivery",
+        "NiFiEncryptFunction",
+        "publishMsg",
+        "nifi-receipt",
+    ],
+)
+def test_create_footnote_returns_data_delivery_instructions_without_view_the_logs_line(
+    processed_log_entry, data_delivery_application
+):
+    # arrange
+    project_name = "foobar"
+    processed_data_delivery_log_entry = dataclasses.replace(
+        processed_log_entry, application=data_delivery_application, timestamp=None
+    )
+
+    # act
+    result = _create_footnote(processed_data_delivery_log_entry, project_name)
+
+    # assert
+    assert result == (
+        "*Next Steps*\n"
+        "1. Add some :eyes: to show you are investigating\n"
+        "2. <https://console.cloud.google.com/monitoring/uptime?referrer=search&project=foobar | Check the system is online>\n"
+        "3. Determine the cause of the error\n"
+        "4. <https://confluence.ons.gov.uk/display/QSS/Troubleshooting+Playbook+-+Data+Delivery | View the Data Delivery Troubleshooting Playbook>"
+    )
+
+
+@pytest.mark.parametrize(
+    "totalmobile_errors",
+    [
+        "Unable to delete job reference LMS6666-FO0.123456 from Totalmobile",
+        "Could not find questionnaire LMS6666-FO0 in Blaise",
+        "Could not find case 123456 for questionnaire LMS6666-FO0 in Blaise",
+        "ERROR: Exception on / [POST] for bts-create-totalmobile-jobs-processor",
+    ],
+)
+def test_create_footnote_returns_totalmobile_instructions_with_view_the_logs_line(
+    processed_log_entry, totalmobile_errors
+):
+    # arrange
+    project_name = "foobar"
+    processed_totalmobile_log_entry = dataclasses.replace(
+        processed_log_entry, message=totalmobile_errors
+    )
+
+    # act
+    result = _create_footnote(processed_totalmobile_log_entry, project_name)
+
+    # assert
+    assert result == (
+        "*Next Steps*\n"
+        "1. Add some :eyes: to show you are investigating\n"
+        "2. <https://console.cloud.google.com/monitoring/uptime?referrer=search&project=foobar | Check the system is online>\n"
+        "3. <https://console.cloud.google.com/logs/query;query=severity%3D%28WARNING%20OR%20ERROR%20OR%20CRITICAL%20OR%20ALERT%20OR%20EMERGENCY%20OR%20DEBUG%29;timeRange=2022-08-10T14:54:03.318939Z%2F2022-08-10T14:54:03.318939Z--PT1M?referrer=search&project=foobar | View the logs>\n"
+        "4. <https://confluence.ons.gov.uk/pages/viewpage.action?pageId=173124107 | View the BTS/Totalmobile Troubleshooting Playbook>"
+    )
+
+
+@pytest.mark.parametrize(
+    "totalmobile_errors",
+    [
+        "Unable to delete job reference LMS6666-FO0.123456 from Totalmobile",
+        "Could not find questionnaire LMS6666-FO0 in Blaise",
+        "Could not find case 123456 for questionnaire LMS6666-FO0 in Blaise",
+        "ERROR: Exception on / [POST] for bts-create-totalmobile-jobs-processor",
+    ],
+)
+def test_create_footnote_returns_totalmobile_instructions_without_view_the_logs_line(
+    processed_log_entry, totalmobile_errors
+):
+    # arrange
+    project_name = "foobar"
+    processed_totalmobile_log_entry = dataclasses.replace(
+        processed_log_entry, message=totalmobile_errors, timestamp=None
+    )
+
+    # act
+    result = _create_footnote(processed_totalmobile_log_entry, project_name)
+
+    # assert
+    assert result == (
+        "*Next Steps*\n"
+        "1. Add some :eyes: to show you are investigating\n"
+        "2. <https://console.cloud.google.com/monitoring/uptime?referrer=search&project=foobar | Check the system is online>\n"
+        "3. Determine the cause of the error\n"
+        "4. <https://confluence.ons.gov.uk/pages/viewpage.action?pageId=173124107 | View the BTS/Totalmobile Troubleshooting Playbook>"
+    )
+
+
+def test_create_footnote_returns_nisra_instructions_with_view_the_logs_line(
+    processed_log_entry,
+):
+    # arrange
+    project_name = "foobar"
+    processed_data_delivery_log_entry = dataclasses.replace(
+        processed_log_entry, application="nisra-case-mover-trigger"
+    )
+
+    # act
+    result = _create_footnote(processed_data_delivery_log_entry, project_name)
+
+    # assert
+    assert result == (
+        "*Next Steps*\n"
+        "1. Add some :eyes: to show you are investigating\n"
+        "2. <https://console.cloud.google.com/monitoring/uptime?referrer=search&project=foobar | Check the system is online>\n"
+        "3. <https://console.cloud.google.com/logs/query;query=severity%3D%28WARNING%20OR%20ERROR%20OR%20CRITICAL%20OR%20ALERT%20OR%20EMERGENCY%20OR%20DEBUG%29;timeRange=2022-08-10T14:54:03.318939Z%2F2022-08-10T14:54:03.318939Z--PT1M?referrer=search&project=foobar | View the logs>\n"
+        "4. <https://confluence.ons.gov.uk/display/QSS/Troubleshooting+Playbook+-+NISRA | View the NISRA Troubleshooting Playbook>"
+    )
+
+
+def test_create_footnote_returns_nisra_instructions_without_view_the_logs_line(
+    processed_log_entry,
+):
+    # arrange
+    project_name = "foobar"
+    processed_totalmobile_log_entry = dataclasses.replace(
+        processed_log_entry, application="nisra-case-mover-trigger", timestamp=None
+    )
+
+    # act
+    result = _create_footnote(processed_totalmobile_log_entry, project_name)
+
+    # assert
+    assert result == (
+        "*Next Steps*\n"
+        "1. Add some :eyes: to show you are investigating\n"
+        "2. <https://console.cloud.google.com/monitoring/uptime?referrer=search&project=foobar | Check the system is online>\n"
+        "3. Determine the cause of the error\n"
+        "4. <https://confluence.ons.gov.uk/display/QSS/Troubleshooting+Playbook+-+NISRA | View the NISRA Troubleshooting Playbook>"
     )

@@ -1,5 +1,4 @@
 from dateutil.parser import parse
-import pytz
 
 from lib.cloud_logging import LogEntry, PayloadType
 from lib.log_processor import ProcessedLogEntry
