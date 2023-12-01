@@ -168,7 +168,10 @@ def _is_totalmobile_alert(processed_log_entry: ProcessedLogEntry) -> bool:
 
 
 def _is_nisra_alert(processed_log_entry: ProcessedLogEntry) -> bool:
-    if processed_log_entry.application != "nisra-case-mover-trigger":
+    if processed_log_entry.application not in (
+        "nisra-case-mover",
+        "nisra-case-mover-trigger",
+    ):
         return False
     return True
 
