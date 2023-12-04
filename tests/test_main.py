@@ -438,7 +438,85 @@ def test_send_audit_log_slack_alert(
     )
 
 
-def test_skip_data_delivery_json_error(run_slack_alerter, number_of_http_calls):
+def test_send_erroneous_questionnaire_for_preprod_alerts(
+    run_slack_alerter, get_webhook_payload
+):
+    # arrange
+    example_log_entry = {
+        "insertId": "6538efc60003b62c3cbdd1b4",
+        "jsonPayload": {
+            "hostname": "localhost",
+            "message": "AUDIT_LOG: Failed to install questionnaire OPN2310_FO0",
+            "info": {},
+            "time": 1698230214243,
+            "req": {"url": "/api/install", "method": "POST"},
+            "pid": 11,
+            "level": 50,
+        },
+        "resource": {
+            "type": "gae_app",
+            "labels": {
+                "version_id": "20231012t154121",
+                "zone": "europe-west2-2",
+                "project_id": "ons-blaise-v2-preprod",
+                "module_id": "dqs-ui",
+            },
+        },
+        "timestamp": "2023-10-25T10:36:54.243244Z",
+        "severity": "ERROR",
+        "labels": {
+            "clone_id": "0037d6d5d3b46943e8ac10f4dbc904507f2621188b0db8eafc6bf828e40168d6d488d2d11a8c8307b7823978eda05e745c2762d66dba9c7642106aca409cfae42aa6b8"
+        },
+        "logName": "projects/ons-blaise-v2-preprod/logs/stdout",
+        "receiveTimestamp": "2023-10-25T10:36:54.419325796Z",
+    }
+    event = create_event(example_log_entry)
+    expected_log_query_link = create_log_query_link(
+        {"resource.type": "gae_app", "resource.labels.module_id": "dqs-ui"},
+        ["WARNING", "ERROR", "CRITICAL", "ALERT", "EMERGENCY", "DEBUG"],
+        parse("2023-10-25T10:36:54.419325Z"),
+        "project-dev",
+    )
+
+    # act
+    response = run_slack_alerter(event)
+
+    # assert
+    assert response == "Alert sent"
+    assert get_webhook_payload() == convert_slack_message_to_blocks(
+        SlackMessage(
+            title=":alert: ERROR: AUDIT_LOG: Failed to install questionnaire OPN2310_FO0",
+            fields={
+                "Platform": "gae_app",
+                "Application": "dqs-ui",
+                "Log Time": "2023-10-25 11:36:54",
+                "Project": "project-dev",
+            },
+            content=(
+                "{\n  "
+                '"hostname": "localhost",\n  '
+                '"info": {},\n  '
+                '"time": 1698230214243,\n  '
+                '"req": {\n'
+                '    "url": "/api/install",\n'
+                '    "method": "POST"\n'
+                "  },\n"
+                "...\n"
+                "[truncated]"
+            ),
+            footnote=(
+                "*Next Steps*\n"
+                "1. Add some :eyes: to show you are investigating\n"
+                "2. <https://console.cloud.google.com/monitoring/uptime?referrer=search&project=project-dev | Check the system is online>\n"
+                f"3. <{expected_log_query_link} | View the logs>\n"
+                "4. Follow the <https://confluence.ons.gov.uk/pages/viewpage.action?pageId=98502389 | Managing Prod Alerts> process"
+            ),
+        )
+    )
+
+
+def test_skip_data_delivery_json_error(run_slack_alerter, number_of_http_calls, caplog):
+    # arrange
     example_log_entry = {
         "insertId": "yhmlfg26ror8hccek",
         "jsonPayload": {
@@ -474,13 +552,22 @@ def test_skip_data_delivery_json_error(run_slack_alerter, number_of_http_calls):
     }
     event = create_event(example_log_entry)
 
-    response = run_slack_alerter(event)
+    # act
+    with caplog.at_level(logging.INFO):
+        response = run_slack_alerter(event)
 
+    # assert
     assert response == "Alert skipped"
     assert number_of_http_calls() == 0
+    assert (
+        "root",
+        logging.INFO,
+        "Skipping os config agent alert",
+    ) in caplog.record_tuples
 
 
-def test_skip_audit_logs_error(run_slack_alerter, number_of_http_calls):
+def test_skip_audit_logs_error(run_slack_alerter, number_of_http_calls, caplog):
+    # arrange
     example_log_entry = {
         "protoPayload": {
             "@type": "type.googleapis.com/google.cloud.audit.AuditLog",
@@ -527,21 +614,25 @@ def test_skip_audit_logs_error(run_slack_alerter, number_of_http_calls):
     }
     event = create_event(example_log_entry)
 
-    response = run_slack_alerter(event)
+    # act
+    with caplog.at_level(logging.INFO):
+        response = run_slack_alerter(event)
 
+    # assert
     assert response == "Alert skipped"
     assert number_of_http_calls() == 0
+    assert ("root", logging.INFO, "Skipping audit log alert") in caplog.record_tuples
 
 
 def test_skip_osconfig_agent_unexpected_end_of_json_input_error(
-    run_slack_alerter, number_of_http_calls
+    run_slack_alerter, number_of_http_calls, caplog
 ):
-    null = None
+    # arrange
     example_log_entry = {
         "insertId": "ak4u0bf38r70c",
         "jsonPayload": {
             "localTimestamp": "2023-05-18T13:22:14.1873+01:00",
-            "omitempty": null,
+            "omitempty": None,
             "message": "unexpected end of JSON input",
         },
         "resource": {
@@ -568,13 +659,22 @@ def test_skip_osconfig_agent_unexpected_end_of_json_input_error(
     }
     event = create_event(example_log_entry)
 
-    response = run_slack_alerter(event)
+    # act
+    with caplog.at_level(logging.INFO):
+        response = run_slack_alerter(event)
 
+    # assert
     assert response == "Alert skipped"
     assert number_of_http_calls() == 0
+    assert (
+        "root",
+        logging.INFO,
+        "Skipping os config agent alert",
+    ) in caplog.record_tuples
 
 
-def test_skip_agent_connect_error(run_slack_alerter, number_of_http_calls):
+def test_skip_agent_connect_error(run_slack_alerter, number_of_http_calls, caplog):
+    # arrange
     example_log_entry = {
         "insertId": "qysctppk7v9cttt1g",
         "jsonPayload": {
@@ -610,22 +710,30 @@ def test_skip_agent_connect_error(run_slack_alerter, number_of_http_calls):
     }
     event = create_event(example_log_entry)
 
-    response = run_slack_alerter(event)
+    # act
+    with caplog.at_level(logging.INFO):
+        response = run_slack_alerter(event)
 
+    # assert
     assert response == "Alert skipped"
     assert number_of_http_calls() == 0
+    assert (
+        "root",
+        logging.INFO,
+        "Skipping agent connect alert",
+    ) in caplog.record_tuples
 
 
 def test_skip_rproxy_lookupEffectiveGuestPolicies_error(
-    run_slack_alerter, number_of_http_calls
+    run_slack_alerter, number_of_http_calls, caplog
 ):
-    null = None
+    # arrange
     example_log_entry = {
         "insertId": "i1tjpyftm0qks",
         "jsonPayload": {
             "message": 'Error running LookupEffectiveGuestPolicies: error calling LookupEffectiveGuestPolicies: code: "NotFound", message: "Requested entity was not found.", details: []',
             "localTimestamp": "2023-09-28T08:45:35.1241Z",
-            "omitempty": null,
+            "omitempty": None,
         },
         "resource": {
             "type": "gce_instance",
@@ -646,22 +754,30 @@ def test_skip_rproxy_lookupEffectiveGuestPolicies_error(
     }
     event = create_event(example_log_entry)
 
-    response = run_slack_alerter(event)
+    # act
+    with caplog.at_level(logging.INFO):
+        response = run_slack_alerter(event)
 
+    # assert
     assert response == "Alert skipped"
     assert number_of_http_calls() == 0
+    assert (
+        "root",
+        logging.INFO,
+        "Skipping rproxy lookupEffectiveGuestPolicies alert",
+    ) in caplog.record_tuples
 
 
 def test_skip_watching_metadata_invalid_character_error(
-    run_slack_alerter, number_of_http_calls
+    run_slack_alerter, number_of_http_calls, caplog
 ):
-    null = None
+    # arrange
     example_log_entry = {
         "insertId": "19s550gfh2251m",
         "jsonPayload": {
             "localTimestamp": "2023-09-18T15:12:28.8451+01:00",
             "message": "Error watching metadata: invalid character '<' looking for beginning of value",
-            "omitempty": null,
+            "omitempty": None,
         },
         "resource": {
             "type": "gce_instance",
@@ -684,16 +800,24 @@ def test_skip_watching_metadata_invalid_character_error(
     }
     event = create_event(example_log_entry)
 
-    response = run_slack_alerter(event)
+    # act
+    with caplog.at_level(logging.INFO):
+        response = run_slack_alerter(event)
 
+    # assert
     assert response == "Alert skipped"
     assert number_of_http_calls() == 0
+    assert (
+        "root",
+        logging.INFO,
+        "Skipping watching metadata invalid character alert",
+    ) in caplog.record_tuples
 
 
 def test_skip_watching_metadata_invalid_character_second_version_error(
-    run_slack_alerter, number_of_http_calls
+    run_slack_alerter, number_of_http_calls, caplog
 ):
-    null = None
+    # arrange
     example_log_entry = {
         "insertId": "hohgijl11degyrvc0",
         "jsonPayload": {
@@ -729,15 +853,24 @@ def test_skip_watching_metadata_invalid_character_second_version_error(
     }
     event = create_event(example_log_entry)
 
-    response = run_slack_alerter(event)
+    # act
+    with caplog.at_level(logging.INFO):
+        response = run_slack_alerter(event)
 
+    # assert
     assert response == "Alert skipped"
     assert number_of_http_calls() == 0
+    assert (
+        "root",
+        logging.INFO,
+        "Skipping watching metadata invalid character alert",
+    ) in caplog.record_tuples
 
 
 def test_skip_watching_ip_space_exhausted_error(
-    run_slack_alerter, number_of_http_calls
+    run_slack_alerter, number_of_http_calls, caplog
 ):
+    # arrange
     example_log_entry = {
         "protoPayload": {
             "@type": "type.googleapis.com/google.cloud.audit.AuditLog",
@@ -795,14 +928,22 @@ def test_skip_watching_ip_space_exhausted_error(
     }
     event = create_event(example_log_entry)
 
-    response = run_slack_alerter(event)
+    # act
+    with caplog.at_level(logging.INFO):
+        response = run_slack_alerter(event)
 
+    # assert
     assert response == "Alert skipped"
     assert number_of_http_calls() == 0
+    assert (
+        "root",
+        logging.INFO,
+        "Skipping ip space exhausted alert",
+    ) in caplog.record_tuples
 
 
 def test_skip_sandbox_alerts_skips_alerts_for_sandboxes(
-    run_slack_alerter, number_of_http_calls
+    run_slack_alerter, number_of_http_calls, caplog
 ):
     # arrange
     example_log_entry = {
@@ -840,21 +981,23 @@ def test_skip_sandbox_alerts_skips_alerts_for_sandboxes(
     event = create_event(example_log_entry)
 
     # act
-    response = run_slack_alerter(event)
+    with caplog.at_level(logging.INFO):
+        response = run_slack_alerter(event)
 
     # assert
     assert response == "Alert skipped"
     assert number_of_http_calls() == 0
+    assert ("root", logging.INFO, "Skipping sandbox alert") in caplog.record_tuples
 
 
 def test_skip_sandbox_alerts_does_not_skip_alerts_for_formal_environments(
-    run_slack_alerter, number_of_http_calls
+    run_slack_alerter, number_of_http_calls, caplog
 ):
     # arrange
     example_log_entry = {
         "insertId": "65675a1e000906c02cfcdb54",
         "jsonPayload": {
-            "logName": "projects/ons-blaise-v2-dev/logs/%40google-cloud%2Fprofiler",
+            "logName": "projects/ons-blaise-v2-prod/logs/%40google-cloud%2Fprofiler",
             "message": "Successfully collected profile HEAP.",
             "resource": {
                 "type": "gae_app",
@@ -871,7 +1014,7 @@ def test_skip_sandbox_alerts_does_not_skip_alerts_for_formal_environments(
             "labels": {
                 "module_id": "dqs-ui",
                 "zone": "europe-west2-1",
-                "project_id": "ons-blaise-v2-dev",
+                "project_id": "ons-blaise-v2-prod",
                 "version_id": "20231129t144628",
             },
         },
@@ -880,14 +1023,91 @@ def test_skip_sandbox_alerts_does_not_skip_alerts_for_formal_environments(
         "labels": {
             "clone_id": "0087599d4250c01bc120294e520c07b780b217e53173b5358cac87748d40d22082f17f1f7fa68823b4a41fe1f57308d3702a9095b6b347e32e672d8952a88afb65"
         },
-        "logName": "projects/ons-blaise-v2-dev/logs/stdout",
+        "logName": "projects/ons-blaise-v2-prod/logs/stdout",
         "receiveTimestamp": "2023-11-29T15:34:54.921342975Z",
     }
     event = create_event(example_log_entry)
 
     # act
-    response = run_slack_alerter(event)
+    with caplog.at_level(logging.INFO):
+        response = run_slack_alerter(event)
 
     # assert
     assert response != "Alert skipped"
     assert number_of_http_calls() == 1
+    assert ("root", logging.INFO, "Skipping sandbox alert") not in caplog.record_tuples
+
+
+def test_skip_all_preprod_and_training_alerts_except_erroneous_questionnaire(
+    run_slack_alerter, number_of_http_calls, caplog
+):
+    # arrange
+    example_log_entry = {
+        "protoPayload": {
+            "@type": "type.googleapis.com/google.cloud.audit.AuditLog",
+            "status": {
+                "code": 8,
+                "message": "IP_SPACE_EXHAUSTED",
+                "details": [
+                    {
+                        "@type": "type.googleapis.com/google.protobuf.Struct",
+                        "value": {
+                            "ipSpaceExhausted": {
+                                "networkOrSubnetworkResource": {
+                                    "resourceType": "SUBNETWORK",
+                                    "resourceName": "aet-europewest2-vpcconnect-sbnt",
+                                    "project": {"canonicalProjectId": "628324858917"},
+                                    "scope": {
+                                        "scopeType": "REGION",
+                                        "scopeName": "europe-west2",
+                                    },
+                                }
+                            }
+                        },
+                    }
+                ],
+            },
+            "authenticationInfo": {
+                "principalEmail": "628324858917@cloudservices.gserviceaccount.com"
+            },
+            "requestMetadata": {
+                "callerSuppliedUserAgent": "GCE Managed Instance Group for Tesseract"
+            },
+            "serviceName": "compute.googleapis.com",
+            "methodName": "v1.compute.instances.insert",
+            "resourceName": "projects/628324858917/zones/europe-west2-b/instances/aet-europewest2-vpcconnect-2t8s",
+            "request": {"@type": "type.googleapis.com/compute.instances.insert"},
+        },
+        "insertId": "-mqmnq7c67w",
+        "resource": {
+            "type": "gce_instance",
+            "labels": {
+                "zone": "europe-west2-b",
+                "instance_id": "8585884535477906154",
+                "project_id": "ons-blaise-v2-preprod",
+            },
+        },
+        "timestamp": "2023-09-14T23:15:40.216920Z",
+        "severity": "ERROR",
+        "logName": "projects/ons-blaise-v2-preprod/logs/cloudaudit.googleapis.com%2Factivity",
+        "operation": {
+            "id": "operation-1694733317846-60559d9663528-e8055062-e3b64477",
+            "producer": "compute.googleapis.com",
+            "last": True,
+        },
+        "receiveTimestamp": "2023-09-14T23:15:41.197750677Z",
+    }
+    event = create_event(example_log_entry)
+
+    # act
+    with caplog.at_level(logging.INFO):
+        response = run_slack_alerter(event)
+
+    # assert
+    assert response == "Alert skipped"
+    assert number_of_http_calls() == 0
+    assert (
+        "root",
+        logging.INFO,
+        "Skipping preprod/training alert",
+    ) in caplog.record_tuples

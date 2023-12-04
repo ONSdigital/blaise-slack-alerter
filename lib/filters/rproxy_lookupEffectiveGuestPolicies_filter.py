@@ -1,3 +1,5 @@
+import logging
+
 from lib.log_processor import ProcessedLogEntry
 
 
@@ -23,4 +25,5 @@ def rproxy_lookupEffectiveGuestPolicies_filter(log_entry: ProcessedLogEntry):
     ):
         return False
 
+    logging.info(f"Skipping rproxy lookupEffectiveGuestPolicies alert")
     return True
