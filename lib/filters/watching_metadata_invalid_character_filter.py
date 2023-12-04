@@ -1,3 +1,5 @@
+import logging
+
 from lib.log_processor import ProcessedLogEntry
 
 
@@ -28,4 +30,5 @@ def watching_metadata_invalid_character_filter(log_entry: ProcessedLogEntry):
         ):
             return False
 
+    logging.info(f"Skipping watching metadata invalid character alert")
     return True

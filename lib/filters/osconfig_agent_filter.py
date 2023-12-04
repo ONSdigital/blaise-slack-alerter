@@ -1,3 +1,5 @@
+import logging
+
 from lib.log_processor import ProcessedLogEntry
 
 
@@ -23,4 +25,5 @@ def osconfig_agent_filter(log_entry: ProcessedLogEntry) -> bool:
     ):
         return False
 
+    logging.info(f"Skipping os config agent alert")
     return True
