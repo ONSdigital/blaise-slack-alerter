@@ -852,36 +852,32 @@ def test_skip_sandbox_alerts_does_not_skip_alerts_for_formal_environments(
 ):
     # arrange
     example_log_entry = {
-        "insertId": "65675a1e000906c02cfcdb54",
+        "insertId": "6538efc60003b62c3cbdd1b4",
         "jsonPayload": {
-            "logName": "projects/ons-blaise-v2-dev/logs/%40google-cloud%2Fprofiler",
-            "message": "Successfully collected profile HEAP.",
-            "resource": {
-                "type": "gae_app",
-                "labels": {
-                    "version_id": "20231129t144628",
-                    "module_id": "dqs-ui",
-                    "zone": "europe-west2-1",
-                },
-            },
-            "timestamp": "2023-11-29T15:34:54.591Z",
+            "hostname": "localhost",
+            "message": "AUDIT_LOG: Failed to install questionnaire OPN2310_FO0",
+            "info": {},
+            "time": 1698230214243,
+            "req": {"url": "/api/install", "method": "POST"},
+            "pid": 11,
+            "level": 50,
         },
         "resource": {
             "type": "gae_app",
             "labels": {
+                "version_id": "20231012t154121",
+                "zone": "europe-west2-2",
+                "project_id": "ons-blaise-v2-preprod",
                 "module_id": "dqs-ui",
-                "zone": "europe-west2-1",
-                "project_id": "ons-blaise-v2-dev",
-                "version_id": "20231129t144628",
             },
         },
-        "timestamp": "2023-11-29T15:34:54.591552Z",
-        "severity": "DEBUG",
+        "timestamp": "2023-10-25T10:36:54.243244Z",
+        "severity": "ERROR",
         "labels": {
-            "clone_id": "0087599d4250c01bc120294e520c07b780b217e53173b5358cac87748d40d22082f17f1f7fa68823b4a41fe1f57308d3702a9095b6b347e32e672d8952a88afb65"
+            "clone_id": "0037d6d5d3b46943e8ac10f4dbc904507f2621188b0db8eafc6bf828e40168d6d488d2d11a8c8307b7823978eda05e745c2762d66dba9c7642106aca409cfae42aa6b8"
         },
-        "logName": "projects/ons-blaise-v2-dev/logs/stdout",
-        "receiveTimestamp": "2023-11-29T15:34:54.921342975Z",
+        "logName": "projects/ons-blaise-v2-preprod/logs/stdout",
+        "receiveTimestamp": "2023-10-25T10:36:54.419325796Z",
     }
     event = create_event(example_log_entry)
 
@@ -891,3 +887,127 @@ def test_skip_sandbox_alerts_does_not_skip_alerts_for_formal_environments(
     # assert
     assert response != "Alert skipped"
     assert number_of_http_calls() == 1
+
+
+def test_send_erroneous_questionnaire_for_preprod_alerts(
+    run_slack_alerter, get_webhook_payload
+):
+    # arrange
+    example_log_entry = {
+        "insertId": "6538efc60003b62c3cbdd1b4",
+        "jsonPayload": {
+            "hostname": "localhost",
+            "message": "AUDIT_LOG: Failed to install questionnaire OPN2310_FO0",
+            "info": {},
+            "time": 1698230214243,
+            "req": {"url": "/api/install", "method": "POST"},
+            "pid": 11,
+            "level": 50,
+        },
+        "resource": {
+            "type": "gae_app",
+            "labels": {
+                "version_id": "20231012t154121",
+                "zone": "europe-west2-2",
+                "project_id": "ons-blaise-v2-preprod",
+                "module_id": "dqs-ui",
+            },
+        },
+        "timestamp": "2023-10-25T10:36:54.243244Z",
+        "severity": "ERROR",
+        "labels": {
+            "clone_id": "0037d6d5d3b46943e8ac10f4dbc904507f2621188b0db8eafc6bf828e40168d6d488d2d11a8c8307b7823978eda05e745c2762d66dba9c7642106aca409cfae42aa6b8"
+        },
+        "logName": "projects/ons-blaise-v2-preprod/logs/stdout",
+        "receiveTimestamp": "2023-10-25T10:36:54.419325796Z",
+    }
+    event = create_event(example_log_entry)
+    expected_log_query_link = create_log_query_link(
+        {"resource.type": "gae_app", "resource.labels.module_id": "dqs-ui"},
+        ["WARNING", "ERROR", "CRITICAL", "ALERT", "EMERGENCY", "DEBUG"],
+        parse("2023-10-25T10:36:54.419325Z"),
+        "project-dev",
+    )
+
+    # act
+    response = run_slack_alerter(event)
+
+    # assert
+    assert response == "Alert sent"
+    assert get_webhook_payload() == convert_slack_message_to_blocks(
+        SlackMessage(
+            title=":alert: ERROR: AUDIT_LOG: Failed to install questionnaire OPN2310_FO0",
+            fields={
+                "Platform": "gae_app",
+                "Application": "dqs-ui",
+                "Log Time": "2023-10-25 11:36:54",
+                "Project": "project-dev",
+            },
+            content=(
+                "{\n  "
+                '"hostname": "localhost",\n  '
+                '"info": {},\n  '
+                '"time": 1698230214243,\n  '
+                '"req": {\n'
+                '    "url": "/api/install",\n'
+                '    "method": "POST"\n'
+                "  },\n"
+                "...\n"
+                "[truncated]"
+            ),
+            footnote=(
+                "*Next Steps*\n"
+                "1. Add some :eyes: to show you are investigating\n"
+                "2. <https://console.cloud.google.com/monitoring/uptime?referrer=search&project=project-dev | Check the system is online>\n"
+                f"3. <{expected_log_query_link} | View the logs>\n"
+                "4. Follow the <https://confluence.ons.gov.uk/pages/viewpage.action?pageId=98502389 | Managing Prod Alerts> process"
+            ),
+        )
+    )
+
+
+# TODO
+# def test_skip_all_preprod_alerts_except_erroneous_questionnaire(
+#         run_slack_alerter, number_of_http_calls
+# ):
+#     # arrange
+#     example_log_entry = {
+#         "insertId": "65675a1e000906c02cfcdb54",
+#         "jsonPayload": {
+#             "logName": "projects/ons-blaise-v2-dev/logs/%40google-cloud%2Fprofiler",
+#             "message": "Successfully collected profile HEAP.",
+#             "resource": {
+#                 "type": "gae_app",
+#                 "labels": {
+#                     "version_id": "20231129t144628",
+#                     "module_id": "dqs-ui",
+#                     "zone": "europe-west2-1",
+#                 },
+#             },
+#             "timestamp": "2023-11-29T15:34:54.591Z",
+#         },
+#         "resource": {
+#             "type": "gae_app",
+#             "labels": {
+#                 "module_id": "dqs-ui",
+#                 "zone": "europe-west2-1",
+#                 "project_id": "ons-blaise-v2-dev",
+#                 "version_id": "20231129t144628",
+#             },
+#         },
+#         "timestamp": "2023-11-29T15:34:54.591552Z",
+#         "severity": "DEBUG",
+#         "labels": {
+#             "clone_id": "0087599d4250c01bc120294e520c07b780b217e53173b5358cac87748d40d22082f17f1f7fa68823b4a41fe1f57308d3702a9095b6b347e32e672d8952a88afb65"
+#         },
+#         "logName": "projects/ons-blaise-v2-dev/logs/stdout",
+#         "receiveTimestamp": "2023-11-29T15:34:54.921342975Z",
+#     }
+#     event = create_event(example_log_entry)
+#
+#     # act
+#     response = run_slack_alerter(event)
+#
+#     # assert
+#     assert response != "Alert skipped"
+#     assert number_of_http_calls() == 1
