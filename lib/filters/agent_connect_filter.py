@@ -1,3 +1,5 @@
+import logging
+
 from lib.log_processor import ProcessedLogEntry
 
 
@@ -16,4 +18,5 @@ def agent_connect_filter(log_entry: ProcessedLogEntry) -> bool:
     ):
         return False
 
+    logging.info(f"Skipping agent connect alert")
     return True
