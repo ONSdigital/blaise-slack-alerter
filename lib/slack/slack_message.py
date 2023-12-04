@@ -164,6 +164,13 @@ def _is_totalmobile_alert(processed_log_entry: ProcessedLogEntry) -> bool:
 
     if any(match in processed_log_entry.message for match in totalmobile_errors):
         return True
+
+    try:
+        if "bts" in processed_log_entry.log_query["jobName"]:
+            return True
+    except KeyError:
+        return False
+
     return False
 
 
