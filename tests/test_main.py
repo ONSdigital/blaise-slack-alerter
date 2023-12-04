@@ -438,457 +438,6 @@ def test_send_audit_log_slack_alert(
     )
 
 
-def test_skip_data_delivery_json_error(run_slack_alerter, number_of_http_calls):
-    example_log_entry = {
-        "insertId": "yhmlfg26ror8hccek",
-        "jsonPayload": {
-            "event_type": "error",
-            "event_category": "0",
-            "source_name": "OSConfigAgent",
-            "record_number": "1880074",
-            "user": "",
-            "channel": "application",
-            "description": "2023-02-25T03:46:49.1619Z OSConfigAgent Error main.go:231: unexpected end of JSON input\r\n",
-            "time_generated": "2023-02-25 03:46:49 +0000",
-            "computer_name": "blaise-gusty-data-entry-1",
-            "time_written": "2023-02-25 03:46:49 +0000",
-            "event_id": "882",
-            "string_inserts": [
-                "2023-02-25T03:46:49.1619Z OSConfigAgent Error main.go:231: unexpected end of JSON input"
-            ],
-            "message": "2023-02-25T03:46:49.1619Z OSConfigAgent Error main.go:231: unexpected end of JSON input\r\n",
-        },
-        "resource": {
-            "type": "gce_instance",
-            "labels": {
-                "instance_id": "458491889528639951",
-                "project_id": "ons-blaise-v2-prod",
-                "zone": "europe-west2-a",
-            },
-        },
-        "timestamp": "2023-02-25T03:46:49Z",
-        "severity": "ERROR",
-        "labels": {"compute.googleapis.com/resource_name": "blaise-gusty-data-entry-1"},
-        "logName": "projects/ons-blaise-v2-prod/logs/winevt.raw",
-        "receiveTimestamp": "2023-02-25T03:46:57.099633534Z",
-    }
-    event = create_event(example_log_entry)
-
-    response = run_slack_alerter(event)
-
-    assert response == "Alert skipped"
-    assert number_of_http_calls() == 0
-
-
-def test_skip_audit_logs_error(run_slack_alerter, number_of_http_calls):
-    example_log_entry = {
-        "protoPayload": {
-            "@type": "type.googleapis.com/google.cloud.audit.AuditLog",
-            "status": {"code": 7},
-            "authenticationInfo": {
-                "principalEmail": "pipeline-bucket-reader@ons-blaise-v2-shared.iam.gserviceaccount.com",
-                "serviceAccountKeyName": "//iam.googleapis.com/projects/ons-blaise-v2-shared/serviceAccounts/pipeline-bucket-reader@ons-blaise-v2-shared.iam.gserviceaccount.com/keys/221e50eb36c76f17c5f6883a5a0bb29c1535ba8a",
-            },
-            "requestMetadata": {
-                "callerIp": "10.6.0.52",
-                "callerSuppliedUserAgent": "apitools Python/3.7.9 gsutil/5.3 (win32) analytics/enabled interactive/False command/cp google-cloud-sdk/360.0.0,gzip(gfe)",
-                "callerNetwork": "//compute.googleapis.com/projects/ons-blaise-v2-prod/global/networks/__unknown__",
-                "requestAttributes": {
-                    "time": "2023-04-14T00:42:09.609760345Z",
-                    "auth": {},
-                },
-                "destinationAttributes": {},
-            },
-            "serviceName": "storage.googleapis.com",
-            "methodName": "storage.objects.list",
-            "authorizationInfo": [
-                {
-                    "resource": "projects/_/buckets/ons-blaise-v2-prod-winvm-data",
-                    "permission": "storage.objects.list",
-                    "resourceAttributes": {},
-                }
-            ],
-            "resourceName": "projects/_/buckets/ons-blaise-v2-prod-winvm-data",
-            "resourceLocation": {"currentLocations": ["europe-west2"]},
-        },
-        "insertId": "pt5jaee3fznz",
-        "resource": {
-            "type": "gcs_bucket",
-            "labels": {
-                "location": "europe-west2",
-                "bucket_name": "ons-blaise-v2-prod-winvm-data",
-                "project_id": "ons-blaise-v2-prod",
-            },
-        },
-        "timestamp": "2023-04-14T00:42:09.598152915Z",
-        "severity": "ERROR",
-        "logName": "projects/ons-blaise-v2-prod/logs/cloudaudit.googleapis.com%2Fdata_access",
-        "receiveTimestamp": "2023-04-14T00:42:11.064730027Z",
-    }
-    event = create_event(example_log_entry)
-
-    response = run_slack_alerter(event)
-
-    assert response == "Alert skipped"
-    assert number_of_http_calls() == 0
-
-
-def test_skip_osconfig_agent_unexpected_end_of_json_input_error(
-    run_slack_alerter, number_of_http_calls
-):
-    null = None
-    example_log_entry = {
-        "insertId": "ak4u0bf38r70c",
-        "jsonPayload": {
-            "localTimestamp": "2023-05-18T13:22:14.1873+01:00",
-            "omitempty": null,
-            "message": "unexpected end of JSON input",
-        },
-        "resource": {
-            "type": "gce_instance",
-            "labels": {
-                "zone": "europe-west2-a",
-                "instance_id": "2340080223918060770",
-                "project_id": "ons-blaise-v2-prod",
-            },
-        },
-        "timestamp": "2023-05-18T12:22:14.230839200Z",
-        "severity": "ERROR",
-        "labels": {
-            "instance_name": "restapi-3",
-            "agent_version": "20230330.00.0+win@1",
-        },
-        "logName": "projects/ons-blaise-v2-prod/logs/OSConfigAgent",
-        "sourceLocation": {
-            "file": "main.go",
-            "line": "231",
-            "function": "main.runTaskLoop",
-        },
-        "receiveTimestamp": "2023-05-18T12:22:16.434926842Z",
-    }
-    event = create_event(example_log_entry)
-
-    response = run_slack_alerter(event)
-
-    assert response == "Alert skipped"
-    assert number_of_http_calls() == 0
-
-
-def test_skip_agent_connect_error(run_slack_alerter, number_of_http_calls):
-    example_log_entry = {
-        "insertId": "qysctppk7v9cttt1g",
-        "jsonPayload": {
-            "event_id": "100",
-            "event_category": "0",
-            "time_generated": "2023-06-06 15:36:14 +0100",
-            "user": "",
-            "time_written": "2023-06-06 15:36:14 +0100",
-            "message": "2023-06-06 14:36:14Z: Agent connect error: The HTTP request timed out after 00:01:00.. Retrying until reconnected.\r\n",
-            "channel": "application",
-            "computer_name": "data-delivery",
-            "event_type": "error",
-            "string_inserts": [
-                "2023-06-06 14:36:14Z: Agent connect error: The HTTP request timed out after 00:01:00.. Retrying until reconnected."
-            ],
-            "description": "2023-06-06 14:36:14Z: Agent connect error: The HTTP request timed out after 00:01:00.. Retrying until reconnected.\r\n",
-            "record_number": "1807900",
-            "source_name": "VstsAgentService",
-        },
-        "resource": {
-            "type": "gce_instance",
-            "labels": {
-                "instance_id": "9047556346870592737",
-                "project_id": "ons-blaise-v2-prod",
-                "zone": "europe-west2-a",
-            },
-        },
-        "timestamp": "2023-06-06T14:36:14Z",
-        "severity": "ERROR",
-        "labels": {"compute.googleapis.com/resource_name": "data-delivery"},
-        "logName": "projects/ons-blaise-v2-prod/logs/winevt.raw",
-        "receiveTimestamp": "2023-06-06T14:36:21.643430478Z",
-    }
-    event = create_event(example_log_entry)
-
-    response = run_slack_alerter(event)
-
-    assert response == "Alert skipped"
-    assert number_of_http_calls() == 0
-
-
-def test_skip_rproxy_lookupEffectiveGuestPolicies_error(
-    run_slack_alerter, number_of_http_calls
-):
-    null = None
-    example_log_entry = {
-        "insertId": "i1tjpyftm0qks",
-        "jsonPayload": {
-            "message": 'Error running LookupEffectiveGuestPolicies: error calling LookupEffectiveGuestPolicies: code: "NotFound", message: "Requested entity was not found.", details: []',
-            "localTimestamp": "2023-09-28T08:45:35.1241Z",
-            "omitempty": null,
-        },
-        "resource": {
-            "type": "gce_instance",
-            "labels": {
-                "zone": "europe-west2-a",
-            },
-        },
-        "timestamp": "2023-09-28T08:45:35.136331729Z",
-        "severity": "ERROR",
-        "labels": {"instance_name": "rproxy-b0bd8e4b", "agent_version": "20230403.00"},
-        "logName": "projects/ons-blaise-v2-prod/logs/OSConfigAgent",
-        "sourceLocation": {
-            "file": "policies.go",
-            "line": "49",
-            "function": "github.com/GoogleCloudPlatform/osconfig/policies.run",
-        },
-        "receiveTimestamp": "2023-09-28T08:45:36.225541583Z",
-    }
-    event = create_event(example_log_entry)
-
-    response = run_slack_alerter(event)
-
-    assert response == "Alert skipped"
-    assert number_of_http_calls() == 0
-
-
-def test_skip_watching_metadata_invalid_character_error(
-    run_slack_alerter, number_of_http_calls
-):
-    null = None
-    example_log_entry = {
-        "insertId": "19s550gfh2251m",
-        "jsonPayload": {
-            "localTimestamp": "2023-09-18T15:12:28.8451+01:00",
-            "message": "Error watching metadata: invalid character '<' looking for beginning of value",
-            "omitempty": null,
-        },
-        "resource": {
-            "type": "gce_instance",
-            "labels": {
-                "project_id": "ons-blaise-v2-prod",
-                "instance_id": "5203162520768539890",
-                "zone": "europe-west2-a",
-            },
-        },
-        "timestamp": "2023-09-18T14:12:28.853979600Z",
-        "severity": "ERROR",
-        "labels": {"instance_name": "blaise-gusty-data-entry-4"},
-        "logName": "projects/ons-blaise-v2-prod/logs/GCEGuestAgent",
-        "sourceLocation": {
-            "file": "metadata.go",
-            "line": "74",
-            "function": "github.com/GoogleCloudPlatform/guest-agent/google_guest_agent/events/metadata.(*Watcher).Run",
-        },
-        "receiveTimestamp": "2023-09-18T14:12:29.912569518Z",
-    }
-    event = create_event(example_log_entry)
-
-    response = run_slack_alerter(event)
-
-    assert response == "Alert skipped"
-    assert number_of_http_calls() == 0
-
-
-def test_skip_watching_metadata_invalid_character_second_version_error(
-    run_slack_alerter, number_of_http_calls
-):
-    null = None
-    example_log_entry = {
-        "insertId": "hohgijl11degyrvc0",
-        "jsonPayload": {
-            "user": "",
-            "event_id": "882",
-            "message": "2023/10/10 23:06:39 GCEGuestAgent: Error watching metadata: invalid character '<' looking for beginning of value\r\n",
-            "time_written": "2023-10-10 23:06:39 +0100",
-            "time_generated": "2023-10-10 23:06:39 +0100",
-            "event_type": "error",
-            "string_inserts": [
-                "2023/10/10 23:06:39 GCEGuestAgent: Error watching metadata: invalid character '<' looking for beginning of value"
-            ],
-            "channel": "application",
-            "source_name": "GCEGuestAgent",
-            "record_number": "2884381",
-            "computer_name": "blaise-gusty-data-entry-1",
-            "description": "2023/10/10 23:06:39 GCEGuestAgent: Error watching metadata: invalid character '<' looking for beginning of value\r\n",
-            "event_category": "0",
-        },
-        "resource": {
-            "type": "gce_instance",
-            "labels": {
-                "project_id": "ons-blaise-v2-prod",
-                "instance_id": "458491889528639951",
-                "zone": "europe-west2-a",
-            },
-        },
-        "timestamp": "2023-10-10T22:06:39Z",
-        "severity": "ERROR",
-        "labels": {"compute.googleapis.com/resource_name": "blaise-gusty-data-entry-1"},
-        "logName": "projects/ons-blaise-v2-prod/logs/winevt.raw",
-        "receiveTimestamp": "2023-10-10T22:06:45.651910670Z",
-    }
-    event = create_event(example_log_entry)
-
-    response = run_slack_alerter(event)
-
-    assert response == "Alert skipped"
-    assert number_of_http_calls() == 0
-
-
-def test_skip_watching_ip_space_exhausted_error(
-    run_slack_alerter, number_of_http_calls
-):
-    example_log_entry = {
-        "protoPayload": {
-            "@type": "type.googleapis.com/google.cloud.audit.AuditLog",
-            "status": {
-                "code": 8,
-                "message": "IP_SPACE_EXHAUSTED",
-                "details": [
-                    {
-                        "@type": "type.googleapis.com/google.protobuf.Struct",
-                        "value": {
-                            "ipSpaceExhausted": {
-                                "networkOrSubnetworkResource": {
-                                    "resourceType": "SUBNETWORK",
-                                    "resourceName": "aet-europewest2-vpcconnect-sbnt",
-                                    "project": {"canonicalProjectId": "628324858917"},
-                                    "scope": {
-                                        "scopeType": "REGION",
-                                        "scopeName": "europe-west2",
-                                    },
-                                }
-                            }
-                        },
-                    }
-                ],
-            },
-            "authenticationInfo": {
-                "principalEmail": "628324858917@cloudservices.gserviceaccount.com"
-            },
-            "requestMetadata": {
-                "callerSuppliedUserAgent": "GCE Managed Instance Group for Tesseract"
-            },
-            "serviceName": "compute.googleapis.com",
-            "methodName": "v1.compute.instances.insert",
-            "resourceName": "projects/628324858917/zones/europe-west2-b/instances/aet-europewest2-vpcconnect-2t8s",
-            "request": {"@type": "type.googleapis.com/compute.instances.insert"},
-        },
-        "insertId": "-mqmnq7c67w",
-        "resource": {
-            "type": "gce_instance",
-            "labels": {
-                "zone": "europe-west2-b",
-                "instance_id": "8585884535477906154",
-                "project_id": "ons-blaise-v2-prod",
-            },
-        },
-        "timestamp": "2023-09-14T23:15:40.216920Z",
-        "severity": "ERROR",
-        "logName": "projects/ons-blaise-v2-prod/logs/cloudaudit.googleapis.com%2Factivity",
-        "operation": {
-            "id": "operation-1694733317846-60559d9663528-e8055062-e3b64477",
-            "producer": "compute.googleapis.com",
-            "last": True,
-        },
-        "receiveTimestamp": "2023-09-14T23:15:41.197750677Z",
-    }
-    event = create_event(example_log_entry)
-
-    response = run_slack_alerter(event)
-
-    assert response == "Alert skipped"
-    assert number_of_http_calls() == 0
-
-
-def test_skip_sandbox_alerts_skips_alerts_for_sandboxes(
-    run_slack_alerter, number_of_http_calls
-):
-    # arrange
-    example_log_entry = {
-        "insertId": "65675a1e000906c02cfcdb54",
-        "jsonPayload": {
-            "logName": "projects/ons-blaise-v2-dev-jw09/logs/%40google-cloud%2Fprofiler",
-            "message": "Successfully collected profile HEAP.",
-            "resource": {
-                "type": "gae_app",
-                "labels": {
-                    "version_id": "20231129t144628",
-                    "module_id": "dqs-ui",
-                    "zone": "europe-west2-1",
-                },
-            },
-            "timestamp": "2023-11-29T15:34:54.591Z",
-        },
-        "resource": {
-            "type": "gae_app",
-            "labels": {
-                "module_id": "dqs-ui",
-                "zone": "europe-west2-1",
-                "project_id": "ons-blaise-v2-dev-jw09",
-                "version_id": "20231129t144628",
-            },
-        },
-        "timestamp": "2023-11-29T15:34:54.591552Z",
-        "severity": "DEBUG",
-        "labels": {
-            "clone_id": "0087599d4250c01bc120294e520c07b780b217e53173b5358cac87748d40d22082f17f1f7fa68823b4a41fe1f57308d3702a9095b6b347e32e672d8952a88afb65"
-        },
-        "logName": "projects/ons-blaise-v2-dev-jw09/logs/stdout",
-        "receiveTimestamp": "2023-11-29T15:34:54.921342975Z",
-    }
-    event = create_event(example_log_entry)
-
-    # act
-    response = run_slack_alerter(event)
-
-    # assert
-    assert response == "Alert skipped"
-    assert number_of_http_calls() == 0
-
-
-def test_skip_sandbox_alerts_does_not_skip_alerts_for_formal_environments(
-    run_slack_alerter, number_of_http_calls
-):
-    # arrange
-    example_log_entry = {
-        "insertId": "6538efc60003b62c3cbdd1b4",
-        "jsonPayload": {
-            "hostname": "localhost",
-            "message": "AUDIT_LOG: Failed to install questionnaire OPN2310_FO0",
-            "info": {},
-            "time": 1698230214243,
-            "req": {"url": "/api/install", "method": "POST"},
-            "pid": 11,
-            "level": 50,
-        },
-        "resource": {
-            "type": "gae_app",
-            "labels": {
-                "version_id": "20231012t154121",
-                "zone": "europe-west2-2",
-                "project_id": "ons-blaise-v2-preprod",
-                "module_id": "dqs-ui",
-            },
-        },
-        "timestamp": "2023-10-25T10:36:54.243244Z",
-        "severity": "ERROR",
-        "labels": {
-            "clone_id": "0037d6d5d3b46943e8ac10f4dbc904507f2621188b0db8eafc6bf828e40168d6d488d2d11a8c8307b7823978eda05e745c2762d66dba9c7642106aca409cfae42aa6b8"
-        },
-        "logName": "projects/ons-blaise-v2-preprod/logs/stdout",
-        "receiveTimestamp": "2023-10-25T10:36:54.419325796Z",
-    }
-    event = create_event(example_log_entry)
-
-    # act
-    response = run_slack_alerter(event)
-
-    # assert
-    assert response != "Alert skipped"
-    assert number_of_http_calls() == 1
-
-
 def test_send_erroneous_questionnaire_for_preprod_alerts(
     run_slack_alerter, get_webhook_payload
 ):
@@ -966,48 +515,595 @@ def test_send_erroneous_questionnaire_for_preprod_alerts(
     )
 
 
-# TODO
-# def test_skip_all_preprod_alerts_except_erroneous_questionnaire(
-#         run_slack_alerter, number_of_http_calls
-# ):
-#     # arrange
-#     example_log_entry = {
-#         "insertId": "65675a1e000906c02cfcdb54",
-#         "jsonPayload": {
-#             "logName": "projects/ons-blaise-v2-dev/logs/%40google-cloud%2Fprofiler",
-#             "message": "Successfully collected profile HEAP.",
-#             "resource": {
-#                 "type": "gae_app",
-#                 "labels": {
-#                     "version_id": "20231129t144628",
-#                     "module_id": "dqs-ui",
-#                     "zone": "europe-west2-1",
-#                 },
-#             },
-#             "timestamp": "2023-11-29T15:34:54.591Z",
-#         },
-#         "resource": {
-#             "type": "gae_app",
-#             "labels": {
-#                 "module_id": "dqs-ui",
-#                 "zone": "europe-west2-1",
-#                 "project_id": "ons-blaise-v2-dev",
-#                 "version_id": "20231129t144628",
-#             },
-#         },
-#         "timestamp": "2023-11-29T15:34:54.591552Z",
-#         "severity": "DEBUG",
-#         "labels": {
-#             "clone_id": "0087599d4250c01bc120294e520c07b780b217e53173b5358cac87748d40d22082f17f1f7fa68823b4a41fe1f57308d3702a9095b6b347e32e672d8952a88afb65"
-#         },
-#         "logName": "projects/ons-blaise-v2-dev/logs/stdout",
-#         "receiveTimestamp": "2023-11-29T15:34:54.921342975Z",
-#     }
-#     event = create_event(example_log_entry)
-#
-#     # act
-#     response = run_slack_alerter(event)
-#
-#     # assert
-#     assert response != "Alert skipped"
-#     assert number_of_http_calls() == 1
+def test_skip_data_delivery_json_error(run_slack_alerter, number_of_http_calls, caplog):
+    # arrange
+    example_log_entry = {
+        "insertId": "yhmlfg26ror8hccek",
+        "jsonPayload": {
+            "event_type": "error",
+            "event_category": "0",
+            "source_name": "OSConfigAgent",
+            "record_number": "1880074",
+            "user": "",
+            "channel": "application",
+            "description": "2023-02-25T03:46:49.1619Z OSConfigAgent Error main.go:231: unexpected end of JSON input\r\n",
+            "time_generated": "2023-02-25 03:46:49 +0000",
+            "computer_name": "blaise-gusty-data-entry-1",
+            "time_written": "2023-02-25 03:46:49 +0000",
+            "event_id": "882",
+            "string_inserts": [
+                "2023-02-25T03:46:49.1619Z OSConfigAgent Error main.go:231: unexpected end of JSON input"
+            ],
+            "message": "2023-02-25T03:46:49.1619Z OSConfigAgent Error main.go:231: unexpected end of JSON input\r\n",
+        },
+        "resource": {
+            "type": "gce_instance",
+            "labels": {
+                "instance_id": "458491889528639951",
+                "project_id": "ons-blaise-v2-prod",
+                "zone": "europe-west2-a",
+            },
+        },
+        "timestamp": "2023-02-25T03:46:49Z",
+        "severity": "ERROR",
+        "labels": {"compute.googleapis.com/resource_name": "blaise-gusty-data-entry-1"},
+        "logName": "projects/ons-blaise-v2-prod/logs/winevt.raw",
+        "receiveTimestamp": "2023-02-25T03:46:57.099633534Z",
+    }
+    event = create_event(example_log_entry)
+
+    # act
+    with caplog.at_level(logging.INFO):
+        response = run_slack_alerter(event)
+
+    # assert
+    assert response == "Alert skipped"
+    assert number_of_http_calls() == 0
+    assert (
+        "root",
+        logging.INFO,
+        "Skipping os config agent alert",
+    ) in caplog.record_tuples
+
+
+def test_skip_audit_logs_error(run_slack_alerter, number_of_http_calls, caplog):
+    # arrange
+    example_log_entry = {
+        "protoPayload": {
+            "@type": "type.googleapis.com/google.cloud.audit.AuditLog",
+            "status": {"code": 7},
+            "authenticationInfo": {
+                "principalEmail": "pipeline-bucket-reader@ons-blaise-v2-shared.iam.gserviceaccount.com",
+                "serviceAccountKeyName": "//iam.googleapis.com/projects/ons-blaise-v2-shared/serviceAccounts/pipeline-bucket-reader@ons-blaise-v2-shared.iam.gserviceaccount.com/keys/221e50eb36c76f17c5f6883a5a0bb29c1535ba8a",
+            },
+            "requestMetadata": {
+                "callerIp": "10.6.0.52",
+                "callerSuppliedUserAgent": "apitools Python/3.7.9 gsutil/5.3 (win32) analytics/enabled interactive/False command/cp google-cloud-sdk/360.0.0,gzip(gfe)",
+                "callerNetwork": "//compute.googleapis.com/projects/ons-blaise-v2-prod/global/networks/__unknown__",
+                "requestAttributes": {
+                    "time": "2023-04-14T00:42:09.609760345Z",
+                    "auth": {},
+                },
+                "destinationAttributes": {},
+            },
+            "serviceName": "storage.googleapis.com",
+            "methodName": "storage.objects.list",
+            "authorizationInfo": [
+                {
+                    "resource": "projects/_/buckets/ons-blaise-v2-prod-winvm-data",
+                    "permission": "storage.objects.list",
+                    "resourceAttributes": {},
+                }
+            ],
+            "resourceName": "projects/_/buckets/ons-blaise-v2-prod-winvm-data",
+            "resourceLocation": {"currentLocations": ["europe-west2"]},
+        },
+        "insertId": "pt5jaee3fznz",
+        "resource": {
+            "type": "gcs_bucket",
+            "labels": {
+                "location": "europe-west2",
+                "bucket_name": "ons-blaise-v2-prod-winvm-data",
+                "project_id": "ons-blaise-v2-prod",
+            },
+        },
+        "timestamp": "2023-04-14T00:42:09.598152915Z",
+        "severity": "ERROR",
+        "logName": "projects/ons-blaise-v2-prod/logs/cloudaudit.googleapis.com%2Fdata_access",
+        "receiveTimestamp": "2023-04-14T00:42:11.064730027Z",
+    }
+    event = create_event(example_log_entry)
+
+    # act
+    with caplog.at_level(logging.INFO):
+        response = run_slack_alerter(event)
+
+    # assert
+    assert response == "Alert skipped"
+    assert number_of_http_calls() == 0
+    assert ("root", logging.INFO, "Skipping audit log alert") in caplog.record_tuples
+
+
+def test_skip_osconfig_agent_unexpected_end_of_json_input_error(
+    run_slack_alerter, number_of_http_calls, caplog
+):
+    # arrange
+    example_log_entry = {
+        "insertId": "ak4u0bf38r70c",
+        "jsonPayload": {
+            "localTimestamp": "2023-05-18T13:22:14.1873+01:00",
+            "omitempty": None,
+            "message": "unexpected end of JSON input",
+        },
+        "resource": {
+            "type": "gce_instance",
+            "labels": {
+                "zone": "europe-west2-a",
+                "instance_id": "2340080223918060770",
+                "project_id": "ons-blaise-v2-prod",
+            },
+        },
+        "timestamp": "2023-05-18T12:22:14.230839200Z",
+        "severity": "ERROR",
+        "labels": {
+            "instance_name": "restapi-3",
+            "agent_version": "20230330.00.0+win@1",
+        },
+        "logName": "projects/ons-blaise-v2-prod/logs/OSConfigAgent",
+        "sourceLocation": {
+            "file": "main.go",
+            "line": "231",
+            "function": "main.runTaskLoop",
+        },
+        "receiveTimestamp": "2023-05-18T12:22:16.434926842Z",
+    }
+    event = create_event(example_log_entry)
+
+    # act
+    with caplog.at_level(logging.INFO):
+        response = run_slack_alerter(event)
+
+    # assert
+    assert response == "Alert skipped"
+    assert number_of_http_calls() == 0
+    assert (
+        "root",
+        logging.INFO,
+        "Skipping os config agent alert",
+    ) in caplog.record_tuples
+
+
+def test_skip_agent_connect_error(run_slack_alerter, number_of_http_calls, caplog):
+    # arrange
+    example_log_entry = {
+        "insertId": "qysctppk7v9cttt1g",
+        "jsonPayload": {
+            "event_id": "100",
+            "event_category": "0",
+            "time_generated": "2023-06-06 15:36:14 +0100",
+            "user": "",
+            "time_written": "2023-06-06 15:36:14 +0100",
+            "message": "2023-06-06 14:36:14Z: Agent connect error: The HTTP request timed out after 00:01:00.. Retrying until reconnected.\r\n",
+            "channel": "application",
+            "computer_name": "data-delivery",
+            "event_type": "error",
+            "string_inserts": [
+                "2023-06-06 14:36:14Z: Agent connect error: The HTTP request timed out after 00:01:00.. Retrying until reconnected."
+            ],
+            "description": "2023-06-06 14:36:14Z: Agent connect error: The HTTP request timed out after 00:01:00.. Retrying until reconnected.\r\n",
+            "record_number": "1807900",
+            "source_name": "VstsAgentService",
+        },
+        "resource": {
+            "type": "gce_instance",
+            "labels": {
+                "instance_id": "9047556346870592737",
+                "project_id": "ons-blaise-v2-prod",
+                "zone": "europe-west2-a",
+            },
+        },
+        "timestamp": "2023-06-06T14:36:14Z",
+        "severity": "ERROR",
+        "labels": {"compute.googleapis.com/resource_name": "data-delivery"},
+        "logName": "projects/ons-blaise-v2-prod/logs/winevt.raw",
+        "receiveTimestamp": "2023-06-06T14:36:21.643430478Z",
+    }
+    event = create_event(example_log_entry)
+
+    # act
+    with caplog.at_level(logging.INFO):
+        response = run_slack_alerter(event)
+
+    # assert
+    assert response == "Alert skipped"
+    assert number_of_http_calls() == 0
+    assert (
+        "root",
+        logging.INFO,
+        "Skipping agent connect alert",
+    ) in caplog.record_tuples
+
+
+def test_skip_rproxy_lookupEffectiveGuestPolicies_error(
+    run_slack_alerter, number_of_http_calls, caplog
+):
+    # arrange
+    example_log_entry = {
+        "insertId": "i1tjpyftm0qks",
+        "jsonPayload": {
+            "message": 'Error running LookupEffectiveGuestPolicies: error calling LookupEffectiveGuestPolicies: code: "NotFound", message: "Requested entity was not found.", details: []',
+            "localTimestamp": "2023-09-28T08:45:35.1241Z",
+            "omitempty": None,
+        },
+        "resource": {
+            "type": "gce_instance",
+            "labels": {
+                "zone": "europe-west2-a",
+            },
+        },
+        "timestamp": "2023-09-28T08:45:35.136331729Z",
+        "severity": "ERROR",
+        "labels": {"instance_name": "rproxy-b0bd8e4b", "agent_version": "20230403.00"},
+        "logName": "projects/ons-blaise-v2-prod/logs/OSConfigAgent",
+        "sourceLocation": {
+            "file": "policies.go",
+            "line": "49",
+            "function": "github.com/GoogleCloudPlatform/osconfig/policies.run",
+        },
+        "receiveTimestamp": "2023-09-28T08:45:36.225541583Z",
+    }
+    event = create_event(example_log_entry)
+
+    # act
+    with caplog.at_level(logging.INFO):
+        response = run_slack_alerter(event)
+
+    # assert
+    assert response == "Alert skipped"
+    assert number_of_http_calls() == 0
+    assert (
+        "root",
+        logging.INFO,
+        "Skipping rproxy lookupEffectiveGuestPolicies alert",
+    ) in caplog.record_tuples
+
+
+def test_skip_watching_metadata_invalid_character_error(
+    run_slack_alerter, number_of_http_calls, caplog
+):
+    # arrange
+    example_log_entry = {
+        "insertId": "19s550gfh2251m",
+        "jsonPayload": {
+            "localTimestamp": "2023-09-18T15:12:28.8451+01:00",
+            "message": "Error watching metadata: invalid character '<' looking for beginning of value",
+            "omitempty": None,
+        },
+        "resource": {
+            "type": "gce_instance",
+            "labels": {
+                "project_id": "ons-blaise-v2-prod",
+                "instance_id": "5203162520768539890",
+                "zone": "europe-west2-a",
+            },
+        },
+        "timestamp": "2023-09-18T14:12:28.853979600Z",
+        "severity": "ERROR",
+        "labels": {"instance_name": "blaise-gusty-data-entry-4"},
+        "logName": "projects/ons-blaise-v2-prod/logs/GCEGuestAgent",
+        "sourceLocation": {
+            "file": "metadata.go",
+            "line": "74",
+            "function": "github.com/GoogleCloudPlatform/guest-agent/google_guest_agent/events/metadata.(*Watcher).Run",
+        },
+        "receiveTimestamp": "2023-09-18T14:12:29.912569518Z",
+    }
+    event = create_event(example_log_entry)
+
+    # act
+    with caplog.at_level(logging.INFO):
+        response = run_slack_alerter(event)
+
+    # assert
+    assert response == "Alert skipped"
+    assert number_of_http_calls() == 0
+    assert (
+        "root",
+        logging.INFO,
+        "Skipping watching metadata invalid character alert",
+    ) in caplog.record_tuples
+
+
+def test_skip_watching_metadata_invalid_character_second_version_error(
+    run_slack_alerter, number_of_http_calls, caplog
+):
+    # arrange
+    example_log_entry = {
+        "insertId": "hohgijl11degyrvc0",
+        "jsonPayload": {
+            "user": "",
+            "event_id": "882",
+            "message": "2023/10/10 23:06:39 GCEGuestAgent: Error watching metadata: invalid character '<' looking for beginning of value\r\n",
+            "time_written": "2023-10-10 23:06:39 +0100",
+            "time_generated": "2023-10-10 23:06:39 +0100",
+            "event_type": "error",
+            "string_inserts": [
+                "2023/10/10 23:06:39 GCEGuestAgent: Error watching metadata: invalid character '<' looking for beginning of value"
+            ],
+            "channel": "application",
+            "source_name": "GCEGuestAgent",
+            "record_number": "2884381",
+            "computer_name": "blaise-gusty-data-entry-1",
+            "description": "2023/10/10 23:06:39 GCEGuestAgent: Error watching metadata: invalid character '<' looking for beginning of value\r\n",
+            "event_category": "0",
+        },
+        "resource": {
+            "type": "gce_instance",
+            "labels": {
+                "project_id": "ons-blaise-v2-prod",
+                "instance_id": "458491889528639951",
+                "zone": "europe-west2-a",
+            },
+        },
+        "timestamp": "2023-10-10T22:06:39Z",
+        "severity": "ERROR",
+        "labels": {"compute.googleapis.com/resource_name": "blaise-gusty-data-entry-1"},
+        "logName": "projects/ons-blaise-v2-prod/logs/winevt.raw",
+        "receiveTimestamp": "2023-10-10T22:06:45.651910670Z",
+    }
+    event = create_event(example_log_entry)
+
+    # act
+    with caplog.at_level(logging.INFO):
+        response = run_slack_alerter(event)
+
+    # assert
+    assert response == "Alert skipped"
+    assert number_of_http_calls() == 0
+    assert (
+        "root",
+        logging.INFO,
+        "Skipping watching metadata invalid character alert",
+    ) in caplog.record_tuples
+
+
+def test_skip_watching_ip_space_exhausted_error(
+    run_slack_alerter, number_of_http_calls, caplog
+):
+    # arrange
+    example_log_entry = {
+        "protoPayload": {
+            "@type": "type.googleapis.com/google.cloud.audit.AuditLog",
+            "status": {
+                "code": 8,
+                "message": "IP_SPACE_EXHAUSTED",
+                "details": [
+                    {
+                        "@type": "type.googleapis.com/google.protobuf.Struct",
+                        "value": {
+                            "ipSpaceExhausted": {
+                                "networkOrSubnetworkResource": {
+                                    "resourceType": "SUBNETWORK",
+                                    "resourceName": "aet-europewest2-vpcconnect-sbnt",
+                                    "project": {"canonicalProjectId": "628324858917"},
+                                    "scope": {
+                                        "scopeType": "REGION",
+                                        "scopeName": "europe-west2",
+                                    },
+                                }
+                            }
+                        },
+                    }
+                ],
+            },
+            "authenticationInfo": {
+                "principalEmail": "628324858917@cloudservices.gserviceaccount.com"
+            },
+            "requestMetadata": {
+                "callerSuppliedUserAgent": "GCE Managed Instance Group for Tesseract"
+            },
+            "serviceName": "compute.googleapis.com",
+            "methodName": "v1.compute.instances.insert",
+            "resourceName": "projects/628324858917/zones/europe-west2-b/instances/aet-europewest2-vpcconnect-2t8s",
+            "request": {"@type": "type.googleapis.com/compute.instances.insert"},
+        },
+        "insertId": "-mqmnq7c67w",
+        "resource": {
+            "type": "gce_instance",
+            "labels": {
+                "zone": "europe-west2-b",
+                "instance_id": "8585884535477906154",
+                "project_id": "ons-blaise-v2-prod",
+            },
+        },
+        "timestamp": "2023-09-14T23:15:40.216920Z",
+        "severity": "ERROR",
+        "logName": "projects/ons-blaise-v2-prod/logs/cloudaudit.googleapis.com%2Factivity",
+        "operation": {
+            "id": "operation-1694733317846-60559d9663528-e8055062-e3b64477",
+            "producer": "compute.googleapis.com",
+            "last": True,
+        },
+        "receiveTimestamp": "2023-09-14T23:15:41.197750677Z",
+    }
+    event = create_event(example_log_entry)
+
+    # act
+    with caplog.at_level(logging.INFO):
+        response = run_slack_alerter(event)
+
+    # assert
+    assert response == "Alert skipped"
+    assert number_of_http_calls() == 0
+    assert (
+        "root",
+        logging.INFO,
+        "Skipping ip space exhausted alert",
+    ) in caplog.record_tuples
+
+
+def test_skip_sandbox_alerts_skips_alerts_for_sandboxes(
+    run_slack_alerter, number_of_http_calls, caplog
+):
+    # arrange
+    example_log_entry = {
+        "insertId": "65675a1e000906c02cfcdb54",
+        "jsonPayload": {
+            "logName": "projects/ons-blaise-v2-dev-jw09/logs/%40google-cloud%2Fprofiler",
+            "message": "Successfully collected profile HEAP.",
+            "resource": {
+                "type": "gae_app",
+                "labels": {
+                    "version_id": "20231129t144628",
+                    "module_id": "dqs-ui",
+                    "zone": "europe-west2-1",
+                },
+            },
+            "timestamp": "2023-11-29T15:34:54.591Z",
+        },
+        "resource": {
+            "type": "gae_app",
+            "labels": {
+                "module_id": "dqs-ui",
+                "zone": "europe-west2-1",
+                "project_id": "ons-blaise-v2-dev-jw09",
+                "version_id": "20231129t144628",
+            },
+        },
+        "timestamp": "2023-11-29T15:34:54.591552Z",
+        "severity": "DEBUG",
+        "labels": {
+            "clone_id": "0087599d4250c01bc120294e520c07b780b217e53173b5358cac87748d40d22082f17f1f7fa68823b4a41fe1f57308d3702a9095b6b347e32e672d8952a88afb65"
+        },
+        "logName": "projects/ons-blaise-v2-dev-jw09/logs/stdout",
+        "receiveTimestamp": "2023-11-29T15:34:54.921342975Z",
+    }
+    event = create_event(example_log_entry)
+
+    # act
+    with caplog.at_level(logging.INFO):
+        response = run_slack_alerter(event)
+
+    # assert
+    assert response == "Alert skipped"
+    assert number_of_http_calls() == 0
+    assert ("root", logging.INFO, "Skipping sandbox alert") in caplog.record_tuples
+
+
+def test_skip_sandbox_alerts_does_not_skip_alerts_for_formal_environments(
+    run_slack_alerter, number_of_http_calls, caplog
+):
+    # arrange
+    example_log_entry = {
+        "insertId": "65675a1e000906c02cfcdb54",
+        "jsonPayload": {
+            "logName": "projects/ons-blaise-v2-prod/logs/%40google-cloud%2Fprofiler",
+            "message": "Successfully collected profile HEAP.",
+            "resource": {
+                "type": "gae_app",
+                "labels": {
+                    "version_id": "20231129t144628",
+                    "module_id": "dqs-ui",
+                    "zone": "europe-west2-1",
+                },
+            },
+            "timestamp": "2023-11-29T15:34:54.591Z",
+        },
+        "resource": {
+            "type": "gae_app",
+            "labels": {
+                "module_id": "dqs-ui",
+                "zone": "europe-west2-1",
+                "project_id": "ons-blaise-v2-prod",
+                "version_id": "20231129t144628",
+            },
+        },
+        "timestamp": "2023-11-29T15:34:54.591552Z",
+        "severity": "DEBUG",
+        "labels": {
+            "clone_id": "0087599d4250c01bc120294e520c07b780b217e53173b5358cac87748d40d22082f17f1f7fa68823b4a41fe1f57308d3702a9095b6b347e32e672d8952a88afb65"
+        },
+        "logName": "projects/ons-blaise-v2-prod/logs/stdout",
+        "receiveTimestamp": "2023-11-29T15:34:54.921342975Z",
+    }
+    event = create_event(example_log_entry)
+
+    # act
+    with caplog.at_level(logging.INFO):
+        response = run_slack_alerter(event)
+
+    # assert
+    assert response != "Alert skipped"
+    assert number_of_http_calls() == 1
+    assert ("root", logging.INFO, "Skipping sandbox alert") not in caplog.record_tuples
+
+
+def test_skip_all_preprod_alerts_except_erroneous_questionnaire(
+    run_slack_alerter, number_of_http_calls, caplog
+):
+    # arrange
+    example_log_entry = {
+        "protoPayload": {
+            "@type": "type.googleapis.com/google.cloud.audit.AuditLog",
+            "status": {
+                "code": 8,
+                "message": "IP_SPACE_EXHAUSTED",
+                "details": [
+                    {
+                        "@type": "type.googleapis.com/google.protobuf.Struct",
+                        "value": {
+                            "ipSpaceExhausted": {
+                                "networkOrSubnetworkResource": {
+                                    "resourceType": "SUBNETWORK",
+                                    "resourceName": "aet-europewest2-vpcconnect-sbnt",
+                                    "project": {"canonicalProjectId": "628324858917"},
+                                    "scope": {
+                                        "scopeType": "REGION",
+                                        "scopeName": "europe-west2",
+                                    },
+                                }
+                            }
+                        },
+                    }
+                ],
+            },
+            "authenticationInfo": {
+                "principalEmail": "628324858917@cloudservices.gserviceaccount.com"
+            },
+            "requestMetadata": {
+                "callerSuppliedUserAgent": "GCE Managed Instance Group for Tesseract"
+            },
+            "serviceName": "compute.googleapis.com",
+            "methodName": "v1.compute.instances.insert",
+            "resourceName": "projects/628324858917/zones/europe-west2-b/instances/aet-europewest2-vpcconnect-2t8s",
+            "request": {"@type": "type.googleapis.com/compute.instances.insert"},
+        },
+        "insertId": "-mqmnq7c67w",
+        "resource": {
+            "type": "gce_instance",
+            "labels": {
+                "zone": "europe-west2-b",
+                "instance_id": "8585884535477906154",
+                "project_id": "ons-blaise-v2-preprod",
+            },
+        },
+        "timestamp": "2023-09-14T23:15:40.216920Z",
+        "severity": "ERROR",
+        "logName": "projects/ons-blaise-v2-preprod/logs/cloudaudit.googleapis.com%2Factivity",
+        "operation": {
+            "id": "operation-1694733317846-60559d9663528-e8055062-e3b64477",
+            "producer": "compute.googleapis.com",
+            "last": True,
+        },
+        "receiveTimestamp": "2023-09-14T23:15:41.197750677Z",
+    }
+    event = create_event(example_log_entry)
+
+    # act
+    with caplog.at_level(logging.INFO):
+        response = run_slack_alerter(event)
+
+    # assert
+    assert response == "Alert skipped"
+    assert number_of_http_calls() == 0
+    assert ("root", logging.INFO, "Skipping preprod alert") in caplog.record_tuples

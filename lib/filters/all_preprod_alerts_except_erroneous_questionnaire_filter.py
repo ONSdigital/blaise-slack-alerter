@@ -1,3 +1,5 @@
+import logging
+
 from lib.log_processor import ProcessedLogEntry
 
 
@@ -16,4 +18,5 @@ def all_preprod_alerts_except_erroneous_questionnaire_filter(
     if "AUDIT_LOG: Failed to install questionnaire" in log_entry.message:
         return False
 
+    logging.info(f"Skipping preprod alert")
     return True
