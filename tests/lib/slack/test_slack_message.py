@@ -656,12 +656,12 @@ def test_create_footnote_returns_nisra_instructions_with_view_the_logs_line(
 ):
     # arrange
     project_name = "foobar"
-    processed_data_delivery_log_entry = dataclasses.replace(
+    processed_nisra_log_entry = dataclasses.replace(
         processed_log_entry, application=nisra_application
     )
 
     # act
-    result = _create_footnote(processed_data_delivery_log_entry, project_name)
+    result = _create_footnote(processed_nisra_log_entry, project_name)
 
     # assert
     assert result == (
@@ -685,12 +685,12 @@ def test_create_footnote_returns_nisra_instructions_without_view_the_logs_line(
 ):
     # arrange
     project_name = "foobar"
-    processed_totalmobile_log_entry = dataclasses.replace(
+    processed_nisra_log_entry = dataclasses.replace(
         processed_log_entry, application=nisra_application, timestamp=None
     )
 
     # act
-    result = _create_footnote(processed_totalmobile_log_entry, project_name)
+    result = _create_footnote(processed_nisra_log_entry, project_name)
 
     # assert
     assert result == (
