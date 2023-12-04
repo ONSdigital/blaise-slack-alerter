@@ -1038,7 +1038,7 @@ def test_skip_sandbox_alerts_does_not_skip_alerts_for_formal_environments(
     assert ("root", logging.INFO, "Skipping sandbox alert") not in caplog.record_tuples
 
 
-def test_skip_all_preprod_alerts_except_erroneous_questionnaire(
+def test_skip_all_preprod_and_training_alerts_except_erroneous_questionnaire(
     run_slack_alerter, number_of_http_calls, caplog
 ):
     # arrange
@@ -1106,4 +1106,8 @@ def test_skip_all_preprod_alerts_except_erroneous_questionnaire(
     # assert
     assert response == "Alert skipped"
     assert number_of_http_calls() == 0
-    assert ("root", logging.INFO, "Skipping preprod alert") in caplog.record_tuples
+    assert (
+        "root",
+        logging.INFO,
+        "Skipping preprod/training alert",
+    ) in caplog.record_tuples
