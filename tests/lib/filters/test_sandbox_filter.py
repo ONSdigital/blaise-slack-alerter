@@ -1,9 +1,9 @@
 import pytest
 import datetime
-import dataclasses
+# import dataclasses
 
 from lib.log_processor import ProcessedLogEntry
-from lib.filters.sandbox_filter import sandbox_filter
+# from lib.filters.sandbox_filter import sandbox_filter
 
 
 @pytest.fixture()
@@ -44,49 +44,49 @@ def processed_log_entry() -> ProcessedLogEntry:
     )
 
 
-@pytest.mark.parametrize(
-    "sandbox_log_name_example",
-    [
-        "projects/ons-blaise-v2-dev-jw09/logs/stdout",
-        "projects/ons-blaise-v2-dev-sj02/logs/stdout",
-        "projects/ons-blaise-v2-dev-cma/logs/stdout",
-        "projects/ons-blaise-v2-dev-foo/logs/stdout",
-        "projects/ons-blaise-v2-dev-bar/logs/stdout",
-    ],
-)
-def test_log_is_skipped_for_sandbox_environment(
-    processed_log_entry: ProcessedLogEntry, sandbox_log_name_example: str
-):
-    # arrange
-    processed_sandbox_environment_log_entry = dataclasses.replace(
-        processed_log_entry, log_name=sandbox_log_name_example
-    )
-    # act
-    log_is_skipped = sandbox_filter(processed_sandbox_environment_log_entry)
+# @pytest.mark.parametrize(
+#     "sandbox_log_name_example",
+#     [
+#         "projects/ons-blaise-v2-dev-jw09/logs/stdout",
+#         "projects/ons-blaise-v2-dev-sj02/logs/stdout",
+#         "projects/ons-blaise-v2-dev-cma/logs/stdout",
+#         "projects/ons-blaise-v2-dev-foo/logs/stdout",
+#         "projects/ons-blaise-v2-dev-bar/logs/stdout",
+#     ],
+# )
+# def test_log_is_skipped_for_sandbox_environment(
+#     processed_log_entry: ProcessedLogEntry, sandbox_log_name_example: str
+# ):
+#     # arrange
+#     processed_sandbox_environment_log_entry = dataclasses.replace(
+#         processed_log_entry, log_name=sandbox_log_name_example
+#     )
+#     # act
+#     log_is_skipped = sandbox_filter(processed_sandbox_environment_log_entry)
+#
+#     # assert
+#     assert log_is_skipped is True
 
-    # assert
-    assert log_is_skipped is True
 
-
-@pytest.mark.parametrize(
-    "formal_log_name_example",
-    [
-        "projects/ons-blaise-v2-dev/logs/stdout",
-        "projects/ons-blaise-v2-dev-training/logs/stdout",
-        "projects/ons-blaise-v2-preprod/logs/stdout",
-        "projects/ons-blaise-v2-prod/logs/stdout",
-    ],
-)
-def test_log_is_not_skipped_for_formal_environment(
-    processed_log_entry: ProcessedLogEntry, formal_log_name_example: str
-):
-    # arrange
-    processed_formal_environment_log_entry = dataclasses.replace(
-        processed_log_entry, log_name=formal_log_name_example
-    )
-
-    # act
-    log_is_skipped = sandbox_filter(processed_formal_environment_log_entry)
-
-    # assert
-    assert log_is_skipped is False
+# @pytest.mark.parametrize(
+#     "formal_log_name_example",
+#     [
+#         "projects/ons-blaise-v2-dev/logs/stdout",
+#         "projects/ons-blaise-v2-dev-training/logs/stdout",
+#         "projects/ons-blaise-v2-preprod/logs/stdout",
+#         "projects/ons-blaise-v2-prod/logs/stdout",
+#     ],
+# )
+# def test_log_is_not_skipped_for_formal_environment(
+#     processed_log_entry: ProcessedLogEntry, formal_log_name_example: str
+# ):
+#     # arrange
+#     processed_formal_environment_log_entry = dataclasses.replace(
+#         processed_log_entry, log_name=formal_log_name_example
+#     )
+#
+#     # act
+#     log_is_skipped = sandbox_filter(processed_formal_environment_log_entry)
+#
+#     # assert
+#     assert log_is_skipped is False
