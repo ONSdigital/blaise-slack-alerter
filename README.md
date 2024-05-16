@@ -60,7 +60,7 @@ Running `make help` will list all available commands.
 The GitHub Actions run the linter, typechecker and tests.
 
 To avoid getting failures, it's worth running `make test` before commit.
-Note, `make test` also runs the typechecker and linter.
+Note, `make test` also runs the typechecker and linter. 
 
 ### Linting Errors
 
