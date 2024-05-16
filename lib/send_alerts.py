@@ -24,6 +24,7 @@ from lib.log_processor import (
     CreateAppLogPayloadFromLogEntry,
 )
 from lib.log_processor import process_log_entry
+from lib.filters.no_instance_filter import no_instance_filter
 
 
 def log_entry_skipped(log_entry: ProcessedLogEntry):
@@ -36,6 +37,7 @@ def log_entry_skipped(log_entry: ProcessedLogEntry):
         rproxy_lookupEffectiveGuestPolicies_filter,
         watching_metadata_invalid_character_filter,
         ip_space_exhausted_filter,
+        no_instance_filter,
     ]
 
     for filter in filters:
