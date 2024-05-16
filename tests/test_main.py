@@ -1113,8 +1113,21 @@ def test_skip_all_preprod_and_training_alerts_except_erroneous_questionnaire(
     ) in caplog.record_tuples
 
 
+@pytest.mark.parametrize(
+    "application_input",
+    [
+        "nisra-case-mover-processor",
+        "bert-call-history",
+        "nifi-receipt",
+        "bert-deliver-mi-hub-reports-processor",
+        "bert-call-history-cleanup",
+        "bts-create-totalmobile-jobs-processor",
+        "publishMsg",
+        "daybatch-create",
+    ],
+)
 def test_skip_all_prod_aborted_where_no_available_instance_alerts(
-    run_slack_alerter, number_of_http_calls, caplog
+    run_slack_alerter, number_of_http_calls, caplog, application_input
 ):
     # arrange
     example_log_entry = {
@@ -1135,7 +1148,7 @@ def test_skip_all_prod_aborted_where_no_available_instance_alerts(
             "labels": {
                 "project_id": "ons-blaise-v2-prod",
                 "region": "europe-west2",
-                "function_name": "nisra-case-mover-processor",
+                "function_name": application_input,
             },
         },
         "timestamp": "2024-05-16T08:45:23.261465Z",

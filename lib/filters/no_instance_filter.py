@@ -20,6 +20,18 @@ def no_instance_filter(log_entry: ProcessedLogEntry) -> bool:
     ):
         return False
 
+    if log_entry.application not in [
+        "nisra-case-mover-processor",
+        "bert-call-history",
+        "nifi-receipt",
+        "bert-deliver-mi-hub-reports-processor",
+        "bert-call-history-cleanup",
+        "bts-create-totalmobile-jobs-processor",
+        "publishMsg",
+        "daybatch-create",
+    ]:
+        return False
+
     if not isinstance(log_entry.log_name, str):
         return False
 

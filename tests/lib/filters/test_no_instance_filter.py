@@ -30,6 +30,26 @@ def test_log_is_skipped_when_its_not_from_cloud_function_instance_when_no_instan
     assert log_is_skipped is True
 
 
+def test_log_is_skipped_when_its_application_is_bert_instance_when_no_instance_error(
+    processed_log_entry_no_instance_error: ProcessedLogEntry,
+):
+    processed_log_entry_no_instance_error = dataclasses.replace(
+        processed_log_entry_no_instance_error, application="bert-call-history"
+    )
+    log_is_skipped = no_instance_filter(processed_log_entry_no_instance_error)
+    assert log_is_skipped is True
+
+
+def test_log_is_not_skipped_when_its_application_is_not_in_list_of_skippable_applications_instance_when_no_instance_error(
+    processed_log_entry_no_instance_error: ProcessedLogEntry,
+):
+    processed_log_entry_no_instance_error = dataclasses.replace(
+        processed_log_entry_no_instance_error, application="dummy"
+    )
+    log_is_skipped = no_instance_filter(processed_log_entry_no_instance_error)
+    assert log_is_skipped is False
+
+
 def test_log_is_not_skipped_when_not_from_cloud_function_instance_when_no_instance_error(
     processed_log_entry_no_instance_error: ProcessedLogEntry,
 ):
