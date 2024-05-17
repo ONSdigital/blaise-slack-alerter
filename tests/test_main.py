@@ -1111,3 +1111,66 @@ def test_skip_all_preprod_and_training_alerts_except_erroneous_questionnaire(
         logging.INFO,
         "Skipping preprod/training alert",
     ) in caplog.record_tuples
+
+
+@pytest.mark.parametrize(
+    "application_input",
+    [
+        "nisra-case-mover-processor",
+        "bert-call-history",
+        "nifi-receipt",
+        "bert-deliver-mi-hub-reports-processor",
+        "bert-call-history-cleanup",
+        "bts-create-totalmobile-jobs-processor",
+        "publishMsg",
+        "daybatch-create",
+    ],
+)
+def test_skip_all_prod_aborted_where_no_available_instance_alerts(
+    run_slack_alerter, number_of_http_calls, caplog, application_input
+):
+    # arrange
+    example_log_entry = {
+        "textPayload": "The request was aborted because there was no available instance. Additional troubleshooting documentation can be found at: https://cloud.google.com/functions/docs/troubleshooting#scalability",
+        "insertId": "6645c7ad000a6dbe74ce0e75",
+        "httpRequest": {
+            "requestMethod": "POST",
+            "requestUrl": "https://9bcbb5f410a6aff0441c475c88588883-dot-k743d1e1feb222eb6p-tp.appspot.com/_ah/push-handlers/pubsub/projects/ons-blaise-v2-prod/topics/ons-blaise-v2-prod-nisra-process?pubsub_trigger=true",
+            "requestSize": "1178",
+            "status": 500,
+            "userAgent": "CloudPubSub-Google",
+            "remoteIp": "2002:a05:602a:2389:b0:15:38e8:78f4",
+            "latency": "0s",
+            "protocol": "HTTP/1.1",
+        },
+        "resource": {
+            "type": "cloud_function",
+            "labels": {
+                "project_id": "ons-blaise-v2-prod",
+                "region": "europe-west2",
+                "function_name": application_input,
+            },
+        },
+        "timestamp": "2024-05-16T08:45:23.261465Z",
+        "severity": "ERROR",
+        "labels": {"infrastructure": "error"},
+        "logName": "projects/ons-blaise-v2-prod/logs/cloudfunctions.googleapis.com%2Fcloud-functions",
+        "trace": "projects/ons-blaise-v2-prod/traces/5997e419d1a18af83270d7deb0b1b2f3",
+        "receiveTimestamp": "2024-05-16T08:45:33.699415689Z",
+        "spanId": "1777605421925520598",
+    }
+
+    event = create_event(example_log_entry)
+
+    # act
+    with caplog.at_level(logging.INFO):
+        response = run_slack_alerter(event)
+
+    # assert
+    assert response == "Alert skipped"
+    assert number_of_http_calls() == 0
+    assert (
+        "root",
+        logging.INFO,
+        "Skipping no instance agent alert",
+    ) in caplog.record_tuples
