@@ -1171,6 +1171,6 @@ def test_skip_all_prod_aborted_where_no_available_instance_alerts(
     assert number_of_http_calls() == 0
     assert (
         "root",
-        logging.INFO,  # TODO: EL why?
+        logging.INFO,
         "Skipping no instance agent alert",
     ) in caplog.record_tuples
