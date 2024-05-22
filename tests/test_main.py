@@ -1174,3 +1174,69 @@ def test_skip_all_prod_aborted_where_no_available_instance_alerts(
         logging.INFO,
         "Skipping no instance agent alert",
     ) in caplog.record_tuples
+
+
+def test_skip_invalid_login_attempt_alerts(
+    run_slack_alerter, number_of_http_calls, caplog
+):
+    # arrange
+    example_log_entry = {
+        "protoPayload": {
+            "@type": "type.googleapis.com/google.cloud.audit.AuditLog",
+            "status": {
+                "code": 7,
+                "message": 'Required "container.clusters.list" permission(s) for "projects/ons-blaise-v2-prod".',
+            },
+            "authenticationInfo": {"principalEmail": "ri...e@gm...m"},
+            "requestMetadata": {"requestAttributes": {}, "destinationAttributes": {}},
+            "serviceName": "container.googleapis.com",
+            "methodName": "google.container.v1.ClusterManager.ListClusters",
+            "authorizationInfo": [
+                {
+                    "resource": "projects/ons-blaise-v2-prod",
+                    "permission": "container.clusters.list",
+                    "resourceAttributes": {
+                        "service": "cloudresourcemanager.googleapis.com",
+                        "name": "projects/ons-blaise-v2-prod",
+                        "type": "cloudresourcemanager.googleapis.com/Project",
+                    },
+                    "permissionType": "ADMIN_READ",
+                }
+            ],
+            "resourceName": "projects/ons-blaise-v2-prod/zones/-",
+            "request": {
+                "@type": "type.googleapis.com/google.container.v1alpha1.ListClustersRequest",
+                "parent": "projects/ons-blaise-v2-prod/locations/-",
+            },
+            "resourceLocation": {"currentLocations": ["-"]},
+            "policyViolationInfo": {"orgPolicyViolationInfo": {}},
+        },
+        "insertId": "qx4ozlctr2",
+        "resource": {
+            "type": "gke_cluster",
+            "labels": {
+                "project_id": "ons-blaise-v2-prod",
+                "cluster_name": "",
+                "location": "-",
+            },
+        },
+        "timestamp": "2024-05-02T08:55:17.007657529Z",
+        "severity": "ERROR",
+        "logName": "projects/ons-blaise-v2-prod/logs/cloudaudit.googleapis.com%2Fdata_access",
+        "receiveTimestamp": "2024-05-02T08:55:17.757250577Z",
+    }
+
+    event = create_event(example_log_entry)
+
+    # act
+    with caplog.at_level(logging.INFO):
+        response = run_slack_alerter(event)
+
+    # assert
+    assert response == "Alert skipped"
+    assert number_of_http_calls() == 0
+    assert (
+        "root",
+        logging.INFO,
+        "Skipping invalid login attempt alert",
+    ) in caplog.record_tuples
