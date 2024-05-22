@@ -1176,7 +1176,7 @@ def test_skip_all_prod_aborted_where_no_available_instance_alerts(
     ) in caplog.record_tuples
 
 
-def test_send_first_then_skip_second_invalid_login_attempt_alerts(
+def test_skip_invalid_login_attempt_alerts(
     run_slack_alerter, number_of_http_calls, caplog
 ):
     # arrange
@@ -1233,21 +1233,8 @@ def test_send_first_then_skip_second_invalid_login_attempt_alerts(
         response = run_slack_alerter(event)
 
     # assert
-    assert response == "Alert sent"
-    assert number_of_http_calls() == 1
-    assert (
-        "root",
-        logging.INFO,
-        "Sending message to Slack",
-    ) in caplog.record_tuples
-
-    # act
-    with caplog.at_level(logging.INFO):
-        response = run_slack_alerter(event)
-
-    # assert
     assert response == "Alert skipped"
-    assert number_of_http_calls() == 1
+    assert number_of_http_calls() == 0
     assert (
         "root",
         logging.INFO,
