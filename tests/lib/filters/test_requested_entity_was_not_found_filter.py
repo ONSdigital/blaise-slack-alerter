@@ -11,7 +11,7 @@ from lib.filters.requested_entity_was_not_found_filter import (
 @pytest.fixture()
 def processed_log_entry_requested_entity_was_not_found_error() -> ProcessedLogEntry:
     return ProcessedLogEntry(
-        message='generic::not_found: Requested entity was not found.".',
+        message="generic::not_found: Requested entity was not found.",
         data=dict(description="dummy"),
         severity="ERROR",
         platform="cloud_function",
