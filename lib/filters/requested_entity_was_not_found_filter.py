@@ -14,7 +14,7 @@ def requested_entity_was_not_found_filter(log_entry: ProcessedLogEntry) -> bool:
     if log_entry.severity != "ERROR":
         return False
 
-    if 'generic::not_found: Requested entity was not found.' not in log_entry.message:
+    if "generic::not_found: Requested entity was not found." not in log_entry.message:
         return False
 
     logging.info(f"Skipping requested entity was not found alert")

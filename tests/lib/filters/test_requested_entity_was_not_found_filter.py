@@ -3,7 +3,10 @@ import datetime
 import dataclasses
 
 from lib.log_processor import ProcessedLogEntry
-from lib.filters.requested_entity_was_not_found_filter import requested_entity_was_not_found_filter
+from lib.filters.requested_entity_was_not_found_filter import (
+    requested_entity_was_not_found_filter,
+)
+
 
 @pytest.fixture()
 def processed_log_entry_requested_entity_was_not_found_error() -> ProcessedLogEntry:
@@ -21,6 +24,7 @@ def processed_log_entry_requested_entity_was_not_found_error() -> ProcessedLogEn
         },
     )
 
+
 def test_log_is_skipped_when_its_from_cloud_function_when_requested_entity_was_not_found_error_GCP(
     processed_log_entry_requested_entity_was_not_found_error: ProcessedLogEntry,
 ):
@@ -28,6 +32,7 @@ def test_log_is_skipped_when_its_from_cloud_function_when_requested_entity_was_n
         processed_log_entry_requested_entity_was_not_found_error
     )
     assert log_is_skipped is True
+
 
 def test_log_message_is_not_a_string_when_entity_was_not_found_error_GCP(
     processed_log_entry_requested_entity_was_not_found_error: ProcessedLogEntry,
@@ -41,6 +46,7 @@ def test_log_message_is_not_a_string_when_entity_was_not_found_error_GCP(
 
     assert log_is_skipped is False
 
+
 def test_log_message_is_not_skipped_when_it_does_not_contain_requested_entity_was_not_found_error_GCP(
     processed_log_entry_requested_entity_was_not_found_error: ProcessedLogEntry,
 ):
@@ -52,6 +58,7 @@ def test_log_message_is_not_skipped_when_it_does_not_contain_requested_entity_wa
     )
 
     assert log_is_skipped is False
+
 
 def test_log_message_is_not_skipped_when_it_contains_severity_info_GCP(
     processed_log_entry_requested_entity_was_not_found_error: ProcessedLogEntry,

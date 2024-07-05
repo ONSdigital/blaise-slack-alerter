@@ -26,7 +26,9 @@ from lib.log_processor import (
 from lib.log_processor import process_log_entry
 from lib.filters.no_instance_filter import no_instance_filter
 from lib.filters.invalid_login_attempt_filter import invalid_login_attempt_filter
-from lib.filters.requested_entity_was_not_found_filter import requested_entity_was_not_found_filter
+from lib.filters.requested_entity_was_not_found_filter import (
+    requested_entity_was_not_found_filter,
+)
 
 
 def log_entry_skipped(log_entry: ProcessedLogEntry):
