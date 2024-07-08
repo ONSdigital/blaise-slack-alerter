@@ -1240,3 +1240,77 @@ def test_skip_invalid_login_attempt_alerts(
         logging.INFO,
         "Skipping invalid login attempt alert",
     ) in caplog.record_tuples
+
+
+def test_skip_requested_entity_was_not_found_alerts(
+    run_slack_alerter, number_of_http_calls, caplog
+):
+    # arrange
+    example_log_entry = {
+        "protoPayload": {
+            "@type": "type.googleapis.com/google.cloud.audit.AuditLog",
+            "status": {
+                "code": 5,
+                "message": "generic::not_found: Requested entity was not found.",
+            },
+            "authenticationInfo": {
+                "principalEmail": "service-628324858917@container-analysis.iam.gserviceaccount.com",
+                "principalSubject": "serviceAccount:service-628324858917@container-analysis.iam.gserviceaccount.com",
+            },
+            "requestMetadata": {
+                "callerIp": "private",
+                "callerSuppliedUserAgent": "ContainerAnalysis/boq_artifact-analysis-scanlistener_20240614.04_p1 go-containerregistry,gzip(gfe)",
+                "requestAttributes": {},
+                "destinationAttributes": {},
+            },
+            "serviceName": "artifactregistry.googleapis.com",
+            "methodName": "Docker-GetManifest",
+            "authorizationInfo": [
+                {
+                    "resource": "projects/ons-blaise-v2-prod/locations/europe-west2/repositories/gcf-artifacts",
+                    "permission": "artifactregistry.repositories.downloadArtifacts",
+                    "granted": True,
+                    "resourceAttributes": {},
+                    "permissionType": "DATA_READ",
+                }
+            ],
+            "resourceName": "projects/ons-blaise-v2-prod/locations/europe-west2/repositories/gcf-artifacts/dockerImages/publish_msg%2Fcache",
+            "request": {
+                "@type": "type.googleapis.com/google.logging.type.HttpRequest",
+                "requestMethod": "GET",
+                "requestUrl": "/v2/ons-blaise-v2-prod/gcf-artifacts/publish_msg/cache/manifests/sha256:a28cec80810f824b2e15005b1dc93877e1b9c7b7b3466d4f4b593c9c5db64868",
+            },
+            "resourceLocation": {
+                "currentLocations": ["europe-west2"],
+                "originalLocations": ["europe-west2"],
+            },
+        },
+        "insertId": "1rtjfyxd1d41",
+        "resource": {
+            "type": "audited_resource",
+            "labels": {
+                "project_id": "ons-blaise-v2-prod",
+                "method": "Docker-GetManifest",
+                "service": "artifactregistry.googleapis.com",
+            },
+        },
+        "timestamp": "2024-07-04T23:50:15.079183701Z",
+        "severity": "ERROR",
+        "logName": "projects/ons-blaise-v2-prod/logs/cloudaudit.googleapis.com%2Fdata_access",
+        "receiveTimestamp": "2024-07-04T23:50:15.816848898Z",
+    }
+
+    event = create_event(example_log_entry)
+
+    # act
+    with caplog.at_level(logging.INFO):
+        response = run_slack_alerter(event)
+
+    # assert
+    assert response == "Alert skipped"
+    assert number_of_http_calls() == 0
+    assert (
+        "root",
+        logging.INFO,
+        "Skipping requested entity was not found alert",
+    ) in caplog.record_tuples

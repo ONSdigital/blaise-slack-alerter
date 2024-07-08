@@ -9,7 +9,9 @@ from lib.filters.rproxy_lookupEffectiveGuestPolicies_filter import (
 
 
 @pytest.fixture()
-def processed_log_entry_rproxy_lookupEffectiveGuestPolicies_error() -> ProcessedLogEntry:
+def processed_log_entry_rproxy_lookupEffectiveGuestPolicies_error() -> (
+    ProcessedLogEntry
+):
     return ProcessedLogEntry(
         message='Error running LookupEffectiveGuestPolicies: error calling LookupEffectiveGuestPolicies: code: "NotFound", message: "Requested entity was not found.", details: []',
         data={"localTimestamp": "2023-09-28T08:45:35.1241Z", "omitempty": None},

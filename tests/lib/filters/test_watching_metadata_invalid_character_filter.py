@@ -9,7 +9,9 @@ from lib.filters.watching_metadata_invalid_character_filter import (
 
 
 @pytest.fixture()
-def processed_log_entry_watching_metadata_invalid_character_error() -> ProcessedLogEntry:
+def processed_log_entry_watching_metadata_invalid_character_error() -> (
+    ProcessedLogEntry
+):
     return ProcessedLogEntry(
         message="Error watching metadata: invalid character '<' looking for beginning of value",
         data={
