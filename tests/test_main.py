@@ -1316,7 +1316,7 @@ def test_skip_requested_entity_was_not_found_alerts(
     ) in caplog.record_tuples
 
 
-def test_skip_execute_sql_alerts(run_slack_alerter, number_of_http_calls, caplog):
+def test_skip_execute_sql_alerts_info(run_slack_alerter, number_of_http_calls, caplog):
     # arrange
     example_log_entry = {
         "protoPayload": {
@@ -1367,6 +1367,78 @@ def test_skip_execute_sql_alerts(run_slack_alerter, number_of_http_calls, caplog
         "severity": "INFO",
         "logName": "projects/ons-blaise-v2-prod/logs/cloudaudit.googleapis.com%2Fdata_access",
         "receiveTimestamp": "2024-08-02T11:56:02.607861434Z",
+    }
+
+    event = create_event(example_log_entry)
+
+    # act
+    with caplog.at_level(logging.INFO):
+        response = run_slack_alerter(event)
+
+    # assert
+    assert response == "Alert skipped"
+    assert number_of_http_calls() == 0
+    assert (
+        "root",
+        logging.INFO,
+        "Skipping execute sql alert",
+    ) in caplog.record_tuples
+
+
+def test_skip_execute_sql_alerts_error(run_slack_alerter, number_of_http_calls, caplog):
+    # arrange
+    example_log_entry = {
+        "protoPayload": {
+            "@type": "type.googleapis.com/google.cloud.audit.AuditLog",
+            "status": {
+                "code": 3,
+                "message": "Some of your SQL statements failed to execute (Learn more at https://cloud.google.com/sql/docs/mysql/manage-data-using-studio). Details: This API does not support reading BLOB columns.",
+            },
+            "authenticationInfo": {"principalEmail": "md.maruf.motaleb@ons.gov.uk"},
+            "requestMetadata": {
+                "callerIp": "155.190.13.19",
+                "requestAttributes": {
+                    "time": "2024-08-01T10:32:44.863464Z",
+                    "auth": {},
+                },
+                "destinationAttributes": {},
+            },
+            "serviceName": "cloudsql.googleapis.com",
+            "methodName": "cloudsql.instances.executeSql",
+            "authorizationInfo": [
+                {
+                    "resource": "projects/ons-blaise-v2-prod/instances/blaise-prod-5587401e",
+                    "permission": "cloudsql.instances.executeSql",
+                    "granted": True,
+                    "resourceAttributes": {
+                        "service": "sqladmin.googleapis.com",
+                        "name": "projects/ons-blaise-v2-prod/instances/blaise-prod-5587401e",
+                        "type": "sqladmin.googleapis.com/Instance",
+                    },
+                    "permissionType": "DATA_WRITE",
+                }
+            ],
+            "resourceName": "projects/ons-blaise-v2-prod/instances/blaise-prod-5587401e",
+            "request": {
+                "project": "ons-blaise-v2-prod",
+                "body": {"user": "blaise", "database": "blaise"},
+                "instance": "blaise-prod-5587401e",
+                "@type": "type.googleapis.com/google.cloud.sql.v1beta4.SqlInstancesExecuteSqlRequest",
+            },
+        },
+        "insertId": "e6g2mre8ysqr",
+        "resource": {
+            "type": "cloudsql_database",
+            "labels": {
+                "project_id": "ons-blaise-v2-prod",
+                "database_id": "ons-blaise-v2-prod:blaise-prod-5587401e",
+                "region": "europe-west2",
+            },
+        },
+        "timestamp": "2024-08-01T10:32:44.372162Z",
+        "severity": "ERROR",
+        "logName": "projects/ons-blaise-v2-prod/logs/cloudaudit.googleapis.com%2Fdata_access",
+        "receiveTimestamp": "2024-08-01T10:32:45.035865832Z",
     }
 
     event = create_event(example_log_entry)
