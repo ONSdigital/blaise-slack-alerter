@@ -84,3 +84,5 @@ def log_entry_skipped(log_entry: ProcessedLogEntry):
         ... etc]
 ```
 9. Run `make format test` - if all pass, push it up!
+
+**NB.** Slack alerts will only be visible in "dev", "dev-training", "preprod" and "prod"
