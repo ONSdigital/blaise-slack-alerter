@@ -11,7 +11,7 @@ def execute_sql_filter(log_entry: ProcessedLogEntry) -> bool:
     if not isinstance(log_entry.message, str):
         return False
 
-    if log_entry.severity != "INFO" and log_entry.severity != "ERROR":
+    if log_entry.severity != "ERROR":
         return False
 
     if (
