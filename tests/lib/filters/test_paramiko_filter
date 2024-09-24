@@ -72,4 +72,4 @@ def test_log_message_does_not_contain_paramiko(
         message="some other message",
     )
     log_is_skipped = paramiko_filter(processed_log_entry_paramiko_error)
-    assert log_is_skipped is True #False
+    assert log_is_skipped is False
