@@ -62,3 +62,14 @@ def test_log_message_is_not_skipped_when_it_contains_severity_info_for_paramiko_
     log_is_skipped = paramiko_filter(processed_log_entry_paramiko_error)
 
     assert log_is_skipped is False
+
+
+def test_log_message_does_not_contain_paramiko(
+    processed_log_entry_paramiko_error: ProcessedLogEntry,
+):
+    processed_log_entry_paramiko_error = dataclasses.replace(
+        processed_log_entry_paramiko_error,
+        message="some other message",
+    )
+    log_is_skipped = paramiko_filter(processed_log_entry_paramiko_error)
+    assert log_is_skipped is False
