@@ -1421,7 +1421,6 @@ def test_skip_paramiko_alerts_error(run_slack_alerter, number_of_http_calls, cap
         response = run_slack_alerter(event)
 
     # assert
-
     assert response == "Alert skipped"
     assert number_of_http_calls() == 0
     assert (
