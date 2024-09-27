@@ -9,7 +9,7 @@ from lib.filters.paramiko_filter import paramiko_filter
 @pytest.fixture()
 def processed_log_entry_paramiko_error() -> ProcessedLogEntry:
     return ProcessedLogEntry(
-        message="paramiko",
+        message="/layers/google.python.pip/pip/lib/python3.9/site-packages/paramiko/sftp_file.py",
         data=dict(description="dummy"),
         severity="ERROR",
         platform="cloud_run_revision",

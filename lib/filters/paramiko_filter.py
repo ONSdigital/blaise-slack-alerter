@@ -17,7 +17,9 @@ def paramiko_filter(log_entry: ProcessedLogEntry) -> bool:
     if log_entry.platform != "cloud_run_revision":
         return False
 
-    if ("paramiko") not in log_entry.message:
+    if (
+        "/layers/google.python.pip/pip/lib/python3.9/site-packages/paramiko/sftp_file.py"
+    ) not in log_entry.message:
         return False
 
     logging.info(f"Skipping paramiko error alert")
