@@ -1430,48 +1430,6 @@ def test_skip_paramiko_alerts_error(run_slack_alerter, number_of_http_calls, cap
     ) in caplog.record_tuples
 
 
-def test_skip_paramiko_alerts_error(run_slack_alerter, number_of_http_calls, caplog):
-    # arrange
-    example_log_entry = {
-        "textPayload": 'Traceback (most recent call last):\n  File "/layers/google.python.pip/pip/lib/python3.9/site-packages/paramiko/sftp_file.py", line 76, in __del__\n    self._close(async_=True)\n  File "/layers/google.python.pip/pip/lib/python3.9/site-packages/paramiko/sftp_file.py", line 97, in _close\n    BufferedFile.close(self)\n  File "/layers/google.python.pip/pip/lib/python3.9/site-packages/paramiko/file.py", line 85, in close\n    self.flush()\n  File "/layers/google.python.pip/pip/lib/python3.9/site-packages/paramiko/file.py", line 93, in flush\n    self._write_all(self._wbuffer.getvalue())\nValueError: I/O operation on closed file.',
-        "insertId": "66f1ab17000e1ad26f7ffcbe",
-        "resource": {
-            "type": "cloud_run_revision",
-            "labels": {
-                "location": "europe-west2",
-                "service_name": "nisra-case-mover-processor",
-                "project_id": "ons-blaise-v2-prod",
-                "configuration_name": "nisra-case-mover-processor",
-                "revision_name": "nisra-case-mover-processor-00012-sew",
-            },
-        },
-        "timestamp": "2024-09-23T17:53:27.924370Z",
-        "severity": "ERROR",
-        "labels": {
-            "goog-managed-by": "cloudfunctions",
-            "instanceId": "007989f2a1c448ded395a411cba085e03c4c09a74e9ee072633331ebe6126caee9691b90d1dc5f22fa5e473acab476a9bc0e3e1eb33eb8244d17d2d8ec4ad67f91d55627",
-        },
-        "logName": "projects/ons-blaise-v2-prod/logs/run.googleapis.com%2Fstderr",
-        "receiveTimestamp": "2024-09-23T17:53:28.255311165Z",
-        "errorGroups": [{"id": "CKakz9W_soaPWw"}],
-    }
-
-    event = create_event(example_log_entry)
-
-    # act
-    with caplog.at_level(logging.INFO):
-        response = run_slack_alerter(event)
-
-    # assert
-    assert response == "Alert skipped"
-    assert number_of_http_calls() == 0
-    assert (
-        "root",
-        logging.INFO,
-        "Skipping paramiko error alert",
-    ) in caplog.record_tuples
-
-
 def test_skip_bootstrapper_alerts(run_slack_alerter, number_of_http_calls, caplog):
     # arrange
     example_log_entry = {
