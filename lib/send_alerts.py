@@ -30,6 +30,8 @@ from lib.filters.requested_entity_was_not_found_filter import (
     requested_entity_was_not_found_filter,
 )
 from lib.filters.execute_sql_filter import execute_sql_filter
+from lib.filters.paramiko_filter import paramiko_filter
+from lib.filters.bootstrapper_filter import bootstrapper_filter
 
 
 def log_entry_skipped(log_entry: ProcessedLogEntry):
@@ -46,6 +48,8 @@ def log_entry_skipped(log_entry: ProcessedLogEntry):
         invalid_login_attempt_filter,
         requested_entity_was_not_found_filter,
         execute_sql_filter,
+        paramiko_filter,
+        bootstrapper_filter,
     ]
 
     for filter in filters:
