@@ -17,13 +17,13 @@ def bootstrapper_filter(log_entry: ProcessedLogEntry) -> bool:
     if log_entry.platform != "gce_instance":
         return False
 
-    if ("") not in log_entry.message:
+    if (
+        "Failed to execute job MTLS_MDS_Credential_Boostrapper with error:"
+        not in log_entry.message
+        and "Failed to schedule job MTLS_MDS_Credential_Boostrapper with error:"
+        not in log_entry.message
+    ):
         return False
-    
-    Failed to execute job MTLS_MDS_Credential_Boostrapper: 
-    Failed to schedule job MTLS_MDS_Credential_Boostrapper 
-    
-    Failed to execute job MTLS_MDS_Credential_Boostrapper: 
-    
+
     logging.info(f"Skipping bootstrapper alert")
     return True

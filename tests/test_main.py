@@ -1388,7 +1388,7 @@ def test_skip_execute_sql_alerts_error(run_slack_alerter, number_of_http_calls, 
     ) in caplog.record_tuples
 
 
-def test_skip_execute_sql_alerts_error(run_slack_alerter, number_of_http_calls, caplog):
+def test_skip_bootstrapper_alerts(run_slack_alerter, number_of_http_calls, caplog):
     # arrange
     example_log_entry = {
         "insertId": "g4ydtwlpwtc5vggzg",
@@ -1401,29 +1401,27 @@ def test_skip_execute_sql_alerts_error(run_slack_alerter, number_of_http_calls, 
             "time_written": "2024-09-20 01:31:12 +0100",
             "time_generated": "2024-09-20 01:31:12 +0100",
             "string_inserts": [
-            "2024/09/20 01:31:12 GCEGuestAgent: Failed to schedule job MTLS_MDS_Credential_Boostrapper with error: ShouldEnable() returned false, cannot schedule job MTLS_MDS_Credential_Boostrapper"
+                "2024/09/20 01:31:12 GCEGuestAgent: Failed to schedule job MTLS_MDS_Credential_Boostrapper with error: ShouldEnable() returned false, cannot schedule job MTLS_MDS_Credential_Boostrapper"
             ],
             "event_type": "error",
             "record_number": "352403810",
             "computer_name": "restapi-4",
             "source_name": "GCEGuestAgent",
-            "event_category": "0"
+            "event_category": "0",
         },
         "resource": {
             "type": "gce_instance",
             "labels": {
-            "zone": "europe-west2-a",
-            "project_id": "ons-blaise-v2-prod",
-            "instance_id": "6542796480007992547"
-            }
+                "zone": "europe-west2-a",
+                "project_id": "ons-blaise-v2-prod",
+                "instance_id": "6542796480007992547",
+            },
         },
         "timestamp": "2024-09-20T00:31:12Z",
         "severity": "ERROR",
-        "labels": {
-            "compute.googleapis.com/resource_name": "restapi-4"
-        },
+        "labels": {"compute.googleapis.com/resource_name": "restapi-4"},
         "logName": "projects/ons-blaise-v2-prod/logs/winevt.raw",
-        "receiveTimestamp": "2024-09-20T00:33:40.603402854Z"
+        "receiveTimestamp": "2024-09-20T00:33:40.603402854Z",
     }
 
     event = create_event(example_log_entry)

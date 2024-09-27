@@ -32,6 +32,7 @@ from lib.filters.requested_entity_was_not_found_filter import (
 from lib.filters.execute_sql_filter import execute_sql_filter
 from lib.filters.bootstrapper_filter import bootstrapper_filter
 
+
 def log_entry_skipped(log_entry: ProcessedLogEntry):
     filters = [
         sandbox_filter,
