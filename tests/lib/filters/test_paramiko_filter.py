@@ -9,7 +9,7 @@ from lib.filters.paramiko_filter import paramiko_filter
 @pytest.fixture()
 def processed_log_entry_paramiko_error() -> ProcessedLogEntry:
     return ProcessedLogEntry(
-        message="/layers/google.python.pip/pip/lib/python3.9/site-packages/paramiko/sftp_file.py",
+        message='Traceback (most recent call last):\n  File "/layers/google.python.pip/pip/lib/python3.9/site-packages/paramiko/sftp_file.py", line 76, in __del__\n    self._close(async_=True)\n  File "/layers/google.python.pip/pip/lib/python3.9/site-packages/paramiko/sftp_file.py", line 97, in _close\n    BufferedFile.close(self)\n  File "/layers/google.python.pip/pip/lib/python3.9/site-packages/paramiko/file.py", line 85, in close\n    self.flush()\n  File "/layers/google.python.pip/pip/lib/python3.9/site-packages/paramiko/file.py", line 93, in flush\n    self._write_all(self._wbuffer.getvalue())\nValueError: I/O operation on closed file.',
         data=dict(description="dummy"),
         severity="ERROR",
         platform="cloud_run_revision",
