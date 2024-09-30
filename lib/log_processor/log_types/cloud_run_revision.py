@@ -5,13 +5,13 @@ from lib.log_processor.app_log_payload import AppLogPayload
 
 
 def attempt_create(entry: LogEntry) -> Optional[AppLogPayload]:
-    if entry.resource_type != "cloud_function":
+    if entry.resource_type != "cloud_run_revision":
         return None
 
     message, data = get_message_and_data(entry)
 
     function_name = entry.resource_labels.get("function_name")
-    log_query = {"resource.type": "cloud_function"}
+    log_query = {"resource.type": "cloud_run_revision"}
 
     if function_name:
         log_query["resource.labels.function_name"] = function_name

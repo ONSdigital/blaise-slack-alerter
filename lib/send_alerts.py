@@ -3,7 +3,7 @@ import logging
 from typing import List
 
 from lib.alerter import Alerter
-from lib.cloud_functions import InvalidCloudFunctionEvent, parse_event
+from lib.cloud_run_revision import InvalidCloudRunRevisionEvent, parse_event
 from lib.cloud_logging import parse_log_entry
 from lib.filters.all_preprod_and_training_alerts_except_erroneous_questionnaire_filter import (
     all_preprod_and_training_alerts_except_erroneous_questionnaire_filter,
@@ -66,7 +66,7 @@ def send_alerts(
 ) -> str:
     try:
         log_data = parse_event(event).data
-    except InvalidCloudFunctionEvent:
+    except InvalidCloudRunRevisionEvent:
         logging.warning(
             f"Invalid PubSub envelope: Field 'data' was missing.",
             extra=dict(textPayload=json.dumps(event)),

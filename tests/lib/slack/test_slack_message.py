@@ -30,7 +30,7 @@ def processed_log_entry(log_timestamp) -> ProcessedLogEntry:
         message="Example error",
         data={"example_field": "example value"},
         severity="ERROR",
-        platform="cloud_functions",
+        platform="cloud_run_revisions",
         application="my-app",
         log_name="/log/my-log",
         timestamp=log_timestamp,
@@ -68,7 +68,7 @@ def test_create_from_processed_log_entry(processed_log_entry, log_query_link):
     assert message == SlackMessage(
         title=":alert: ERROR: Example error",
         fields={
-            "Platform": "cloud_functions",
+            "Platform": "cloud_run_revisions",
             "Application": "my-app",
             "Log Time": "2022-08-10 15:54:03",
             "Project": "example-gcp-project",
@@ -98,7 +98,7 @@ def test_create_from_processed_log_entry_with_timestamp_in_gmt(
     assert message == SlackMessage(
         title=":alert: ERROR: Example error",
         fields={
-            "Platform": "cloud_functions",
+            "Platform": "cloud_run_revisions",
             "Application": "my-app",
             "Log Time": "2022-01-10 14:54:03",
             "Project": "example-gcp-project",
@@ -131,7 +131,7 @@ def test_create_from_processed_log_entry_with_most_important_fields(
     assert message == SlackMessage(
         title=":alert: ERROR: Example error",
         fields={
-            "Platform": "cloud_functions",
+            "Platform": "cloud_run_revisions",
             "Application": "my-app",
             "Log Time": "2022-08-10 15:54:03",
             "Project": "example-gcp-project",
@@ -164,7 +164,7 @@ def test_create_from_processed_log_entry_with_most_important_field_not_found(
     assert message == SlackMessage(
         title=":alert: ERROR: Example error",
         fields={
-            "Platform": "cloud_functions",
+            "Platform": "cloud_run_revisions",
             "Application": "my-app",
             "Log Time": "2022-08-10 15:54:03",
             "Project": "example-gcp-project",
@@ -195,7 +195,7 @@ def test_create_from_processed_log_entry_with_no_important_fields(
     assert message == SlackMessage(
         title=":alert: ERROR: Example error",
         fields={
-            "Platform": "cloud_functions",
+            "Platform": "cloud_run_revisions",
             "Application": "my-app",
             "Log Time": "2022-08-10 15:54:03",
             "Project": "example-gcp-project",

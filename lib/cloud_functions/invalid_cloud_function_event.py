@@ -1,2 +1,0 @@
-class InvalidCloudFunctionEvent(RuntimeError):
-    pass

@@ -23,7 +23,7 @@ def processed_log_entry_bootstrapper_error() -> ProcessedLogEntry:
     )
 
 
-def test_log_is_skipped_when_its_from_cloud_run_revision_when_bootstrapper_error(
+def test_log_is_skipped_when_its_from_gce_instance_when_bootstrapper_error(
     processed_log_entry_bootstrapper_error: ProcessedLogEntry,
 ):
     log_is_skipped = bootstrapper_filter(processed_log_entry_bootstrapper_error)
