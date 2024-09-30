@@ -54,7 +54,8 @@ def test_log_is_not_skipped_when_not_from_cloud_run_revision_instance_when_no_in
     processed_log_entry_no_instance_error: ProcessedLogEntry,
 ):
     processed_log_entry_no_instance_error = dataclasses.replace(
-        processed_log_entry_no_instance_error, platform="not_cloud_run_revision_instance"
+        processed_log_entry_no_instance_error,
+        platform="not_cloud_run_revision_instance",
     )
     log_is_skipped = no_instance_filter(processed_log_entry_no_instance_error)
 
