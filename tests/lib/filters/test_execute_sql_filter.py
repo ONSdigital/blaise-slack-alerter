@@ -25,7 +25,7 @@ def processed_log_entry_execute_sql_error() -> ProcessedLogEntry:
     )
 
 
-def test_log_is_skipped_when_its_from_cloud_function_when_execute_sql_error(
+def test_log_is_skipped_when_its_from_cloud_run_revision_when_execute_sql_error(
     processed_log_entry_execute_sql_error: ProcessedLogEntry,
 ):
     log_is_skipped = execute_sql_filter(processed_log_entry_execute_sql_error)

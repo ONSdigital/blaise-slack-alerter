@@ -3,13 +3,13 @@ import dataclasses
 import pytest
 
 from lib.cloud_logging import LogEntry, PayloadType
-from lib.log_processor.log_types.cloud_function import attempt_create
+from lib.log_processor.log_types.cloud_run_revision import attempt_create
 
 
 @pytest.fixture
 def log_entry() -> LogEntry:
     return LogEntry(
-        resource_type="cloud_function",
+        resource_type="cloud_run_revision",
         resource_labels=dict(function_name="example-function"),
         payload_type=PayloadType.TEXT,
         payload="Cloud function error message",
@@ -26,10 +26,10 @@ def test_attempt_create_succeeds_with_complete_entry(log_entry):
     assert instance is not None
     assert instance.message == "Cloud function error message"
     assert instance.data == ""
-    assert instance.platform == "cloud_function"
+    assert instance.platform == "cloud_run_revision"
     assert instance.application == "example-function"
     assert instance.log_query == {
-        "resource.type": "cloud_function",
+        "resource.type": "cloud_run_revision",
         "resource.labels.function_name": "example-function",
     }
 
@@ -53,7 +53,7 @@ def test_attempt_create_returns_query_without_function_name_if_label_is_missing(
     del log_entry.resource_labels["function_name"]
     instance = attempt_create(log_entry)
     assert instance is not None
-    assert instance.log_query == {"resource.type": "cloud_function"}
+    assert instance.log_query == {"resource.type": "cloud_run_revision"}
 
 
 def test_attempt_create_succeeds_if_payload_type_is_json(log_entry):

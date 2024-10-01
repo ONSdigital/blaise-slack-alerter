@@ -8,7 +8,7 @@ def no_instance_filter(log_entry: ProcessedLogEntry) -> bool:
     if not isinstance(log_entry.platform, str):
         return False
 
-    if log_entry.platform != "cloud_function":
+    if log_entry.platform != "cloud_run_revision":
         return False
 
     if not isinstance(log_entry.message, str):
