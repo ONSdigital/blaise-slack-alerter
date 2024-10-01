@@ -12,18 +12,18 @@ def processed_log_entry_no_instance_error() -> ProcessedLogEntry:
         message="The request was aborted because there was no available instance. Additional troubleshooting documentation can be found at: https://cloud.google.com/functions/docs/troubleshooting#scalability",
         data=dict(description="dummy"),
         severity="ERROR",
-        platform="cloud_function",
+        platform="cloud_run_revision",
         application="nisra-case-mover-processor",
         log_name="/logs/cloudfunctions",
         timestamp=datetime.datetime(2024, 5, 16, 11, 11, 11, 99633),
         log_query={
-            "resource.type": "cloud_function",
+            "resource.type": "cloud_run_revision",
             "resource.labels.instance_id": "458491889528627364",
         },
     )
 
 
-def test_log_is_skipped_when_its_not_from_cloud_function_instance_when_no_instance_error(
+def test_log_is_skipped_when_its_not_from_cloud_run_revision_instance_when_no_instance_error(
     processed_log_entry_no_instance_error: ProcessedLogEntry,
 ):
     log_is_skipped = no_instance_filter(processed_log_entry_no_instance_error)
@@ -50,11 +50,12 @@ def test_log_is_not_skipped_when_its_application_is_not_in_list_of_skippable_app
     assert log_is_skipped is False
 
 
-def test_log_is_not_skipped_when_not_from_cloud_function_instance_when_no_instance_error(
+def test_log_is_not_skipped_when_not_from_cloud_run_revision_instance_when_no_instance_error(
     processed_log_entry_no_instance_error: ProcessedLogEntry,
 ):
     processed_log_entry_no_instance_error = dataclasses.replace(
-        processed_log_entry_no_instance_error, platform="not_cloud_function_instance"
+        processed_log_entry_no_instance_error,
+        platform="not_cloud_run_revision_instance",
     )
     log_is_skipped = no_instance_filter(processed_log_entry_no_instance_error)
 

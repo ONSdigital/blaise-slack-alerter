@@ -3,7 +3,7 @@ import json
 
 import pytest
 
-from lib.cloud_functions import InvalidCloudFunctionEvent, parse_event
+from lib.cloud_run_revision import InvalidCloudRunRevisionEvent, parse_event
 
 
 @pytest.fixture
@@ -21,14 +21,14 @@ def event():
 
 def test_parse_event_fails_when_type_does_not_exist(event):
     del event["@type"]
-    with pytest.raises(InvalidCloudFunctionEvent) as e:
+    with pytest.raises(InvalidCloudRunRevisionEvent) as e:
         parse_event(event)
     assert e.value.args[0] == "Field '@type' is missing."
 
 
 def test_parse_event_fails_when_type_is_not_v1_pubsub_message(event):
     event["@type"] = "unknown"
-    with pytest.raises(InvalidCloudFunctionEvent) as e:
+    with pytest.raises(InvalidCloudRunRevisionEvent) as e:
         parse_event(event)
     assert (
         e.value.args[0]
@@ -38,14 +38,14 @@ def test_parse_event_fails_when_type_is_not_v1_pubsub_message(event):
 
 def test_parse_event_fails_when_data_does_not_exist(event):
     del event["data"]
-    with pytest.raises(InvalidCloudFunctionEvent) as e:
+    with pytest.raises(InvalidCloudRunRevisionEvent) as e:
         parse_event(event)
     assert e.value.args[0] == "Field 'data' is missing."
 
 
 def test_parse_event_fails_when_data_is_not_valid_base64(event):
     event["data"] = "not_base_64"
-    with pytest.raises(InvalidCloudFunctionEvent) as e:
+    with pytest.raises(InvalidCloudRunRevisionEvent) as e:
         parse_event(event)
     assert e.value.args[0] == (
         "Field 'data' does not contain valid base64 encoded content. "
@@ -55,7 +55,7 @@ def test_parse_event_fails_when_data_is_not_valid_base64(event):
 
 def test_parse_event_fails_when_data_is_not_valid_json(event):
     event["data"] = base64.b64encode(b"{not-json}")
-    with pytest.raises(InvalidCloudFunctionEvent) as e:
+    with pytest.raises(InvalidCloudRunRevisionEvent) as e:
         parse_event(event)
     assert e.value.args[0] == (
         "Field 'data' does not contain valid JSON. "
