@@ -1,0 +1,2 @@
+class InvalidCloudRunRevisionEvent(RuntimeError):
+    pass

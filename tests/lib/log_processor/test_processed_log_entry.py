@@ -23,7 +23,7 @@ def test_create_processed_log_entry():
     app_log_payload = AppLogPayload(
         message="there was an error",
         data=dict(key="example_value"),
-        platform="cloud_function",
+        platform="cloud_run_revision",
         application="my_app",
         most_important_values=["important_value"],
     )
@@ -37,7 +37,7 @@ def test_create_processed_log_entry():
         timestamp=parse("2022-07-22T20:36:21.891133Z").astimezone(
             pytz.timezone("Europe/London")
         ),
-        platform="cloud_function",
+        platform="cloud_run_revision",
         application="my_app",
         most_important_values=["important_value"],
     )
@@ -57,7 +57,7 @@ def test_create_processed_log_entry_when_timestamp_is_missing():
     app_log_payload = AppLogPayload(
         message="there was an error",
         data=dict(key="example_value"),
-        platform="cloud_function",
+        platform="cloud_run_revision",
         application="my_app",
     )
     result = create_processed_log_entry(log_entry, app_log_payload)
@@ -68,7 +68,7 @@ def test_create_processed_log_entry_when_timestamp_is_missing():
         severity="WARN",
         log_name="/example_log",
         timestamp=None,
-        platform="cloud_function",
+        platform="cloud_run_revision",
         application="my_app",
     )
 
@@ -87,7 +87,7 @@ def test_create_processed_log_entry_when_timestamp_not_parseable():
     app_log_payload = AppLogPayload(
         message="there was an error",
         data=dict(key="example_value"),
-        platform="cloud_function",
+        platform="cloud_run_revision",
         application="my_app",
         log_query=dict(field1="value1", field2="value2"),
     )
@@ -99,7 +99,7 @@ def test_create_processed_log_entry_when_timestamp_not_parseable():
         severity="WARN",
         log_name="/example_log",
         timestamp=None,
-        platform="cloud_function",
+        platform="cloud_run_revision",
         application="my_app",
         log_query=dict(field1="value1", field2="value2"),
     )

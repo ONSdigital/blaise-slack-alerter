@@ -200,26 +200,26 @@ def test_send_gce_instance_slack_alert(run_slack_alerter, get_webhook_payload):
     )
 
 
-def test_send_cloud_function_slack_alert(run_slack_alerter, get_webhook_payload):
-    cloud_function_log_entry = {
+def test_send_cloud_run_revision_slack_alert(run_slack_alerter, get_webhook_payload):
+    cloud_run_revision_log_entry = {
         "receiveTimestamp": "2022-07-22T20:36:22.219592062Z",
         "resource": {
             "labels": {
                 "function_name": "log-error",
             },
-            "type": "cloud_function",
+            "type": "cloud_run_revision",
         },
         "severity": "ERROR",
         "textPayload": "Example error message",
     }
-    event = create_event(cloud_function_log_entry)
+    event = create_event(cloud_run_revision_log_entry)
 
     response = run_slack_alerter(event)
 
     assert response == "Alert sent"
     expected_log_query_link = create_log_query_link(
         {
-            "resource.type": "cloud_function",
+            "resource.type": "cloud_run_revision",
             "resource.labels.function_name": "log-error",
         },
         ["WARNING", "ERROR", "CRITICAL", "ALERT", "EMERGENCY", "DEBUG"],
@@ -231,7 +231,7 @@ def test_send_cloud_function_slack_alert(run_slack_alerter, get_webhook_payload)
         SlackMessage(
             title=":alert: ERROR: Example error message",
             fields={
-                "Platform": "cloud_function",
+                "Platform": "cloud_run_revision",
                 "Application": "log-error",
                 "Log Time": "2022-07-22 21:36:22",
                 "Project": "project-dev",
@@ -250,28 +250,28 @@ def test_send_cloud_function_slack_alert(run_slack_alerter, get_webhook_payload)
     )
 
 
-def test_send_cloud_function_timeout_slack_alert(
+def test_send_cloud_run_revision_timeout_slack_alert(
     run_slack_alerter, get_webhook_payload
 ):
-    cloud_function_log_entry = {
+    cloud_run_revision_log_entry = {
         "receiveTimestamp": "2022-12-15T04:09:02.428095884Z",
         "resource": {
             "labels": {
                 "function_name": "log-error",
             },
-            "type": "cloud_function",
+            "type": "cloud_run_revision",
         },
         "severity": "DEBUG",
         "textPayload": "Function execution took 540141 ms. Finished with status: timeout",
     }
-    event = create_event(cloud_function_log_entry)
+    event = create_event(cloud_run_revision_log_entry)
 
     response = run_slack_alerter(event)
 
     assert response == "Alert sent"
     expected_log_query_link = create_log_query_link(
         {
-            "resource.type": "cloud_function",
+            "resource.type": "cloud_run_revision",
             "resource.labels.function_name": "log-error",
         },
         ["WARNING", "ERROR", "CRITICAL", "ALERT", "EMERGENCY", "DEBUG"],
@@ -282,7 +282,7 @@ def test_send_cloud_function_timeout_slack_alert(
         SlackMessage(
             title=":alert: DEBUG: Function execution took 540141 ms. Finished with status: timeout",
             fields={
-                "Platform": "cloud_function",
+                "Platform": "cloud_run_revision",
                 "Application": "log-error",
                 "Log Time": "2022-12-15 04:09:02",
                 "Project": "project-dev",
@@ -1144,7 +1144,7 @@ def test_skip_all_prod_aborted_where_no_available_instance_alerts(
             "protocol": "HTTP/1.1",
         },
         "resource": {
-            "type": "cloud_function",
+            "type": "cloud_run_revision",
             "labels": {
                 "project_id": "ons-blaise-v2-prod",
                 "region": "europe-west2",
