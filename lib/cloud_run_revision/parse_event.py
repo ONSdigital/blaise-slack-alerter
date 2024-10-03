@@ -22,13 +22,12 @@ def assert_is_v1_pubsub_message(event: dict) -> None:
 
 
 def parse_event(event) -> Event:
+    assert_is_v1_pubsub_message(event)
+    assert_field_in_event("@type", event)
+    assert_field_in_event("data", event)
 
     try:
-        event = Event(data=json.loads(base64.b64decode(event["data"])))
-        assert_is_v1_pubsub_message(event)
-        assert_field_in_event("@type", event)
-        assert_field_in_event("data", event)
-        return event
+        return Event(data=json.loads(base64.b64decode(event["data"])))
     except binascii.Error as err:
         raise InvalidCloudRunRevisionEvent(
             f"Field 'data' does not contain valid base64 encoded content. {str(err)}."
