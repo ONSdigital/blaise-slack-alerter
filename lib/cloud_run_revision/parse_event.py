@@ -22,7 +22,7 @@ def assert_is_v1_pubsub_message(event: dict) -> None:
 
 
 def parse_event(event) -> Event:
-    assert_field_in_event("data", event)
+    # assert_field_in_event("data", event)
     assert_field_in_event("@type", event)
     assert_is_v1_pubsub_message(event)
 

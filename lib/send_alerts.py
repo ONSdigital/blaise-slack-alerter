@@ -67,7 +67,7 @@ def send_alerts(
     try:
         logging.info("EVENT LOG HERE")
         logging.info(event)
-        log_data = parse_event(event)
+        log_data = parse_event(event).data
     except InvalidCloudRunRevisionEvent:
         logging.warning(
             f"Invalid PubSub envelope: Field 'data' was missing.",
