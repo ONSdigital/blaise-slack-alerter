@@ -65,7 +65,8 @@ def send_alerts(
     app_log_payload_factories: List[CreateAppLogPayloadFromLogEntry],
 ) -> str:
     try:
-        logging.debug("EVENT LOG HERE: ", event)
+        logging.info("EVENT LOG HERE")
+        logging.debug(event)
         log_data = parse_event(event).data
     except InvalidCloudRunRevisionEvent:
         logging.warning(
