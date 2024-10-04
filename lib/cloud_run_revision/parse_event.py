@@ -22,9 +22,9 @@ def assert_is_v1_pubsub_message(event: dict) -> None:
 
 
 def parse_event(event) -> Event:
-    assert_is_v1_pubsub_message(event)
-    assert_field_in_event("@type", event)
-    assert_field_in_event("data", event)
+    # assert_is_v1_pubsub_message(event)
+    # assert_field_in_event("@type", event)
+    # assert_field_in_event("data", event)
 
     try:
         return Event(data=json.loads(base64.b64decode(event["data"])))

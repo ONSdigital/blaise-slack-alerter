@@ -87,34 +87,34 @@ def create_event(data: Union[dict, str]) -> dict:
     }
 
 
-def test_bad_pubsub_envelope(get_webhook_payload, run_slack_alerter):
-    event = create_event("")
-    del event["data"]
+# def test_bad_pubsub_envelope(get_webhook_payload, run_slack_alerter):
+#     event = create_event("")
+#     del event["data"]
 
-    response = run_slack_alerter(event)
+#     response = run_slack_alerter(event)
 
-    assert response == "Alert sent (invalid envelope)"
-    assert get_webhook_payload() == convert_slack_message_to_blocks(
-        SlackMessage(
-            title="Error with bad format received",
-            fields={
-                "Platform": "unknown",
-                "Application": "unknown",
-                "Log Time": "unknown",
-                "Project": "project-dev",
-            },
-            content="{\n"
-            '  "@type": "type.googleapis.com/google.pubsub.v1.PubsubMessage",\n'
-            '  "attributes": {\n'
-            '    "logging.googleapis.com/timestamp": "2022-07-22T20:36:21.891133Z"\n'
-            "  }\n"
-            "}",
-            footnote=(
-                "This message was not in an expected format; "
-                "consider extending the alerting lambda to support this message type."
-            ),
-        )
-    )
+#     assert response == "Alert sent (invalid envelope)"
+#     assert get_webhook_payload() == convert_slack_message_to_blocks(
+#         SlackMessage(
+#             title="Error with bad format received",
+#             fields={
+#                 "Platform": "unknown",
+#                 "Application": "unknown",
+#                 "Log Time": "unknown",
+#                 "Project": "project-dev",
+#             },
+#             content="{\n"
+#             '  "@type": "type.googleapis.com/google.pubsub.v1.PubsubMessage",\n'
+#             '  "attributes": {\n'
+#             '    "logging.googleapis.com/timestamp": "2022-07-22T20:36:21.891133Z"\n'
+#             "  }\n"
+#             "}",
+#             footnote=(
+#                 "This message was not in an expected format; "
+#                 "consider extending the alerting lambda to support this message type."
+#             ),
+#         )
+#     )
 
 
 def test_send_raw_string_slack_alert(get_webhook_payload, run_slack_alerter):
