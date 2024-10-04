@@ -68,7 +68,8 @@ def send_alerts(
     try:
         logging.info("EVENT LOG HERE")
         logging.info(event)
-        logging.info(event.data)
+        logging.info("EVENT TYPE HERE")
+        logging.info(type(event))
         log_data = parse_event(event).data
     except InvalidCloudRunRevisionEvent:
         logging.warning(
