@@ -36,11 +36,11 @@ def event():
 #     )
 
 
-# def test_parse_event_fails_when_data_does_not_exist(event):
-#     del event["data"]
-#     with pytest.raises(InvalidCloudRunRevisionEvent) as e:
-#         parse_event(event)
-#     assert e.value.args[0] == "Field 'data' is missing."
+def test_parse_event_fails_when_data_does_not_exist(event):
+    del event["data"]
+    with pytest.raises(InvalidCloudRunRevisionEvent) as e:
+        parse_event(event)
+    assert e.value.args[0] == "Field 'data' is missing."
 
 
 def test_parse_event_fails_when_data_is_not_valid_base64(event):
