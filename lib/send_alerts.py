@@ -1,4 +1,5 @@
 import json
+import base64
 import logging
 from typing import List
 
@@ -67,6 +68,8 @@ def send_alerts(
     try:
         logging.info("EVENT LOG HERE")
         logging.info(event)
+        parse_data = base64.b64decode(event.data)
+        logging.info(parse_data)
         log_data = parse_event(event).data
     except InvalidCloudRunRevisionEvent:
         logging.warning(
