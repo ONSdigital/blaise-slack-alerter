@@ -1,5 +1,4 @@
 import json
-import base64
 import logging
 from typing import List
 
@@ -66,6 +65,12 @@ def send_alerts(
     app_log_payload_factories: List[CreateAppLogPayloadFromLogEntry],
 ) -> str:
     try:
+        logging.info("EVENT LOG HERE")
+        logging.info(event)
+
+        for key in event:
+            logging.info(f"Key: {key}")
+
         log_data = parse_event(event).data
     except InvalidCloudRunRevisionEvent:
         logging.warning(
