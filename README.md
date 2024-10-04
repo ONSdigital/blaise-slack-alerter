@@ -4,7 +4,7 @@ This is a Cloud Function which is used to send alerts from Google Cloud Logging 
 
 ## How it Works
 
-Some GCP infrastructure is required for this to working.
+Some GCP infrastructure is required for this to work.
 
 1. **A PubSub Topic**:<br>
     Log messages will be put on this topic and trigger the Cloud Function.
@@ -50,23 +50,24 @@ This repository uses poetry. After cloning, install the dependencies by running:
 poetry install
 ```
 
+
 ### Makefile
 
 A `Makefile` is included with some useful tasks to help with development.
 Running `make help` will list all available commands.
 
-### GitHub Actions
+### Linting and Testing
 
-The GitHub Actions run the linter, typechecker and tests.
+The [GitHub Actions](https://docs.github.com/en/actions), a CI/CD platform, runs the linter, typechecker and tests (using workflows), whenever a GitHub PR is raised.
 
-To avoid getting failures, it's worth running `make test` before commit.
-Note, `make test` also runs the typechecker and linter. 
-
-### Linting Errors
+To minimise chances of failures when the GitHub Actions are ran, it's worth running `make test` before you push and commit to GitHub.
+Note, `make test` also runs the typechecker and linter.
 
 Linting errors can usually be fixed quickly with `make format`.
 
+
 ### How to silence prod alerts 
+
 1. Navigate to the log entry in GCP Console and copy the entry to the clipboard
 2. Create a test in the `test_main.py` file using the copied log entry
 3. Run tests using `make format test` - the test you just created should fail!
@@ -85,4 +86,4 @@ def log_entry_skipped(log_entry: ProcessedLogEntry):
 ```
 9. Run `make format test` - if all pass, push it up!
 
-**NB.** Slack alerts will only be visible in "dev", "dev-training", "preprod" and "prod"
+**NB** Slack alerts coming from sandboxes are filtered by default, and so any error level event logs that you try to reproduce in sandboxes won't show in the sandbox alert Slack channels. If you want to reproduce error logs within a sandbox, make sure to remove `sandbox_filter` in `send_alerts/log_entry_skipped` before deploying.
