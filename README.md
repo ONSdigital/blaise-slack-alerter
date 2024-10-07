@@ -4,7 +4,7 @@ This is a Cloud Function which is used to send alerts from Google Cloud Logging 
 
 ## How it Works
 
-Some GCP infrastructure is required for this to working.
+Some GCP infrastructure is required for this to work.
 
 1. **A PubSub Topic**:<br>
     Log messages will be put on this topic and trigger the Cloud Function.
@@ -50,23 +50,24 @@ This repository uses poetry. After cloning, install the dependencies by running:
 poetry install
 ```
 
+
 ### Makefile
 
 A `Makefile` is included with some useful tasks to help with development.
 Running `make help` will list all available commands.
 
-### GitHub Actions
+### Linting and Testing
 
-The GitHub Actions run the linter, typechecker and tests.
+The [GitHub Actions](https://docs.github.com/en/actions), a CI/CD platform, runs the linter, typechecker and tests (using workflows), whenever a GitHub PR is raised.
 
-To avoid getting failures, it's worth running `make test` before commit.
-Note, `make test` also runs the typechecker and linter. 
-
-### Linting Errors
+To minimise chances of failures when the GitHub Actions are ran, it's worth running `make test` before you push and commit to GitHub.
+Note, `make test` also runs the typechecker and linter.
 
 Linting errors can usually be fixed quickly with `make format`.
 
-### How to silence prod alerts 
+
+### How to silence specific event logs
+
 1. Navigate to the log entry in GCP Console and copy the entry to the clipboard
 2. Create a test in the `test_main.py` file using the copied log entry
 3. Run tests using `make format test` - the test you just created should fail!
@@ -74,6 +75,7 @@ Linting errors can usually be fixed quickly with `make format`.
 5. Add new functionality to the newly created file (see `osconfig_agent_filter.py` for an example)
 6. Navigate to the `tests/lib/filters` dir and create a new `test_XX.py` file
 7. Create unit tests that test the actual filter functionality (again, check `test_osconfig_agent_filter.py` for an example). You will need to change the fixture!
+    - **NB** Event logs can be difficult to replicate in a sandbox, so it is important that the unit tests are present and accurately written before it is deployed to an environment.
 8. In `send_alerts.py`, import the function you just created and add it to the filter array `[]` in the `log_entry_skipped` function
 ```python
 def log_entry_skipped(log_entry: ProcessedLogEntry):
@@ -83,6 +85,6 @@ def log_entry_skipped(log_entry: ProcessedLogEntry):
         agent_connect_filter,
         ... etc]
 ```
-9. Run `make format test` - if all pass, push it up!
-
-**NB.** Slack alerts will only be visible in "dev", "dev-training", "preprod" and "prod"
+9. Run `make format test` - if the checks pass, push and commit!
+10. Deploy the Cloud Function in a sandbox and ensure it works as expected.
+    - **NB** Logs coming from sandboxes are filtered by default. If you want to reproduce error logs within a sandbox, make sure to remove `sandbox_filter` in `send_alerts/log_entry_skipped` before deploying the Cloud Function.
