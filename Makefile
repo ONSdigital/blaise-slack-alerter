@@ -27,16 +27,3 @@ test: lint check-types
 
 requirements.txt:
 	@poetry export -f requirements.txt --without-hashes --output requirements.txt
-
-# TODO remove me
-.PHONY=deploy-log-error
-deploy-log-error: requirements.txt
-	 @gcloud functions deploy log-error \
-        --region=europe-west2 \
-        --entry-point=log_error \
-        --trigger-http \
-        --runtime=python39
-
-# TODO remove me
-.PHONY=deploy
-deploy: deploy-slack-alerts deploy-log-error
