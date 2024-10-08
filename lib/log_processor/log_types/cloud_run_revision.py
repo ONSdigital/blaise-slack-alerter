@@ -10,17 +10,17 @@ def attempt_create(entry: LogEntry) -> Optional[AppLogPayload]:
 
     message, data = get_message_and_data(entry)
 
-    function_name = entry.resource_labels.get("service_name")
+    service_name = entry.resource_labels.get("service_name")
     log_query = {"resource.type": "cloud_run_revision"}
 
-    if function_name:
-        log_query["resource.labels.service_name"] = function_name
+    if service_name:
+        log_query["resource.labels.service_name"] = service_name
 
     return AppLogPayload(
         message=message,
         data=data,
         platform=entry.resource_type,
-        application=function_name or "[unknown]",
+        application=service_name or "[unknown]",
         log_query=log_query,
     )
 
