@@ -205,7 +205,7 @@ def test_send_cloud_run_revision_slack_alert(run_slack_alerter, get_webhook_payl
         "receiveTimestamp": "2022-07-22T20:36:22.219592062Z",
         "resource": {
             "labels": {
-                "function_name": "log-error",
+                "service_name": "log-error",
             },
             "type": "cloud_run_revision",
         },
@@ -220,7 +220,7 @@ def test_send_cloud_run_revision_slack_alert(run_slack_alerter, get_webhook_payl
     expected_log_query_link = create_log_query_link(
         {
             "resource.type": "cloud_run_revision",
-            "resource.labels.function_name": "log-error",
+            "resource.labels.service_name": "log-error",
         },
         ["WARNING", "ERROR", "CRITICAL", "ALERT", "EMERGENCY", "DEBUG"],
         parse("2022-07-22T20:36:22.219592Z"),
@@ -257,7 +257,7 @@ def test_send_cloud_run_revision_timeout_slack_alert(
         "receiveTimestamp": "2022-12-15T04:09:02.428095884Z",
         "resource": {
             "labels": {
-                "function_name": "log-error",
+                "service_name": "log-error",
             },
             "type": "cloud_run_revision",
         },
@@ -272,7 +272,7 @@ def test_send_cloud_run_revision_timeout_slack_alert(
     expected_log_query_link = create_log_query_link(
         {
             "resource.type": "cloud_run_revision",
-            "resource.labels.function_name": "log-error",
+            "resource.labels.service_name": "log-error",
         },
         ["WARNING", "ERROR", "CRITICAL", "ALERT", "EMERGENCY", "DEBUG"],
         parse("2022-12-15T04:09:02.428095Z").astimezone(pytz.timezone("Europe/London")),
@@ -1148,7 +1148,7 @@ def test_skip_all_prod_aborted_where_no_available_instance_alerts(
             "labels": {
                 "project_id": "ons-blaise-v2-prod",
                 "region": "europe-west2",
-                "function_name": application_input,
+                "service_name": application_input,
             },
         },
         "timestamp": "2024-05-16T08:45:23.261465Z",
