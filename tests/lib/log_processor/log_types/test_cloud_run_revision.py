@@ -10,7 +10,7 @@ from lib.log_processor.log_types.cloud_run_revision import attempt_create
 def log_entry() -> LogEntry:
     return LogEntry(
         resource_type="cloud_run_revision",
-        resource_labels=dict(function_name="example-function"),
+        resource_labels=dict(service_name="example-function"),
         payload_type=PayloadType.TEXT,
         payload="Cloud function error message",
         severity="ERROR",
@@ -30,7 +30,7 @@ def test_attempt_create_succeeds_with_complete_entry(log_entry):
     assert instance.application == "example-function"
     assert instance.log_query == {
         "resource.type": "cloud_run_revision",
-        "resource.labels.function_name": "example-function",
+        "resource.labels.service_name": "example-function",
     }
 
 
@@ -41,16 +41,16 @@ def test_attempt_create_returns_none_if_resource_type_is_wrong(log_entry):
 
 
 def test_attempt_create_returns_unknown_application_if_label_is_missing(log_entry):
-    del log_entry.resource_labels["function_name"]
+    del log_entry.resource_labels["service_name"]
     instance = attempt_create(log_entry)
     assert instance is not None
     assert instance.application == "[unknown]"
 
 
-def test_attempt_create_returns_query_without_function_name_if_label_is_missing(
+def test_attempt_create_returns_query_without_service_name_if_label_is_missing(
     log_entry,
 ):
-    del log_entry.resource_labels["function_name"]
+    del log_entry.resource_labels["service_name"]
     instance = attempt_create(log_entry)
     assert instance is not None
     assert instance.log_query == {"resource.type": "cloud_run_revision"}
