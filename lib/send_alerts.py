@@ -37,7 +37,7 @@ from lib.filters.generic_not_found_filter import generic_not_found_filter
 
 def log_entry_skipped(log_entry: ProcessedLogEntry):
     filters = [
-        sandbox_filter,
+        # sandbox_filter,
         all_preprod_and_training_alerts_except_erroneous_questionnaire_filter,
         osconfig_agent_filter,
         auditlog_filter,
