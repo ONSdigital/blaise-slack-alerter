@@ -1480,3 +1480,165 @@ def test_skip_bootstrapper_alerts(run_slack_alerter, number_of_http_calls, caplo
         logging.INFO,
         "Skipping bootstrapper alert",
     ) in caplog.record_tuples
+
+
+def test_skip_generic_not_found_alerts_latest(
+    run_slack_alerter, number_of_http_calls, caplog
+):
+    # arrange
+    example_log_entry = {
+        "protoPayload": {
+            "@type": "type.googleapis.com/google.cloud.audit.AuditLog",
+            "status": {
+                "code": 5,
+                "message": 'generic::not_found: Failed to fetch "latest"',
+            },
+            "authenticationInfo": {
+                "principalEmail": "628324858917@cloudbuild.gserviceaccount.com",
+                "serviceAccountDelegationInfo": [
+                    {
+                        "firstPartyPrincipal": {
+                            "principalEmail": "cloud-build-argo-foreman@prod.google.com"
+                        }
+                    }
+                ],
+                "principalSubject": "serviceAccount:628324858917@cloudbuild.gserviceaccount.com",
+            },
+            "requestMetadata": {
+                "callerIp": "34.89.11.189",
+                "callerSuppliedUserAgent": "go-containerregistry,gzip(gfe)",
+                "requestAttributes": {},
+                "destinationAttributes": {},
+            },
+            "serviceName": "artifactregistry.googleapis.com",
+            "methodName": "Docker-HeadManifest",
+            "authorizationInfo": [
+                {
+                    "resource": "projects/ons-blaise-v2-prod/locations/europe-west2/repositories/gcf-artifacts",
+                    "permission": "artifactregistry.repositories.downloadArtifacts",
+                    "granted": True,
+                    "resourceAttributes": {},
+                    "permissionType": "DATA_READ",
+                }
+            ],
+            "resourceName": "projects/ons-blaise-v2-prod/locations/europe-west2/repositories/gcf-artifacts/dockerImages/ons--blaise--v2--prod__europe--west2__nifi--receipt%2Fcache",
+            "request": {
+                "@type": "type.googleapis.com/google.logging.type.HttpRequest",
+                "requestUrl": "/v2/ons-blaise-v2-prod/gcf-artifacts/ons--blaise--v2--prod__europe--west2__nifi--receipt/cache/manifests/latest",
+                "requestMethod": "HEAD",
+            },
+            "resourceLocation": {
+                "currentLocations": ["europe-west2"],
+                "originalLocations": ["europe-west2"],
+            },
+        },
+        "insertId": "1h15w4udgp0q",
+        "resource": {
+            "type": "audited_resource",
+            "labels": {
+                "project_id": "ons-blaise-v2-prod",
+                "service": "artifactregistry.googleapis.com",
+                "method": "Docker-HeadManifest",
+            },
+        },
+        "timestamp": "2024-12-02T12:01:35.011476126Z",
+        "severity": "ERROR",
+        "logName": "projects/ons-blaise-v2-prod/logs/cloudaudit.googleapis.com%2Fdata_access",
+        "receiveTimestamp": "2024-12-02T12:01:35.148295977Z",
+    }
+
+    event = create_event(example_log_entry)
+
+    # act
+    with caplog.at_level(logging.INFO):
+        response = run_slack_alerter(event)
+
+    # assert
+    assert response == "Alert skipped"
+    assert number_of_http_calls() == 0
+    assert (
+        "root",
+        logging.INFO,
+        "Skipping generic not found alert",
+    ) in caplog.record_tuples
+
+
+def test_skip_generic_not_found_alerts_version(
+    run_slack_alerter, number_of_http_calls, caplog
+):
+    # arrange
+    example_log_entry = {
+        "protoPayload": {
+            "@type": "type.googleapis.com/google.cloud.audit.AuditLog",
+            "status": {
+                "code": 5,
+                "message": 'generic::not_found: Failed to fetch "version_1"',
+            },
+            "authenticationInfo": {
+                "principalEmail": "628324858917@cloudbuild.gserviceaccount.com",
+                "serviceAccountDelegationInfo": [
+                    {
+                        "firstPartyPrincipal": {
+                            "principalEmail": "cloud-build-argo-foreman@prod.google.com"
+                        }
+                    }
+                ],
+                "principalSubject": "serviceAccount:628324858917@cloudbuild.gserviceaccount.com",
+            },
+            "requestMetadata": {
+                "callerIp": "34.89.11.189",
+                "callerSuppliedUserAgent": "go-containerregistry/v0.19.1,gzip(gfe)",
+                "requestAttributes": {},
+                "destinationAttributes": {},
+            },
+            "serviceName": "artifactregistry.googleapis.com",
+            "methodName": "Docker-HeadManifest",
+            "authorizationInfo": [
+                {
+                    "resource": "projects/ons-blaise-v2-prod/locations/europe-west2/repositories/gcf-artifacts",
+                    "permission": "artifactregistry.repositories.downloadArtifacts",
+                    "granted": True,
+                    "resourceAttributes": {},
+                    "permissionType": "DATA_READ",
+                }
+            ],
+            "resourceName": "projects/ons-blaise-v2-prod/locations/europe-west2/repositories/gcf-artifacts/dockerImages/ons--blaise--v2--prod__europe--west2__nifi--receipt",
+            "request": {
+                "requestMethod": "HEAD",
+                "@type": "type.googleapis.com/google.logging.type.HttpRequest",
+                "requestUrl": "/v2/ons-blaise-v2-prod/gcf-artifacts/ons--blaise--v2--prod__europe--west2__nifi--receipt/manifests/version_1",
+            },
+            "resourceLocation": {
+                "currentLocations": ["europe-west2"],
+                "originalLocations": ["europe-west2"],
+            },
+        },
+        "insertId": "1snjiu3dbkh4",
+        "resource": {
+            "type": "audited_resource",
+            "labels": {
+                "method": "Docker-HeadManifest",
+                "service": "artifactregistry.googleapis.com",
+                "project_id": "ons-blaise-v2-prod",
+            },
+        },
+        "timestamp": "2024-12-02T12:01:36.494768789Z",
+        "severity": "ERROR",
+        "logName": "projects/ons-blaise-v2-prod/logs/cloudaudit.googleapis.com%2Fdata_access",
+        "receiveTimestamp": "2024-12-02T12:01:36.786461532Z",
+    }
+
+    event = create_event(example_log_entry)
+
+    # act
+    with caplog.at_level(logging.INFO):
+        response = run_slack_alerter(event)
+
+    # assert
+    assert response == "Alert skipped"
+    assert number_of_http_calls() == 0
+    assert (
+        "root",
+        logging.INFO,
+        "Skipping generic not found alert",
+    ) in caplog.record_tuples
