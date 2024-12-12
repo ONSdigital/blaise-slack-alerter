@@ -8,7 +8,6 @@ from lib.cloud_logging import parse_log_entry
 from lib.filters.all_preprod_and_training_alerts_except_erroneous_questionnaire_filter import (
     all_preprod_and_training_alerts_except_erroneous_questionnaire_filter,
 )
-from lib.filters.sandbox_filter import sandbox_filter
 from lib.filters.auditlog_filter import auditlog_filter
 from lib.filters.agent_connect_filter import agent_connect_filter
 from lib.filters.osconfig_agent_filter import osconfig_agent_filter
@@ -37,7 +36,6 @@ from lib.filters.generic_not_found_filter import generic_not_found_filter
 
 def log_entry_skipped(log_entry: ProcessedLogEntry):
     filters = [
-        sandbox_filter,
         all_preprod_and_training_alerts_except_erroneous_questionnaire_filter,
         osconfig_agent_filter,
         auditlog_filter,
