@@ -3,8 +3,7 @@ from lib.log_processor import ProcessedLogEntry
 
 
 def socket_exception_filter(log_entry: ProcessedLogEntry) -> bool:
-    return ""
-    '''
+    
     if not isinstance(log_entry.severity, str):
         return False
 
@@ -15,11 +14,10 @@ def socket_exception_filter(log_entry: ProcessedLogEntry) -> bool:
         return False
 
     if (
-        'generic::not_found: Failed to fetch "latest' not in log_entry.message
-        and 'generic::not_found: Failed to fetch "version_' not in log_entry.message
+        'Socket exception: Connection reset by peer (104)' not in log_entry.message
     ):
         return False
 
-    logging.info(f"Skipping generic not found alert")
+    logging.info(f"Skipping socket exception alert")
     return True
-   '''
+   
