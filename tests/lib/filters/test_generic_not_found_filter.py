@@ -240,6 +240,7 @@ def test_log_message_is_skipped_for_different_uuids(
         "faabd683-3f78-476f-967f-16fd24a13247",
         "910f5b2a-aa01-459b-b36d-e983aafc1c6b",
         "850d6598-b2b2-418d-9bfc-c79676463076",
+        "79cce210-187e-4c0c-8b38-4efe12e4c88e",
     ]
 
     for uuid in uuids:
