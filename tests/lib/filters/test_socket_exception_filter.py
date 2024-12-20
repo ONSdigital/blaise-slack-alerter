@@ -10,7 +10,7 @@ from lib.filters.socket_exception_filter import socket_exception_filter
 def processed_log_entry_socket_not_found_error() -> ProcessedLogEntry:
     return ProcessedLogEntry(
         message="Socket exception: Connection reset by peer (104)",
-        data=dict(description="dummy"),
+        data=dict(description="dummeh"),
         severity="ERROR",
         platform="cloud_run_revision",
         application="slack-alerts",
