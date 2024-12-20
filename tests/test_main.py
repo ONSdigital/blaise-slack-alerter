@@ -1723,3 +1723,50 @@ def test_skip_generic_not_found_alerts_with_uuid(
         logging.INFO,
         "Skipping generic not found alert",
     ) in caplog.record_tuples
+
+
+def test_skip_socket_exception_alerts(run_slack_alerter, number_of_http_calls, caplog):
+    # arrange
+    example_log_entry = {
+        "textPayload": "Socket exception: Connection reset by peer (104)",
+        "insertId": "67043d0900053abd778cf0bc",
+        "httpRequest": {},
+        "resource": {
+            "type": "cloud_run_revision",
+            "labels": {
+                "project_id": "ons-blaise-v2-prod",
+                "configuration_name": "nisra-case-mover-processor",
+                "service_name": "nisra-case-mover-processor",
+                "location": "europe-west2",
+                "revision_name": "nisra-case-mover-processor-00017-jeg",
+            },
+        },
+        "timestamp": "2024-10-07T19:56:57.342717Z",
+        "severity": "ERROR",
+        "labels": {
+            "goog-managed-by": "cloudfunctions",
+            "instanceId": "007989f2a133de4fee2c331909aca0d04d3c03445e79e08dcfd070aaaa797bf94922ed1cc41c359b986e4653c00bf33ce25ac252d7d382b8d656f0d25242a09d9ef85f1b",
+            "python_logger": "paramiko.transport",
+        },
+        "logName": "projects/ons-blaise-v2-prod/logs/run.googleapis.com%2Fstderr",
+        "sourceLocation": {
+            "file": "/layers/google.python.pip/pip/lib/python3.9/site-packages/paramiko/transport.py",
+            "line": "1909",
+            "function": "_log",
+        },
+        "receiveTimestamp": "2024-10-07T19:56:57.346635669Z",
+    }
+    event = create_event(example_log_entry)
+
+    # act
+    with caplog.at_level(logging.INFO):
+        response = run_slack_alerter(event)
+
+    # assert
+    assert response == "Alert skipped"
+    assert number_of_http_calls() == 0
+    assert (
+        "root",
+        logging.INFO,
+        "Skipping socket exception alert",
+    ) in caplog.record_tuples
