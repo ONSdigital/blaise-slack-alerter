@@ -1642,3 +1642,131 @@ def test_skip_generic_not_found_alerts_version(
         logging.INFO,
         "Skipping generic not found alert",
     ) in caplog.record_tuples
+
+
+def test_skip_generic_not_found_alerts_with_uuid(
+    run_slack_alerter, number_of_http_calls, caplog
+):
+    # arrange
+    example_log_entry = {
+        "protoPayload": {
+            "@type": "type.googleapis.com/google.cloud.audit.AuditLog",
+            "status": {
+                "code": 5,
+                "message": 'generic::not_found: Failed to fetch "79cce210-187e-4c0c-8b38-4efe12e4c88e"',
+            },
+            "authenticationInfo": {
+                "principalEmail": "628324858917@cloudbuild.gserviceaccount.com",
+                "serviceAccountDelegationInfo": [
+                    {
+                        "firstPartyPrincipal": {
+                            "principalEmail": "cloud-build-argo-foreman@prod.google.com"
+                        }
+                    }
+                ],
+                "principalSubject": "serviceAccount:628324858917@cloudbuild.gserviceaccount.com",
+            },
+            "requestMetadata": {
+                "callerIp": "35.189.93.138",
+                "callerSuppliedUserAgent": "go-containerregistry/v0.19.1,gzip(gfe)",
+                "requestAttributes": {},
+                "destinationAttributes": {},
+            },
+            "serviceName": "artifactregistry.googleapis.com",
+            "methodName": "Docker-HeadManifest",
+            "authorizationInfo": [
+                {
+                    "resource": "projects/ons-blaise-v2-prod/locations/europe/repositories/eu.gcr.io",
+                    "permission": "artifactregistry.repositories.downloadArtifacts",
+                    "granted": "true",
+                    "resourceAttributes": {},
+                    "permissionType": "DATA_READ",
+                }
+            ],
+            "resourceName": "projects/ons-blaise-v2-prod/locations/europe/repositories/eu.gcr.io/dockerImages/app-engine-tmp%2Fapp%2Fdashboard-ui%2Fttl-18h",
+            "request": {
+                "requestMethod": "HEAD",
+                "@type": "type.googleapis.com/google.logging.type.HttpRequest",
+                "requestUrl": "/v2/ons-blaise-v2-prod/eu.gcr.io/app-engine-tmp/app/dashboard-ui/ttl-18h/manifests/79cce210-187e-4c0c-8b38-4efe12e4c88e",
+            },
+            "resourceLocation": {
+                "currentLocations": ["europe"],
+                "originalLocations": ["europe"],
+            },
+        },
+        "insertId": "46xft1d29ve",
+        "resource": {
+            "type": "audited_resource",
+            "labels": {
+                "method": "Docker-HeadManifest",
+                "project_id": "ons-blaise-v2-prod",
+                "service": "artifactregistry.googleapis.com",
+            },
+        },
+        "timestamp": "2024-12-11T16:35:06.591915301Z",
+        "severity": "ERROR",
+        "logName": "projects/ons-blaise-v2-prod/logs/cloudaudit.googleapis.com%2Fdata_access",
+        "receiveTimestamp": "2024-12-11T16:35:07.046014612Z",
+    }
+
+    event = create_event(example_log_entry)
+
+    # act
+    with caplog.at_level(logging.INFO):
+        response = run_slack_alerter(event)
+
+    # assert
+    assert response == "Alert skipped"
+    assert number_of_http_calls() == 0
+    assert (
+        "root",
+        logging.INFO,
+        "Skipping generic not found alert",
+    ) in caplog.record_tuples
+
+
+def test_skip_socket_exception_alerts(run_slack_alerter, number_of_http_calls, caplog):
+    # arrange
+    example_log_entry = {
+        "textPayload": "Socket exception: Connection reset by peer (104)",
+        "insertId": "67043d0900053abd778cf0bc",
+        "httpRequest": {},
+        "resource": {
+            "type": "cloud_run_revision",
+            "labels": {
+                "project_id": "ons-blaise-v2-prod",
+                "configuration_name": "nisra-case-mover-processor",
+                "service_name": "nisra-case-mover-processor",
+                "location": "europe-west2",
+                "revision_name": "nisra-case-mover-processor-00017-jeg",
+            },
+        },
+        "timestamp": "2024-10-07T19:56:57.342717Z",
+        "severity": "ERROR",
+        "labels": {
+            "goog-managed-by": "cloudfunctions",
+            "instanceId": "007989f2a133de4fee2c331909aca0d04d3c03445e79e08dcfd070aaaa797bf94922ed1cc41c359b986e4653c00bf33ce25ac252d7d382b8d656f0d25242a09d9ef85f1b",
+            "python_logger": "paramiko.transport",
+        },
+        "logName": "projects/ons-blaise-v2-prod/logs/run.googleapis.com%2Fstderr",
+        "sourceLocation": {
+            "file": "/layers/google.python.pip/pip/lib/python3.9/site-packages/paramiko/transport.py",
+            "line": "1909",
+            "function": "_log",
+        },
+        "receiveTimestamp": "2024-10-07T19:56:57.346635669Z",
+    }
+    event = create_event(example_log_entry)
+
+    # act
+    with caplog.at_level(logging.INFO):
+        response = run_slack_alerter(event)
+
+    # assert
+    assert response == "Alert skipped"
+    assert number_of_http_calls() == 0
+    assert (
+        "root",
+        logging.INFO,
+        "Skipping socket exception alert",
+    ) in caplog.record_tuples
