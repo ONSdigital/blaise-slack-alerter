@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "blaise-slack-alerter"
+name = "blaise_slack_alerter"
 version = "0.1.0"
 description = ""
 authors = ["Tom Oram <tom.oram@armakuni.com>"]
