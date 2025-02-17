@@ -14,6 +14,9 @@ def service_account_key_filter(log_entry: ProcessedLogEntry) -> bool:
     if not isinstance(log_entry.message, str):
         return False
 
+    if log_entry.severity != "ERROR":
+        return False
+
     if ("Service account key" and "does not exist.") not in log_entry.message:
         return False
 

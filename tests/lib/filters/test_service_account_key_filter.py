@@ -24,50 +24,42 @@ def processed_service_account_key_error() -> ProcessedLogEntry:
 
 
 def test_log_is_skipped_when_its_from_service_account_when_service_account_key_error(
-    processed_log_entry_service_account_key_error: ProcessedLogEntry,
+    processed_service_account_key_error: ProcessedLogEntry,
 ):
-    log_is_skipped = service_account_key_filter(
-        processed_log_entry_service_account_key_error
-    )
+    log_is_skipped = service_account_key_filter(processed_service_account_key_error)
     assert log_is_skipped is True
 
 
 def test_log_message_is_not_a_string_when_service_account_key_error(
-    processed_log_entry_service_account_key_error: ProcessedLogEntry,
+    processed_service_account_key_error: ProcessedLogEntry,
 ):
-    processed_log_entry_service_account_key_error = dataclasses.replace(
-        processed_log_entry_service_account_key_error, message=1234
+    processed_service_account_key_error = dataclasses.replace(
+        processed_service_account_key_error, message=1234
     )
-    log_is_skipped = service_account_key_filter(
-        processed_log_entry_service_account_key_error
-    )
+    log_is_skipped = service_account_key_filter(processed_service_account_key_error)
 
     assert log_is_skipped is False
 
 
 def test_log_message_is_not_skipped_when_it_contains_severity_info_for_service_account_key_error(
-    processed_log_entry_service_account_key_error: ProcessedLogEntry,
+    processed_service_account_key_error: ProcessedLogEntry,
 ):
-    processed_log_entry_service_account_key_error = dataclasses.replace(
-        processed_log_entry_service_account_key_error, severity="INFO"
+    processed_service_account_key_error = dataclasses.replace(
+        processed_service_account_key_error, severity="INFO"
     )
-    log_is_skipped = service_account_key_filter(
-        processed_log_entry_service_account_key_error
-    )
+    log_is_skipped = service_account_key_filter(processed_service_account_key_error)
 
     assert log_is_skipped is False
 
 
 def test_log_message_does_not_contain_service_account_key(
-    processed_log_entry_service_account_key_error: ProcessedLogEntry,
+    processed_service_account_key_error: ProcessedLogEntry,
 ):
-    processed_log_entry_service_account_key_error = dataclasses.replace(
-        processed_log_entry_service_account_key_error,
+    processed_service_account_key_error = dataclasses.replace(
+        processed_service_account_key_error,
         message="some other message",
     )
-    log_is_skipped = service_account_key_filter(
-        processed_log_entry_service_account_key_error
-    )
+    log_is_skipped = service_account_key_filter(processed_service_account_key_error)
     assert log_is_skipped is False
 
 
@@ -81,15 +73,13 @@ def test_log_message_does_not_contain_service_account_key(
     ],
 )
 def test_log_message_is_correct_format_for_different_service_account_keys(
-    processed_log_entry_service_account_key_error: ProcessedLogEntry, account_key: str
+    processed_service_account_key_error: ProcessedLogEntry, account_key: str
 ):
-    processed_log_entry_service_account_key_error = dataclasses.replace(
-        processed_log_entry_service_account_key_error,
+    processed_service_account_key_error = dataclasses.replace(
+        processed_service_account_key_error,
         message=f"Service account key {account_key} does not exist.",
     )
-    log_is_skipped = service_account_key_filter(
-        processed_log_entry_service_account_key_error
-    )
+    log_is_skipped = service_account_key_filter(processed_service_account_key_error)
     assert log_is_skipped is True
 
 
@@ -104,14 +94,12 @@ def test_log_message_is_correct_format_for_different_service_account_keys(
     ],
 )
 def test_log_message_is_incorrect_format_for_service_account_key(
-    processed_log_entry_service_account_key_error: ProcessedLogEntry,
+    processed_service_account_key_error: ProcessedLogEntry,
     invalid_account_key: str,
 ):
-    processed_log_entry_service_account_key_error = dataclasses.replace(
-        processed_log_entry_service_account_key_error,
+    processed_service_account_key_error = dataclasses.replace(
+        processed_service_account_key_error,
         message=f"Service account key {invalid_account_key} does not exist.",
     )
-    log_is_skipped = service_account_key_filter(
-        processed_log_entry_service_account_key_error
-    )
+    log_is_skipped = service_account_key_filter(processed_service_account_key_error)
     assert log_is_skipped is False
