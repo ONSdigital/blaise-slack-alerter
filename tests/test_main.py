@@ -1778,65 +1778,65 @@ def test_skip_service_account_key(run_slack_alerter, number_of_http_calls, caplo
         "protoPayload": {
             "@type": "type.googleapis.com/google.cloud.audit.AuditLog",
             "status": {
-            "code": '5',
-            "message": "Service account key f7ade4740059a1f5137bea2ff20b0952f012cf17 does not exist."
+                "code": "5",
+                "message": "Service account key f7ade4740059a1f5137bea2ff20b0952f012cf17 does not exist.",
             },
             "authenticationInfo": {
-            "principalEmail": "scc-dormant-accounts-alert@ons-gcp-monitoring-prod.iam.gserviceaccount.com",
-            "serviceAccountDelegationInfo": [
-                {
-                "firstPartyPrincipal": {
-                    "principalEmail": "service-719628633551@serverless-robot-prod.iam.gserviceaccount.com"
-                }
-                }
-            ],
-            "principalSubject": "serviceAccount:scc-dormant-accounts-alert@ons-gcp-monitoring-prod.iam.gserviceaccount.com"
+                "principalEmail": "scc-dormant-accounts-alert@ons-gcp-monitoring-prod.iam.gserviceaccount.com",
+                "serviceAccountDelegationInfo": [
+                    {
+                        "firstPartyPrincipal": {
+                            "principalEmail": "service-719628633551@serverless-robot-prod.iam.gserviceaccount.com"
+                        }
+                    }
+                ],
+                "principalSubject": "serviceAccount:scc-dormant-accounts-alert@ons-gcp-monitoring-prod.iam.gserviceaccount.com",
             },
             "requestMetadata": {
-            "callerIp": "34.34.246.100",
-            "callerSuppliedUserAgent": "grpc-python/1.70.0 grpc-c/45.0.0 (linux; chttp2),gzip(gfe)",
-            "requestAttributes": {
-                "time": "2025-02-17T01:28:44.251600949Z",
-                "auth": {}
-            },
-            "destinationAttributes": {}
+                "callerIp": "34.34.246.100",
+                "callerSuppliedUserAgent": "grpc-python/1.70.0 grpc-c/45.0.0 (linux; chttp2),gzip(gfe)",
+                "requestAttributes": {
+                    "time": "2025-02-17T01:28:44.251600949Z",
+                    "auth": {},
+                },
+                "destinationAttributes": {},
             },
             "serviceName": "iam.googleapis.com",
             "methodName": "google.iam.admin.v1.GetServiceAccountKey",
             "authorizationInfo": [
-            {
-                "resource": "projects/-/serviceAccounts/110247389061820088971",
-                "permission": "iam.serviceAccountKeys.get",
-                "granted": 'true',
-                "resourceAttributes": {
-                "name": "projects/-/serviceAccounts/110247389061820088971"
-                },
-                "permissionType": "ADMIN_READ"
-            }
+                {
+                    "resource": "projects/-/serviceAccounts/110247389061820088971",
+                    "permission": "iam.serviceAccountKeys.get",
+                    "granted": "true",
+                    "resourceAttributes": {
+                        "name": "projects/-/serviceAccounts/110247389061820088971"
+                    },
+                    "permissionType": "ADMIN_READ",
+                }
             ],
             "resourceName": "projects/-/serviceAccounts/110247389061820088971/keys/f7ade4740059a1f5137bea2ff20b0952f012cf17",
             "request": {
-            "name": "projects/ons-blaise-v2-prod/serviceAccounts/628324858917-compute@developer.gserviceaccount.com/keys/f7ade4740059a1f5137bea2ff20b0952f012cf17",
-            "@type": "type.googleapis.com/google.iam.admin.v1.GetServiceAccountKeyRequest"
-            }
+                "name": "projects/ons-blaise-v2-prod/serviceAccounts/628324858917-compute@developer.gserviceaccount.com/keys/f7ade4740059a1f5137bea2ff20b0952f012cf17",
+                "@type": "type.googleapis.com/google.iam.admin.v1.GetServiceAccountKeyRequest",
+            },
         },
         "insertId": "10cyfzcf1hve2j",
         "resource": {
             "type": "service_account",
             "labels": {
-            "email_id": "628324858917-compute@developer.gserviceaccount.com",
-            "project_id": "ons-blaise-v2-prod",
-            "unique_id": "110247389061820088971"
-            }
+                "email_id": "628324858917-compute@developer.gserviceaccount.com",
+                "project_id": "ons-blaise-v2-prod",
+                "unique_id": "110247389061820088971",
+            },
         },
         "timestamp": "2025-02-17T01:28:44.233811231Z",
         "severity": "ERROR",
         "logName": "projects/ons-blaise-v2-prod/logs/cloudaudit.googleapis.com%2Fdata_access",
-        "receiveTimestamp": "2025-02-17T01:28:45.898607418Z"
+        "receiveTimestamp": "2025-02-17T01:28:45.898607418Z",
     }
     event = create_event(example_log_entry)
 
-    # act 
+    # act
     with caplog.at_level(logging.INFO):
         response = run_slack_alerter(event)
 
