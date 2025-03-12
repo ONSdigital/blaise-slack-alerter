@@ -35,6 +35,7 @@ from lib.filters.bootstrapper_filter import bootstrapper_filter
 from lib.filters.generic_not_found_filter import generic_not_found_filter
 from lib.filters.socket_exception_filter import socket_exception_filter
 from lib.filters.service_account_key_filter import service_account_key_filter
+from lib.filters.permission_denied_by_iam_filter import permission_denied_by_iam_filter
 
 
 def log_entry_skipped(log_entry: ProcessedLogEntry):
@@ -56,6 +57,7 @@ def log_entry_skipped(log_entry: ProcessedLogEntry):
         generic_not_found_filter,
         socket_exception_filter,
         service_account_key_filter,
+        permission_denied_by_iam_filter,
     ]
 
     for filter in filters:
