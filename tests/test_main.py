@@ -1848,3 +1848,66 @@ def test_skip_service_account_key(run_slack_alerter, number_of_http_calls, caplo
         logging.INFO,
         "Skipping service account key alert",
     ) in caplog.record_tuples
+
+
+def test_skip_permission_denied_by_iam(run_slack_alerter, number_of_http_calls, caplog):
+    # arrange
+    example_log_entry = {
+        "protoPayload": {
+            "@type": "type.googleapis.com/google.cloud.audit.AuditLog",
+            "status": {"code": 2, "message": "permission denied by IAM"},
+            "authenticationInfo": {},
+            "requestMetadata": {
+                "callerIp": "5.161.230.161",
+                "callerSuppliedUserAgent": "Fuzz Faster U Fool v2.1.0,gzip(gfe)",
+            },
+            "serviceName": "artifactregistry.googleapis.com",
+            "methodName": "Docker-GetTags",
+            "authorizationInfo": [
+                {
+                    "resource": "projects/ons-blaise-v2-prod/locations/europe/repositories/eu.gcr.io",
+                    "permission": "artifactregistry.repositories.downloadArtifacts",
+                    "granted": False,
+                    "resourceAttributes": {},
+                    "permissionType": "DATA_READ",
+                }
+            ],
+            "resourceName": "projects/ons-blaise-v2-prod/locations/europe/repositories/eu.gcr.io",
+            "request": {
+                "requestMethod": "GET",
+                "requestUrl": "/v2/ons-blaise-v2-prod/eu.gcr.io/tags/list",
+                "@type": "type.googleapis.com/google.logging.type.HttpRequest",
+            },
+            "resourceLocation": {
+                "currentLocations": ["europe"],
+                "originalLocations": ["europe"],
+            },
+        },
+        "insertId": "1q7acrxd7195",
+        "resource": {
+            "type": "audited_resource",
+            "labels": {
+                "method": "Docker-GetTags",
+                "service": "artifactregistry.googleapis.com",
+                "project_id": "ons-blaise-v2-prod",
+            },
+        },
+        "timestamp": "2025-03-03T05:07:51.689323290Z",
+        "severity": "ERROR",
+        "logName": "projects/ons-blaise-v2-prod/logs/cloudaudit.googleapis.com%2Fdata_access",
+        "receiveTimestamp": "2025-03-03T05:07:51.704386101Z",
+    }
+    event = create_event(example_log_entry)
+
+    # act
+    with caplog.at_level(logging.INFO):
+        response = run_slack_alerter(event)
+
+    # assert
+    assert response == "Alert skipped"
+    assert number_of_http_calls() == 0
+    assert (
+        "root",
+        logging.INFO,
+        "Skipping permission denied by IAM alert",
+    ) in caplog.record_tuples
