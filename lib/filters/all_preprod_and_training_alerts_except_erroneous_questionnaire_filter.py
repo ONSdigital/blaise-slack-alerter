@@ -24,13 +24,17 @@ def _is_training(log_name: str) -> bool:
 def all_preprod_and_training_alerts_except_erroneous_questionnaire_filter(
     log_entry: ProcessedLogEntry,
 ) -> bool:
+    logging.info("sidra-log entry")
+    logging.info(log_entry)
     if not isinstance(log_entry.message, str):
         return False
 
     if not log_entry.log_name:
+        logging.info("sidra-log_name is missing")
         return False
 
     if "ons-blaise-v2-prod" in log_entry.log_name:
+        logging.info("sidra-prod in env name")
         return False
 
     if (
