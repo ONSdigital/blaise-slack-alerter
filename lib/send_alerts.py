@@ -8,7 +8,6 @@ from lib.cloud_logging import parse_log_entry
 from lib.filters.all_preprod_and_training_alerts_except_erroneous_questionnaire_filter import (
     all_preprod_and_training_alerts_except_erroneous_questionnaire_filter,
 )
-
 from lib.filters.sandbox_filter import sandbox_filter
 from lib.filters.auditlog_filter import auditlog_filter
 from lib.filters.agent_connect_filter import agent_connect_filter
