@@ -143,7 +143,7 @@ def test_log_is_not_skipped_when_principal_email_is_missing(
         data={
             "description": "dummy",
             "authenticationInfo": {},
-        },  
+        },
     )
     log_is_skipped = scc_dormant_accounts_alert_filter(processed_log)
     assert log_is_skipped is False
