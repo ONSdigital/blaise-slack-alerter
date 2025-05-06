@@ -1772,7 +1772,7 @@ def test_skip_socket_exception_alerts(run_slack_alerter, number_of_http_calls, c
     ) in caplog.record_tuples
 
 
-def test_skip_scc_dormant_accounts_alert_service_account_keys_error(
+def test_skip_scc_dormant_accounts_prod_alert_service_account_keys_error(
     run_slack_alerter, number_of_http_calls, caplog
 ):
     # arrange
@@ -1852,7 +1852,7 @@ def test_skip_scc_dormant_accounts_alert_service_account_keys_error(
     ) in caplog.record_tuples
 
 
-def test_skip_scc_dormant_accounts_alert_service_account_not_found_error(
+def test_skip_scc_dormant_accounts_prod_alert_service_account_not_found_error(
     run_slack_alerter, number_of_http_calls, caplog
 ):
     # arrange

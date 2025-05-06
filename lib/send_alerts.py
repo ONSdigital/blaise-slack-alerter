@@ -34,8 +34,8 @@ from lib.filters.paramiko_filter import paramiko_filter
 from lib.filters.bootstrapper_filter import bootstrapper_filter
 from lib.filters.generic_not_found_filter import generic_not_found_filter
 from lib.filters.socket_exception_filter import socket_exception_filter
-from lib.filters.scc_dormant_accounts_alert_filter import (
-    scc_dormant_accounts_alert_filter,
+from lib.filters.scc_dormant_accounts_prod_alert_filter import (
+    scc_dormant_accounts_prod_alert_filter,
 )
 from lib.filters.permission_denied_by_iam_filter import permission_denied_by_iam_filter
 
@@ -58,7 +58,7 @@ def log_entry_skipped(log_entry: ProcessedLogEntry):
         bootstrapper_filter,
         generic_not_found_filter,
         socket_exception_filter,
-        scc_dormant_accounts_alert_filter,
+        scc_dormant_accounts_prod_alert_filter,
         permission_denied_by_iam_filter,
     ]
 

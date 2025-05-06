@@ -2,7 +2,7 @@ import logging
 from lib.log_processor import ProcessedLogEntry
 
 
-def scc_dormant_accounts_alert_filter(log_entry: ProcessedLogEntry) -> bool:
+def scc_dormant_accounts_prod_alert_filter(log_entry: ProcessedLogEntry) -> bool:
     TARGET_EXTERNAL_SERVICE_ACCOUNT = (
         "scc-dormant-accounts-alert@ons-gcp-monitoring-prod.iam.gserviceaccount.com"
     )
