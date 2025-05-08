@@ -1772,7 +1772,9 @@ def test_skip_socket_exception_alerts(run_slack_alerter, number_of_http_calls, c
     ) in caplog.record_tuples
 
 
-def test_skip_service_account_key(run_slack_alerter, number_of_http_calls, caplog):
+def test_skip_scc_dormant_accounts_prod_alert_service_account_keys_error(
+    run_slack_alerter, number_of_http_calls, caplog
+):
     # arrange
     example_log_entry = {
         "protoPayload": {
@@ -1846,7 +1848,85 @@ def test_skip_service_account_key(run_slack_alerter, number_of_http_calls, caplo
     assert (
         "root",
         logging.INFO,
-        "Skipping service account key alert",
+        "Skipping external 'SCC Dormant Accounts Alert' service account alert",
+    ) in caplog.record_tuples
+
+
+def test_skip_scc_dormant_accounts_prod_alert_service_account_not_found_error(
+    run_slack_alerter, number_of_http_calls, caplog
+):
+    # arrange
+    example_log_entry = {
+        "protoPayload": {
+            "@type": "type.googleapis.com/google.cloud.audit.AuditLog",
+            "status": {
+                "code": 5,
+                "message": "Service account projects/ons-blaise-v2-prod/serviceAccounts/blaise-cloud-functions@ons-blaise-v2-prod.iam.gserviceaccount.com does not exist.",
+            },
+            "authenticationInfo": {
+                "principalEmail": "scc-dormant-accounts-alert@ons-gcp-monitoring-prod.iam.gserviceaccount.com",
+                "serviceAccountDelegationInfo": [
+                    {
+                        "firstPartyPrincipal": {
+                            "principalEmail": "service-719628633551@serverless-robot-prod.iam.gserviceaccount.com"
+                        }
+                    }
+                ],
+                "principalSubject": "serviceAccount:scc-dormant-accounts-alert@ons-gcp-monitoring-prod.iam.gserviceaccount.com",
+            },
+            "requestMetadata": {
+                "callerIp": "34.34.246.124",
+                "callerSuppliedUserAgent": "grpc-python/1.71.0 grpc-c/46.0.0 (linux; chttp2),gzip(gfe)",
+                "requestAttributes": {
+                    "time": "2025-03-14T01:27:24.596234977Z",
+                    "auth": {},
+                },
+                "destinationAttributes": {},
+            },
+            "serviceName": "iam.googleapis.com",
+            "methodName": "google.iam.admin.v1.GetServiceAccount",
+            "authorizationInfo": [
+                {
+                    "resource": "projects/ons-blaise-v2-prod",
+                    "permission": "iam.serviceAccounts.list",
+                    "granted": "true",
+                    "resourceAttributes": {},
+                    "permissionType": "ADMIN_READ",
+                }
+            ],
+            "resourceName": "projects/-/serviceAccounts/105250506097979753968",
+            "request": {
+                "@type": "type.googleapis.com/google.iam.admin.v1.GetServiceAccountRequest",
+                "name": "projects/ons-blaise-v2-prod/serviceAccounts/blaise-cloud-functions@ons-blaise-v2-prod.iam.gserviceaccount.com",
+            },
+        },
+        "insertId": "voy2d9edl9sk",
+        "resource": {
+            "type": "service_account",
+            "labels": {
+                "unique_id": "",
+                "email_id": "",
+                "project_id": "ons-blaise-v2-prod",
+            },
+        },
+        "timestamp": "2025-03-14T01:27:24.512834663Z",
+        "severity": "ERROR",
+        "logName": "projects/ons-blaise-v2-prod/logs/cloudaudit.googleapis.com%2Fdata_access",
+        "receiveTimestamp": "2025-03-14T01:27:24.891395117Z",
+    }
+    event = create_event(example_log_entry)
+
+    # act
+    with caplog.at_level(logging.INFO):
+        response = run_slack_alerter(event)
+
+    # assert
+    assert response == "Alert skipped"
+    assert number_of_http_calls() == 0
+    assert (
+        "root",
+        logging.INFO,
+        "Skipping external 'SCC Dormant Accounts Alert' service account alert",
     ) in caplog.record_tuples
 
 
