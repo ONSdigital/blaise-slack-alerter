@@ -33,6 +33,9 @@ def all_preprod_and_training_alerts_except_erroneous_questionnaire_filter(
     if "ons-blaise-v2-prod" in log_entry.log_name:
         return False
 
+    if "ons-blaise-v2-dev-jun1" in log_entry.log_name:
+        return False
+
     if (
         _is_preprod(log_entry.log_name) or _is_training(log_entry.log_name)
     ) and _is_failed_to_install(log_entry):
