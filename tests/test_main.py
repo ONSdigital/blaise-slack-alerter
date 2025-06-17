@@ -942,7 +942,7 @@ def test_skip_watching_ip_space_exhausted_error(
     ) in caplog.record_tuples
 
 
-"""def test_skip_sandbox_alerts_skips_alerts_for_sandboxes(
+def test_skip_sandbox_alerts_skips_alerts_for_sandboxes(
     run_slack_alerter, number_of_http_calls, caplog
 ):
     # arrange
@@ -988,7 +988,6 @@ def test_skip_watching_ip_space_exhausted_error(
     assert response == "Alert skipped"
     assert number_of_http_calls() == 0
     assert ("root", logging.INFO, "Skipping sandbox alert") in caplog.record_tuples
-"""
 
 
 def test_skip_sandbox_alerts_does_not_skip_alerts_for_formal_environments(
