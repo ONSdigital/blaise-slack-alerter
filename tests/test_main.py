@@ -308,7 +308,7 @@ def test_send_app_engine_slack_alert(
         "protoPayload": {
             "host": "0.20220803t140821.app-name.project-name.nw.r.appspot.com",
             "httpVersion": "HTTP/1.1",
-            "ip": "0.1.0.3",
+            "ip": "203.0.113.1",
             "latency": "0.004229s",
             "line": [
                 {
@@ -353,7 +353,7 @@ def test_send_app_engine_slack_alert(
             "host: 0.20220803t140821.app-name.project-name.nw.r.appspot.com\n"
             "method: GET\n"
             "resource: /_ah/stop\n"
-            "ip: 0.1.0.3\n"
+            "ip: 203.0.113.1\n"
             "latency: 0.004229s\n"
             "responseSize: 3013\n"
             "httpVersion: HTTP/1.1",
@@ -577,7 +577,7 @@ def test_skip_audit_logs_error(run_slack_alerter, number_of_http_calls, caplog):
                 "serviceAccountKeyName": "//iam.googleapis.com/projects/ons-blaise-v2-shared/serviceAccounts/pipeline-bucket-reader@ons-blaise-v2-shared.iam.gserviceaccount.com/keys/221e50eb36c76f17c5f6883a5a0bb29c1535ba8a",
             },
             "requestMetadata": {
-                "callerIp": "10.6.0.52",
+                "callerIp": "gcp-internal-ip",
                 "callerSuppliedUserAgent": "apitools Python/3.7.9 gsutil/5.3 (win32) analytics/enabled interactive/False command/cp google-cloud-sdk/360.0.0,gzip(gfe)",
                 "callerNetwork": "//compute.googleapis.com/projects/ons-blaise-v2-prod/global/networks/__unknown__",
                 "requestAttributes": {
@@ -1139,7 +1139,7 @@ def test_skip_all_prod_aborted_where_no_available_instance_alerts(
             "requestSize": "1178",
             "status": 500,
             "userAgent": "CloudPubSub-Google",
-            "remoteIp": "2002:a05:602a:2389:b0:15:38e8:78f4",
+            "remoteIp": "2001:db8::100",
             "latency": "0s",
             "protocol": "HTTP/1.1",
         },
@@ -1258,7 +1258,7 @@ def test_skip_requested_entity_was_not_found_alerts(
                 "principalSubject": "serviceAccount:service-628324858917@container-analysis.iam.gserviceaccount.com",
             },
             "requestMetadata": {
-                "callerIp": "private",
+                "callerIp": "gcp-internal-ip",
                 "callerSuppliedUserAgent": "ContainerAnalysis/boq_artifact-analysis-scanlistener_20240614.04_p1 go-containerregistry,gzip(gfe)",
                 "requestAttributes": {},
                 "destinationAttributes": {},
@@ -1325,9 +1325,9 @@ def test_skip_execute_sql_alerts_error(run_slack_alerter, number_of_http_calls, 
                 "code": 3,
                 "message": "Some of your SQL statements failed to execute (Learn more at https://cloud.google.com/sql/docs/mysql/manage-data-using-studio). Details: This API does not support reading BLOB columns.",
             },
-            "authenticationInfo": {"principalEmail": "md.maruf.motaleb@ons.gov.uk"},
+            "authenticationInfo": {"principalEmail": "jane.blaise@example.com"},
             "requestMetadata": {
-                "callerIp": "155.190.13.19",
+                "callerIp": "gcp-internal-ip",
                 "requestAttributes": {
                     "time": "2024-08-01T10:32:44.863464Z",
                     "auth": {},
@@ -1505,7 +1505,7 @@ def test_skip_generic_not_found_alerts_latest(
                 "principalSubject": "serviceAccount:628324858917@cloudbuild.gserviceaccount.com",
             },
             "requestMetadata": {
-                "callerIp": "34.89.11.189",
+                "callerIp": "203.0.113.2",
                 "callerSuppliedUserAgent": "go-containerregistry,gzip(gfe)",
                 "requestAttributes": {},
                 "destinationAttributes": {},
@@ -1586,7 +1586,7 @@ def test_skip_generic_not_found_alerts_version(
                 "principalSubject": "serviceAccount:628324858917@cloudbuild.gserviceaccount.com",
             },
             "requestMetadata": {
-                "callerIp": "34.89.11.189",
+                "callerIp": "203.0.113.3",
                 "callerSuppliedUserAgent": "go-containerregistry/v0.19.1,gzip(gfe)",
                 "requestAttributes": {},
                 "destinationAttributes": {},
@@ -1667,7 +1667,7 @@ def test_skip_generic_not_found_alerts_with_uuid(
                 "principalSubject": "serviceAccount:628324858917@cloudbuild.gserviceaccount.com",
             },
             "requestMetadata": {
-                "callerIp": "35.189.93.138",
+                "callerIp": "203.0.113.4",
                 "callerSuppliedUserAgent": "go-containerregistry/v0.19.1,gzip(gfe)",
                 "requestAttributes": {},
                 "destinationAttributes": {},
@@ -1795,7 +1795,7 @@ def test_skip_scc_dormant_accounts_prod_alert_service_account_keys_error(
                 "principalSubject": "serviceAccount:scc-dormant-accounts-alert@ons-gcp-monitoring-prod.iam.gserviceaccount.com",
             },
             "requestMetadata": {
-                "callerIp": "34.34.246.100",
+                "callerIp": "203.0.113.5",
                 "callerSuppliedUserAgent": "grpc-python/1.70.0 grpc-c/45.0.0 (linux; chttp2),gzip(gfe)",
                 "requestAttributes": {
                     "time": "2025-02-17T01:28:44.251600949Z",
@@ -1875,7 +1875,7 @@ def test_skip_scc_dormant_accounts_prod_alert_service_account_not_found_error(
                 "principalSubject": "serviceAccount:scc-dormant-accounts-alert@ons-gcp-monitoring-prod.iam.gserviceaccount.com",
             },
             "requestMetadata": {
-                "callerIp": "34.34.246.124",
+                "callerIp": "203.0.113.6",
                 "callerSuppliedUserAgent": "grpc-python/1.71.0 grpc-c/46.0.0 (linux; chttp2),gzip(gfe)",
                 "requestAttributes": {
                     "time": "2025-03-14T01:27:24.596234977Z",
@@ -1938,7 +1938,7 @@ def test_skip_permission_denied_by_iam(run_slack_alerter, number_of_http_calls, 
             "status": {"code": 2, "message": "permission denied by IAM"},
             "authenticationInfo": {},
             "requestMetadata": {
-                "callerIp": "5.161.230.161",
+                "callerIp": "203.0.113.7",
                 "callerSuppliedUserAgent": "Fuzz Faster U Fool v2.1.0,gzip(gfe)",
             },
             "serviceName": "artifactregistry.googleapis.com",
@@ -1990,4 +1990,140 @@ def test_skip_permission_denied_by_iam(run_slack_alerter, number_of_http_calls, 
         "root",
         logging.INFO,
         "Skipping permission denied by IAM alert",
+    ) in caplog.record_tuples
+
+
+def test_skip_org_policy_constraint_physicalZoneSeparation_not_found_alerts(
+    run_slack_alerter, number_of_http_calls, caplog
+):
+    # arrange
+    example_log_entry = {
+        "protoPayload": {
+            "@type": "type.googleapis.com/google.cloud.audit.AuditLog",
+            "status": {
+                "code": 5,
+                "message": "com.google.apps.framework.request.StatusException: <eye3 title='NOT_FOUND'/> generic::NOT_FOUND: No constraint found with name 'constraints/gcp.requiresPhysicalZoneSeparation'.",
+            },
+            "authenticationInfo": {"principalEmail": "test.user1@example.com"},
+            "requestMetadata": {
+                "callerIp": "2001:db8::1",
+                "callerSuppliedUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36 OPR/119.0.0.0,gzip(gfe),gzip(gfe)",
+                "requestAttributes": {
+                    "time": "2025-07-11T08:21:33.991820655Z",
+                    "auth": {},
+                },
+                "destinationAttributes": {},
+            },
+            "serviceName": "orgpolicy.googleapis.com",
+            "methodName": "google.cloud.orgpolicy.v2.OrgPolicy.GetEffectivePolicy",
+            "authorizationInfo": [
+                {
+                    "resource": "projects/ons-blaise-v2-prod/policies/gcp.requiresPhysicalZoneSeparation",
+                    "permission": "orgpolicy.policy.get",
+                    "granted": True,
+                    "resourceAttributes": {},
+                    "permissionType": "ADMIN_READ",
+                }
+            ],
+            "resourceName": "projects/ons-blaise-v2-prod/policies/gcp.requiresPhysicalZoneSeparation",
+            "request": {
+                "@type": "type.googleapis.com/google.cloud.orgpolicy.v2.GetEffectivePolicyRequest",
+                "name": "projects/ons-blaise-v2-prod/policies/gcp.requiresPhysicalZoneSeparation",
+            },
+        },
+        "insertId": "14u34yud232p",
+        "resource": {
+            "type": "audited_resource",
+            "labels": {
+                "method": "google.cloud.orgpolicy.v2.OrgPolicy.GetEffectivePolicy",
+                "service": "orgpolicy.googleapis.com",
+                "project_id": "ons-blaise-v2-prod",
+            },
+        },
+        "timestamp": "2025-07-11T08:21:33.984397510Z",
+        "severity": "ERROR",
+        "logName": "projects/ons-blaise-v2-prod/logs/cloudaudit.googleapis.com%2Fdata_access",
+        "receiveTimestamp": "2025-07-11T08:21:34.086169195Z",
+    }
+    event = create_event(example_log_entry)
+
+    # act
+    with caplog.at_level(logging.INFO):
+        response = run_slack_alerter(event)
+
+    # assert
+    assert response == "Alert skipped"
+    assert number_of_http_calls() == 0
+    assert (
+        "root",
+        logging.INFO,
+        "Skipping 'org policy constraint not found: constraints/gcp.requiresPhysicalZoneSeparation' alert",
+    ) in caplog.record_tuples
+
+
+def test_skip_org_policy_constraint_disableServiceAccountHmacKeyCreation_not_found_alerts(
+    run_slack_alerter, number_of_http_calls, caplog
+):
+    # arrange
+    example_log_entry = {
+        "protoPayload": {
+            "@type": "type.googleapis.com/google.cloud.audit.AuditLog",
+            "status": {
+                "code": 5,
+                "message": "com.google.apps.framework.request.StatusException: <eye3 title='NOT_FOUND'/> generic::NOT_FOUND: No constraint found with name 'constraints/storage.disableServiceAccountHmacKeyCreation'.",
+            },
+            "authenticationInfo": {"principalEmail": "test.user2@example.com"},
+            "requestMetadata": {
+                "callerIp": "2001:db8::2",
+                "callerSuppliedUserAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36,gzip(gfe)",
+                "requestAttributes": {
+                    "time": "2025-07-14T10:15:22.123456789Z",
+                    "auth": {},
+                },
+                "destinationAttributes": {},
+            },
+            "serviceName": "orgpolicy.googleapis.com",
+            "methodName": "google.cloud.orgpolicy.v2.OrgPolicy.GetEffectivePolicy",
+            "authorizationInfo": [
+                {
+                    "resource": "projects/ons-blaise-v2-prod/policies/storage.disableServiceAccountHmacKeyCreation",
+                    "permission": "orgpolicy.policy.get",
+                    "granted": True,
+                    "resourceAttributes": {},
+                    "permissionType": "ADMIN_READ",
+                }
+            ],
+            "resourceName": "projects/ons-blaise-v2-prod/policies/storage.disableServiceAccountHmacKeyCreation",
+            "request": {
+                "@type": "type.googleapis.com/google.cloud.orgpolicy.v2.GetEffectivePolicyRequest",
+                "name": "projects/ons-blaise-v2-prod/policies/storage.disableServiceAccountHmacKeyCreation",
+            },
+        },
+        "insertId": "28x45zud987q",
+        "resource": {
+            "type": "audited_resource",
+            "labels": {
+                "method": "google.cloud.orgpolicy.v2.OrgPolicy.GetEffectivePolicy",
+                "service": "orgpolicy.googleapis.com",
+                "project_id": "ons-blaise-v2-prod",
+            },
+        },
+        "timestamp": "2025-07-14T10:15:22.098765432Z",
+        "severity": "ERROR",
+        "logName": "projects/ons-blaise-v2-prod/logs/cloudaudit.googleapis.com%2Fdata_access",
+        "receiveTimestamp": "2025-07-14T10:15:22.234567890Z",
+    }
+    event = create_event(example_log_entry)
+
+    # act
+    with caplog.at_level(logging.INFO):
+        response = run_slack_alerter(event)
+
+    # assert
+    assert response == "Alert skipped"
+    assert number_of_http_calls() == 0
+    assert (
+        "root",
+        logging.INFO,
+        "Skipping 'org policy constraint not found: constraints/storage.disableServiceAccountHmacKeyCreation' alert",
     ) in caplog.record_tuples
