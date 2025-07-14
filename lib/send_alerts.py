@@ -5,6 +5,11 @@ from typing import List
 from lib.alerter import Alerter
 from lib.cloud_run_revision import InvalidCloudRunRevisionEvent, parse_event
 from lib.cloud_logging import parse_log_entry
+from lib.log_processor import (
+    ProcessedLogEntry,
+    CreateAppLogPayloadFromLogEntry,
+)
+from lib.log_processor import process_log_entry
 from lib.filters.all_preprod_and_training_alerts_except_erroneous_questionnaire_filter import (
     all_preprod_and_training_alerts_except_erroneous_questionnaire_filter,
 )
@@ -19,11 +24,6 @@ from lib.filters.rproxy_lookupEffectiveGuestPolicies_filter import (
 from lib.filters.watching_metadata_invalid_character_filter import (
     watching_metadata_invalid_character_filter,
 )
-from lib.log_processor import (
-    ProcessedLogEntry,
-    CreateAppLogPayloadFromLogEntry,
-)
-from lib.log_processor import process_log_entry
 from lib.filters.no_instance_filter import no_instance_filter
 from lib.filters.invalid_login_attempt_filter import invalid_login_attempt_filter
 from lib.filters.requested_entity_was_not_found_filter import (
@@ -38,6 +38,10 @@ from lib.filters.scc_dormant_accounts_prod_alert_filter import (
     scc_dormant_accounts_prod_alert_filter,
 )
 from lib.filters.permission_denied_by_iam_filter import permission_denied_by_iam_filter
+from lib.filters.gcp_constraint_not_found_filter import (
+    physical_zone_separation_constraint_filter,
+    service_account_hmac_key_constraint_filter,
+)
 
 
 def log_entry_skipped(log_entry: ProcessedLogEntry):
@@ -60,6 +64,8 @@ def log_entry_skipped(log_entry: ProcessedLogEntry):
         socket_exception_filter,
         scc_dormant_accounts_prod_alert_filter,
         permission_denied_by_iam_filter,
+        physical_zone_separation_constraint_filter,
+        service_account_hmac_key_constraint_filter,
     ]
 
     for filter in filters:
