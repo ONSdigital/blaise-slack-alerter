@@ -95,4 +95,4 @@ Error logs coming from sandboxes are filtered out by the Cloud Function via filt
 - `sandbox_filter`
 - `all_preprod_and_training_alerts_except_erroneous_questionnaire_filter`
 
-**NB** After removing the filters, ensure the following commands run successfully, otherwise the deployment will fail: `make format & make test`.
+**NB** After removing the filters, ensure the following commands run successfully, otherwise the deployment will fail: `make format test`.
