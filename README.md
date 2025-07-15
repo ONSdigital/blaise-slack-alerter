@@ -90,7 +90,7 @@ def log_entry_skipped(log_entry: ProcessedLogEntry):
 
 ### How to enable Slack alerts in sandboxes
 
-Logs coming from sandboxes are filtered by default. If you want to reproduce error logs within a sandbox, make sure to remove the following filters in `send_alerts/log_entry_skipped` before deploying the Cloud Function:
+Error logs coming from sandboxes are filtered out by the Cloud Function via filters. If you want to enable Slack alerts in a sandbox, make sure to remove the following filters in `send_alerts/log_entry_skipped` before deploying:
 
 - `sandbox_filter`
 - `all_preprod_and_training_alerts_except_erroneous_questionnaire_filter`
