@@ -577,7 +577,7 @@ def test_skip_audit_logs_error(run_slack_alerter, number_of_http_calls, caplog):
                 "serviceAccountKeyName": "//iam.googleapis.com/projects/ons-blaise-v2-shared/serviceAccounts/pipeline-bucket-reader@ons-blaise-v2-shared.iam.gserviceaccount.com/keys/221e50eb36c76f17c5f6883a5a0bb29c1535ba8a",
             },
             "requestMetadata": {
-                "callerIp": "gcp-internal-ip",
+                "callerIp": "203.0.113.2",
                 "callerSuppliedUserAgent": "apitools Python/3.7.9 gsutil/5.3 (win32) analytics/enabled interactive/False command/cp google-cloud-sdk/360.0.0,gzip(gfe)",
                 "callerNetwork": "//compute.googleapis.com/projects/ons-blaise-v2-prod/global/networks/__unknown__",
                 "requestAttributes": {
@@ -1258,7 +1258,7 @@ def test_skip_requested_entity_was_not_found_alerts(
                 "principalSubject": "serviceAccount:service-628324858917@container-analysis.iam.gserviceaccount.com",
             },
             "requestMetadata": {
-                "callerIp": "gcp-internal-ip",
+                "callerIp": "203.0.113.2",
                 "callerSuppliedUserAgent": "ContainerAnalysis/boq_artifact-analysis-scanlistener_20240614.04_p1 go-containerregistry,gzip(gfe)",
                 "requestAttributes": {},
                 "destinationAttributes": {},
@@ -1327,7 +1327,7 @@ def test_skip_execute_sql_alerts_error(run_slack_alerter, number_of_http_calls, 
             },
             "authenticationInfo": {"principalEmail": "jane.blaise@example.com"},
             "requestMetadata": {
-                "callerIp": "gcp-internal-ip",
+                "callerIp": "203.0.113.2",
                 "requestAttributes": {
                     "time": "2024-08-01T10:32:44.863464Z",
                     "auth": {},
@@ -2004,7 +2004,7 @@ def test_skip_org_policy_constraint_physicalZoneSeparation_not_found_alerts(
                 "code": 5,
                 "message": "com.google.apps.framework.request.StatusException: <eye3 title='NOT_FOUND'/> generic::NOT_FOUND: No constraint found with name 'constraints/gcp.requiresPhysicalZoneSeparation'.",
             },
-            "authenticationInfo": {"principalEmail": "test.user1@example.com"},
+            "authenticationInfo": {"principalEmail": "j.blaise@example.com"},
             "requestMetadata": {
                 "callerIp": "2001:db8::1",
                 "callerSuppliedUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36 OPR/119.0.0.0,gzip(gfe),gzip(gfe)",
@@ -2072,7 +2072,7 @@ def test_skip_org_policy_constraint_disableServiceAccountHmacKeyCreation_not_fou
                 "code": 5,
                 "message": "com.google.apps.framework.request.StatusException: <eye3 title='NOT_FOUND'/> generic::NOT_FOUND: No constraint found with name 'constraints/storage.disableServiceAccountHmacKeyCreation'.",
             },
-            "authenticationInfo": {"principalEmail": "test.user2@example.com"},
+            "authenticationInfo": {"principalEmail": "j.blaise@example.com"},
             "requestMetadata": {
                 "callerIp": "2001:db8::2",
                 "callerSuppliedUserAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36,gzip(gfe)",
