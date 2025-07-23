@@ -574,7 +574,7 @@ def test_skip_audit_logs_error(run_slack_alerter, number_of_http_calls, caplog):
             "status": {"code": 7},
             "authenticationInfo": {
                 "principalEmail": "pipeline-bucket-reader@ons-blaise-v2-shared.iam.gserviceaccount.com",
-                "serviceAccountKeyName": "//iam.googleapis.com/projects/ons-blaise-v2-shared/serviceAccounts/pipeline-bucket-reader@ons-blaise-v2-shared.iam.gserviceaccount.com/keys/221e50eb36c76f17c5f6883a5a0bb29c1535ba8a",
+                "serviceAccountKeyName": "//iam.googleapis.com/projects/ons-blaise-v2-shared/serviceAccounts/pipeline-bucket-reader@ons-blaise-v2-shared.iam.gserviceaccount.com/keys/test123456789abcdef123456789abcdef12345678",
             },
             "requestMetadata": {
                 "callerIp": "203.0.113.2",
@@ -1781,7 +1781,7 @@ def test_skip_scc_dormant_accounts_prod_alert_service_account_keys_error(
             "@type": "type.googleapis.com/google.cloud.audit.AuditLog",
             "status": {
                 "code": "5",
-                "message": "Service account key f7ade4740059a1f5137bea2ff20b0952f012cf17 does not exist.",
+                "message": "Service account key test1234567890abcdef1234567890abcdef12345678 does not exist.",
             },
             "authenticationInfo": {
                 "principalEmail": "scc-dormant-accounts-alert@ons-gcp-monitoring-prod.iam.gserviceaccount.com",
@@ -1816,9 +1816,9 @@ def test_skip_scc_dormant_accounts_prod_alert_service_account_keys_error(
                     "permissionType": "ADMIN_READ",
                 }
             ],
-            "resourceName": "projects/-/serviceAccounts/110247389061820088971/keys/f7ade4740059a1f5137bea2ff20b0952f012cf17",
+            "resourceName": "projects/-/serviceAccounts/110247389061820088971/keys/test1234567890abcdef1234567890abcdef12345678",
             "request": {
-                "name": "projects/ons-blaise-v2-prod/serviceAccounts/628324858917-compute@developer.gserviceaccount.com/keys/f7ade4740059a1f5137bea2ff20b0952f012cf17",
+                "name": "projects/ons-blaise-v2-prod/serviceAccounts/628324858917-compute@developer.gserviceaccount.com/keys/test1234567890abcdef1234567890abcdef12345678",
                 "@type": "type.googleapis.com/google.iam.admin.v1.GetServiceAccountKeyRequest",
             },
         },
@@ -2127,3 +2127,379 @@ def test_skip_org_policy_constraint_disableServiceAccountHmacKeyCreation_not_fou
         logging.INFO,
         "Skipping 'org policy constraint not found: constraints/storage.disableServiceAccountHmacKeyCreation' alert",
     ) in caplog.record_tuples
+
+
+def test_skip_google_compute_engine_compat_manager_service_terminated_during_maintenance_window(
+    run_slack_alerter, number_of_http_calls, caplog
+):
+    # arrange - Friday July 11, 2025 at 01:40 AM UTC (within maintenance window)
+    example_log_entry = {
+        "insertId": "test1a2sfo7e84rqe",
+        "jsonPayload": {
+            "Channel": "System",
+            "TimeGenerated": "2025-07-11 02:40:25 +0100",
+            "Data": "470043004500570069006e0064006f007700730043006f006d007000610074004d0061006e0061006700650072000000",
+            "message": "The Google Compute Engine Compat Manager service terminated unexpectedly.  It has done this 1 time(s).  The following corrective action will be taken in 1000 milliseconds: Restart the service.\r\n",
+            "EventID": 7031,
+            "source_name": "Service Control Manager",
+            "StringInserts": [
+                "Google Compute Engine Compat Manager",
+                "1",
+                "1000",
+                "1",
+                "Restart the service"
+            ],
+            "Qualifiers": 49152,
+            "EventType": "Error",
+            "RecordNumber": 2420520,
+            "Sid": "",
+            "EventCategory": 0,
+            "TimeWritten": "2025-07-11 02:40:25 +0100",
+            "computer_name": "blaise-gusty-data-entry-3"
+        },
+        "resource": {
+            "type": "gce_instance",
+            "labels": {
+                "instance_id": "1234567890123456789",
+                "zone": "europe-west2-a",
+                "project_id": "ons-blaise-v2-prod"
+            }
+        },
+        "timestamp": "2025-07-11T02:40:25Z",
+        "severity": "ERROR",
+        "labels": {
+            "compute.googleapis.com/resource_name": "blaise-gusty-data-entry-3"
+        },
+        "logName": "projects/ons-blaise-v2-prod/logs/windows_event_log",
+        "receiveTimestamp": "2025-07-11T01:40:27.653108664Z"
+    }
+    event = create_event(example_log_entry)
+
+    # act
+    with caplog.at_level(logging.INFO):
+        response = run_slack_alerter(event)
+
+    # assert
+    assert response == "Alert skipped"
+    assert number_of_http_calls() == 0
+    assert (
+        "root",
+        logging.INFO,
+        "Skipping OS patch weekly maintenance window alert for blaise-gusty-data-entry-3",
+    ) in caplog.record_tuples
+
+
+def test_skip_google_compute_engine_agent_manager_service_terminated_during_maintenance_window(
+    run_slack_alerter, number_of_http_calls, caplog
+):
+    # arrange - Friday July 11, 2025 at 01:30 AM UTC (within maintenance window)  
+    example_log_entry = {
+        "insertId": "testyfq1u7e4umi2",
+        "jsonPayload": {
+            "Data": "4700430045004100670065006e0074004d0061006e0061006700650072000000",
+            "EventID": 7031,
+            "RecordNumber": 1013220,
+            "EventCategory": 0,
+            "StringInserts": [
+                "Google Compute Engine Agent Manager",
+                "2",
+                "2000",
+                "1",
+                "Restart the service"
+            ],
+            "Channel": "System",
+            "TimeWritten": "2025-07-11 02:30:46 +0100",
+            "computer_name": "restapi-1",
+            "source_name": "Service Control Manager",
+            "TimeGenerated": "2025-07-11 02:30:46 +0100",
+            "Qualifiers": 49152,
+            "EventType": "Error",
+            "Sid": "",
+            "message": "The Google Compute Engine Agent Manager service terminated unexpectedly.  It has done this 2 time(s).  The following corrective action will be taken in 2000 milliseconds: Restart the service.\r\n"
+        },
+        "resource": {
+            "type": "gce_instance",
+            "labels": {
+                "project_id": "ons-blaise-v2-prod",
+                "zone": "europe-west2-a",
+                "instance_id": "9876543210987654321"
+            }
+        },
+        "timestamp": "2025-07-11T01:30:46Z",
+        "severity": "ERROR",
+        "labels": {
+            "compute.googleapis.com/resource_name": "restapi-1"
+        },
+        "logName": "projects/ons-blaise-v2-prod/logs/windows_event_log",
+        "receiveTimestamp": "2025-07-11T01:32:14.031295294Z"
+    }
+    event = create_event(example_log_entry)
+
+    # act
+    with caplog.at_level(logging.INFO):
+        response = run_slack_alerter(event)
+
+    # assert
+    assert response == "Alert skipped"
+    assert number_of_http_calls() == 0
+    assert (
+        "root",
+        logging.INFO,
+        "Skipping OS patch weekly maintenance window alert for restapi-1",
+    ) in caplog.record_tuples
+
+
+def test_skip_gce_guest_agent_metadata_context_canceled_during_maintenance_window(
+    run_slack_alerter, number_of_http_calls, caplog
+):
+    # arrange - Friday July 11, 2025 at 01:30 AM UTC (within maintenance window)
+    example_log_entry = {
+        "insertId": "testjhigkve7mleb",
+        "jsonPayload": {
+            "localTimestamp": "2025-07-11T02:00:46.3700+01:00",
+            "message": "Error watching metadata: context canceled",
+            "omitempty": None
+        },
+        "resource": {
+            "type": "gce_instance",
+            "labels": {
+                "zone": "europe-west2-a",
+                "instance_id": "9876543210987654321",
+                "project_id": "ons-blaise-v2-prod"
+            }
+        },
+        "timestamp": "2025-07-11T01:30:46.452563300Z",
+        "severity": "ERROR",
+        "labels": {
+            "instance_name": "restapi-1"
+        },
+        "logName": "projects/ons-blaise-v2-prod/logs/GCEGuestAgent",
+        "sourceLocation": {
+            "file": "metadata.go",
+            "line": "68",
+            "function": "github.com/GoogleCloudPlatform/guest-agent/google_guest_agent/events/metadata.(*Watcher).Run"
+        },
+        "receiveTimestamp": "2025-07-11T01:30:46.567692609Z"
+    }
+    event = create_event(example_log_entry)
+
+    # act
+    with caplog.at_level(logging.INFO):
+        response = run_slack_alerter(event)
+
+    # assert
+    assert response == "Alert skipped"
+    assert number_of_http_calls() == 0
+    assert (
+        "root",
+        logging.INFO,
+        "Skipping metadata context canceled alert during maintenance window for restapi-1",
+    ) in caplog.record_tuples
+
+
+def test_allows_google_compute_engine_service_terminated_outside_maintenance_window(
+    run_slack_alerter, number_of_http_calls, caplog
+):
+    # arrange - Tuesday at 10:00 AM UTC (outside maintenance window)
+    example_log_entry = {
+        "insertId": "test1a2sfo7e84rqe",
+        "jsonPayload": {
+            "Channel": "System",
+            "TimeGenerated": "2025-07-15 10:00:25 +0000",
+            "Data": "470043004500570069006e0064006f007700730043006f006d007000610074004d0061006e0061006700650072000000",
+            "message": "The Google Compute Engine Compat Manager service terminated unexpectedly.  It has done this 1 time(s).  The following corrective action will be taken in 1000 milliseconds: Restart the service.\r\n",
+            "EventID": 7031,
+            "source_name": "Service Control Manager",
+            "StringInserts": [
+                "Google Compute Engine Compat Manager",
+                "1",
+                "1000", 
+                "1",
+                "Restart the service"
+            ],
+            "Qualifiers": 49152,
+            "EventType": "Error",
+            "RecordNumber": 2420520,
+            "Sid": "",
+            "EventCategory": 0,
+            "TimeWritten": "2025-07-15 10:00:25 +0000",
+            "computer_name": "blaise-gusty-data-entry-3"
+        },
+        "resource": {
+            "type": "gce_instance",
+            "labels": {
+                "instance_id": "1234567890123456789",
+                "zone": "europe-west2-a",
+                "project_id": "ons-blaise-v2-prod"
+            }
+        },
+        "timestamp": "2025-07-15T10:00:25Z",  # Tuesday 10:00 AM UTC
+        "severity": "ERROR",
+        "labels": {
+            "compute.googleapis.com/resource_name": "blaise-gusty-data-entry-3"
+        },
+        "logName": "projects/ons-blaise-v2-prod/logs/windows_event_log",
+        "receiveTimestamp": "2025-07-15T10:00:27.653108664Z"
+    }
+    event = create_event(example_log_entry)
+
+    # act
+    with caplog.at_level(logging.INFO):
+        response = run_slack_alerter(event)
+
+    assert response == "Alert sent"
+    assert number_of_http_calls() == 1
+    skip_messages = [record for record in caplog.record_tuples if "maintenance window" in str(record)]
+    assert len(skip_messages) == 0
+
+
+def test_skip_fluent_bit_tls_error_during_maintenance_window(
+    run_slack_alerter, number_of_http_calls, caplog
+):
+    # arrange - Friday July 11, 2025 at 01:30 AM UTC (within maintenance window)
+    example_log_entry = {
+        "insertId": "testnmg0smfqwksg9",
+        "jsonPayload": {
+            "message": "[2025/07/18 12:48:35] [error] [C:\\work\\submodules\\fluent-bit\\src\\tls\\openssl.c:551 errno=0] No error"
+        },
+        "resource": {
+            "type": "gce_instance",
+            "labels": {
+                "project_id": "ons-blaise-v2-prod",
+                "instance_id": "test6542796480007992547",
+                "zone": "europe-west2-a"
+            }
+        },
+        "timestamp": "2025-07-11T01:30:35Z",
+        "severity": "ERROR",
+        "logName": "projects/ons-blaise-v2-prod/logs/ops-agent-fluent-bit",
+        "receiveTimestamp": "2025-07-11T01:30:36.718393938Z"
+    }
+    event = create_event(example_log_entry)
+
+    # act
+    with caplog.at_level(logging.INFO):
+        response = run_slack_alerter(event)
+
+    # assert
+    assert response == "Alert skipped"
+    assert number_of_http_calls() == 0
+    assert (
+        "root",
+        logging.INFO,
+        "Skipping fluent-bit maintenance error for test6542796480007992547",
+    ) in caplog.record_tuples
+
+
+def test_skip_fluent_bit_syscall_error_during_maintenance_window(
+    run_slack_alerter, number_of_http_calls, caplog
+):
+    # arrange - Friday July 11, 2025 at 01:48 AM UTC (within maintenance window)
+    example_log_entry = {
+        "insertId": "test14j6phjfqtmdxg",
+        "jsonPayload": {
+            "message": "[2025/07/18 12:48:51] [error] [tls] syscall error: error:00000005:lib(0):func(0):DH lib"
+        },
+        "resource": {
+            "type": "gce_instance",
+            "labels": {
+                "project_id": "ons-blaise-v2-prod",
+                "zone": "europe-west2-a",
+                "instance_id": "test6542796480007992547"
+            }
+        },
+        "timestamp": "2025-07-11T01:48:51Z",
+        "severity": "ERROR",
+        "logName": "projects/ons-blaise-v2-prod/logs/ops-agent-fluent-bit",
+        "receiveTimestamp": "2025-07-11T01:48:52.716007518Z"
+    }
+    event = create_event(example_log_entry)
+
+    # act
+    with caplog.at_level(logging.INFO):
+        response = run_slack_alerter(event)
+
+    # assert
+    assert response == "Alert skipped"
+    assert number_of_http_calls() == 0
+    assert (
+        "root",
+        logging.INFO,
+        "Skipping fluent-bit maintenance error for test6542796480007992547",
+    ) in caplog.record_tuples
+
+
+def test_skip_fluent_bit_broken_connection_during_maintenance_window(
+    run_slack_alerter, number_of_http_calls, caplog
+):
+    # arrange - Friday July 11, 2025 at 01:48 AM UTC (within maintenance window)
+    example_log_entry = {
+        "insertId": "test14j6phjfqtmdxh",
+        "jsonPayload": {
+            "message": "[2025/07/18 12:48:51] [error] [http_client] broken connection to logging.googleapis.com:443 ?"
+        },
+        "resource": {
+            "type": "gce_instance",
+            "labels": {
+                "zone": "europe-west2-a",
+                "project_id": "ons-blaise-v2-prod",
+                "instance_id": "test6542796480007992547"
+            }
+        },
+        "timestamp": "2025-07-11T01:48:51Z",
+        "severity": "ERROR",
+        "logName": "projects/ons-blaise-v2-prod/logs/ops-agent-fluent-bit",
+        "receiveTimestamp": "2025-07-11T01:48:52.716007518Z"
+    }
+    event = create_event(example_log_entry)
+
+    # act
+    with caplog.at_level(logging.INFO):
+        response = run_slack_alerter(event)
+
+    # assert
+    assert response == "Alert skipped"
+    assert number_of_http_calls() == 0
+    assert (
+        "root",
+        logging.INFO,
+        "Skipping fluent-bit maintenance error for test6542796480007992547",
+    ) in caplog.record_tuples
+
+
+def test_allows_fluent_bit_errors_outside_maintenance_window(
+    run_slack_alerter, number_of_http_calls, caplog
+):
+    # arrange - Tuesday at 10:00 AM UTC (outside maintenance window)
+    example_log_entry = {
+        "insertId": "testnmg0smfqwksg9_outside",
+        "jsonPayload": {
+            "message": "[2025/07/18 12:48:35] [error] [C:\\work\\submodules\\fluent-bit\\src\\tls\\openssl.c:551 errno=0] No error"
+        },
+        "resource": {
+            "type": "gce_instance",
+            "labels": {
+                "project_id": "ons-blaise-v2-prod",
+                "instance_id": "6542796480007992547",
+                "zone": "europe-west2-a"
+            }
+        },
+        "timestamp": "2025-07-15T10:00:35Z",
+        "severity": "ERROR",
+        "logName": "projects/ons-blaise-v2-prod/logs/ops-agent-fluent-bit",
+        "receiveTimestamp": "2025-07-15T10:00:36.718393938Z"
+    }
+    event = create_event(example_log_entry)
+
+    # act
+    with caplog.at_level(logging.INFO):
+        response = run_slack_alerter(event)
+
+    # assert - Should NOT be skipped since it's outside maintenance window
+    assert response == "Alert sent"
+    assert number_of_http_calls() == 1
+    # Should not contain any fluent-bit maintenance skip messages
+    skip_messages = [record for record in caplog.record_tuples if "fluent-bit maintenance" in str(record)]
+    assert len(skip_messages) == 0
+
+
