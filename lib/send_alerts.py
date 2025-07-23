@@ -42,12 +42,16 @@ from lib.filters.gcp_constraint_not_found_filter import (
     physical_zone_separation_constraint_filter,
     service_account_hmac_key_constraint_filter,
 )
+from lib.filters.os_patch_maintenance_filter import os_patch_maintenance_filter
+from lib.filters.fluent_bit_maintenance_filter import fluent_bit_maintenance_filter
 
 
 def log_entry_skipped(log_entry: ProcessedLogEntry):
     filters = [
         sandbox_filter,
         all_preprod_and_training_alerts_except_erroneous_questionnaire_filter,
+        os_patch_maintenance_filter,
+        fluent_bit_maintenance_filter,
         osconfig_agent_filter,
         auditlog_filter,
         agent_connect_filter,
