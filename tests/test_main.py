@@ -2147,7 +2147,7 @@ def test_skip_google_compute_engine_compat_manager_service_terminated_during_mai
                 "1",
                 "1000",
                 "1",
-                "Restart the service"
+                "Restart the service",
             ],
             "Qualifiers": 49152,
             "EventType": "Error",
@@ -2155,23 +2155,21 @@ def test_skip_google_compute_engine_compat_manager_service_terminated_during_mai
             "Sid": "",
             "EventCategory": 0,
             "TimeWritten": "2025-07-11 02:40:25 +0100",
-            "computer_name": "blaise-gusty-data-entry-3"
+            "computer_name": "blaise-gusty-data-entry-3",
         },
         "resource": {
             "type": "gce_instance",
             "labels": {
                 "instance_id": "1234567890123456789",
                 "zone": "europe-west2-a",
-                "project_id": "ons-blaise-v2-prod"
-            }
+                "project_id": "ons-blaise-v2-prod",
+            },
         },
         "timestamp": "2025-07-11T02:40:25Z",
         "severity": "ERROR",
-        "labels": {
-            "compute.googleapis.com/resource_name": "blaise-gusty-data-entry-3"
-        },
+        "labels": {"compute.googleapis.com/resource_name": "blaise-gusty-data-entry-3"},
         "logName": "projects/ons-blaise-v2-prod/logs/windows_event_log",
-        "receiveTimestamp": "2025-07-11T01:40:27.653108664Z"
+        "receiveTimestamp": "2025-07-11T01:40:27.653108664Z",
     }
     event = create_event(example_log_entry)
 
@@ -2192,7 +2190,7 @@ def test_skip_google_compute_engine_compat_manager_service_terminated_during_mai
 def test_skip_google_compute_engine_agent_manager_service_terminated_during_maintenance_window(
     run_slack_alerter, number_of_http_calls, caplog
 ):
-    # arrange - Friday July 11, 2025 at 01:30 AM UTC (within maintenance window)  
+    # arrange - Friday July 11, 2025 at 01:30 AM UTC (within maintenance window)
     example_log_entry = {
         "insertId": "testyfq1u7e4umi2",
         "jsonPayload": {
@@ -2205,7 +2203,7 @@ def test_skip_google_compute_engine_agent_manager_service_terminated_during_main
                 "2",
                 "2000",
                 "1",
-                "Restart the service"
+                "Restart the service",
             ],
             "Channel": "System",
             "TimeWritten": "2025-07-11 02:30:46 +0100",
@@ -2215,23 +2213,21 @@ def test_skip_google_compute_engine_agent_manager_service_terminated_during_main
             "Qualifiers": 49152,
             "EventType": "Error",
             "Sid": "",
-            "message": "The Google Compute Engine Agent Manager service terminated unexpectedly.  It has done this 2 time(s).  The following corrective action will be taken in 2000 milliseconds: Restart the service.\r\n"
+            "message": "The Google Compute Engine Agent Manager service terminated unexpectedly.  It has done this 2 time(s).  The following corrective action will be taken in 2000 milliseconds: Restart the service.\r\n",
         },
         "resource": {
             "type": "gce_instance",
             "labels": {
                 "project_id": "ons-blaise-v2-prod",
                 "zone": "europe-west2-a",
-                "instance_id": "9876543210987654321"
-            }
+                "instance_id": "9876543210987654321",
+            },
         },
         "timestamp": "2025-07-11T01:30:46Z",
         "severity": "ERROR",
-        "labels": {
-            "compute.googleapis.com/resource_name": "restapi-1"
-        },
+        "labels": {"compute.googleapis.com/resource_name": "restapi-1"},
         "logName": "projects/ons-blaise-v2-prod/logs/windows_event_log",
-        "receiveTimestamp": "2025-07-11T01:32:14.031295294Z"
+        "receiveTimestamp": "2025-07-11T01:32:14.031295294Z",
     }
     event = create_event(example_log_entry)
 
@@ -2258,28 +2254,26 @@ def test_skip_gce_guest_agent_metadata_context_canceled_during_maintenance_windo
         "jsonPayload": {
             "localTimestamp": "2025-07-11T02:00:46.3700+01:00",
             "message": "Error watching metadata: context canceled",
-            "omitempty": None
+            "omitempty": None,
         },
         "resource": {
             "type": "gce_instance",
             "labels": {
                 "zone": "europe-west2-a",
                 "instance_id": "9876543210987654321",
-                "project_id": "ons-blaise-v2-prod"
-            }
+                "project_id": "ons-blaise-v2-prod",
+            },
         },
         "timestamp": "2025-07-11T01:30:46.452563300Z",
         "severity": "ERROR",
-        "labels": {
-            "instance_name": "restapi-1"
-        },
+        "labels": {"instance_name": "restapi-1"},
         "logName": "projects/ons-blaise-v2-prod/logs/GCEGuestAgent",
         "sourceLocation": {
             "file": "metadata.go",
             "line": "68",
-            "function": "github.com/GoogleCloudPlatform/guest-agent/google_guest_agent/events/metadata.(*Watcher).Run"
+            "function": "github.com/GoogleCloudPlatform/guest-agent/google_guest_agent/events/metadata.(*Watcher).Run",
         },
-        "receiveTimestamp": "2025-07-11T01:30:46.567692609Z"
+        "receiveTimestamp": "2025-07-11T01:30:46.567692609Z",
     }
     event = create_event(example_log_entry)
 
@@ -2313,9 +2307,9 @@ def test_allows_google_compute_engine_service_terminated_outside_maintenance_win
             "StringInserts": [
                 "Google Compute Engine Compat Manager",
                 "1",
-                "1000", 
+                "1000",
                 "1",
-                "Restart the service"
+                "Restart the service",
             ],
             "Qualifiers": 49152,
             "EventType": "Error",
@@ -2323,23 +2317,21 @@ def test_allows_google_compute_engine_service_terminated_outside_maintenance_win
             "Sid": "",
             "EventCategory": 0,
             "TimeWritten": "2025-07-15 10:00:25 +0000",
-            "computer_name": "blaise-gusty-data-entry-3"
+            "computer_name": "blaise-gusty-data-entry-3",
         },
         "resource": {
             "type": "gce_instance",
             "labels": {
                 "instance_id": "1234567890123456789",
                 "zone": "europe-west2-a",
-                "project_id": "ons-blaise-v2-prod"
-            }
+                "project_id": "ons-blaise-v2-prod",
+            },
         },
         "timestamp": "2025-07-15T10:00:25Z",  # Tuesday 10:00 AM UTC
         "severity": "ERROR",
-        "labels": {
-            "compute.googleapis.com/resource_name": "blaise-gusty-data-entry-3"
-        },
+        "labels": {"compute.googleapis.com/resource_name": "blaise-gusty-data-entry-3"},
         "logName": "projects/ons-blaise-v2-prod/logs/windows_event_log",
-        "receiveTimestamp": "2025-07-15T10:00:27.653108664Z"
+        "receiveTimestamp": "2025-07-15T10:00:27.653108664Z",
     }
     event = create_event(example_log_entry)
 
@@ -2349,7 +2341,9 @@ def test_allows_google_compute_engine_service_terminated_outside_maintenance_win
 
     assert response == "Alert sent"
     assert number_of_http_calls() == 1
-    skip_messages = [record for record in caplog.record_tuples if "maintenance window" in str(record)]
+    skip_messages = [
+        record for record in caplog.record_tuples if "maintenance window" in str(record)
+    ]
     assert len(skip_messages) == 0
 
 
@@ -2367,13 +2361,13 @@ def test_skip_fluent_bit_tls_error_during_maintenance_window(
             "labels": {
                 "project_id": "ons-blaise-v2-prod",
                 "instance_id": "test6542796480007992547",
-                "zone": "europe-west2-a"
-            }
+                "zone": "europe-west2-a",
+            },
         },
         "timestamp": "2025-07-11T01:30:35Z",
         "severity": "ERROR",
         "logName": "projects/ons-blaise-v2-prod/logs/ops-agent-fluent-bit",
-        "receiveTimestamp": "2025-07-11T01:30:36.718393938Z"
+        "receiveTimestamp": "2025-07-11T01:30:36.718393938Z",
     }
     event = create_event(example_log_entry)
 
@@ -2405,13 +2399,13 @@ def test_skip_fluent_bit_syscall_error_during_maintenance_window(
             "labels": {
                 "project_id": "ons-blaise-v2-prod",
                 "zone": "europe-west2-a",
-                "instance_id": "test6542796480007992547"
-            }
+                "instance_id": "test6542796480007992547",
+            },
         },
         "timestamp": "2025-07-11T01:48:51Z",
         "severity": "ERROR",
         "logName": "projects/ons-blaise-v2-prod/logs/ops-agent-fluent-bit",
-        "receiveTimestamp": "2025-07-11T01:48:52.716007518Z"
+        "receiveTimestamp": "2025-07-11T01:48:52.716007518Z",
     }
     event = create_event(example_log_entry)
 
@@ -2443,13 +2437,13 @@ def test_skip_fluent_bit_broken_connection_during_maintenance_window(
             "labels": {
                 "zone": "europe-west2-a",
                 "project_id": "ons-blaise-v2-prod",
-                "instance_id": "test6542796480007992547"
-            }
+                "instance_id": "test6542796480007992547",
+            },
         },
         "timestamp": "2025-07-11T01:48:51Z",
         "severity": "ERROR",
         "logName": "projects/ons-blaise-v2-prod/logs/ops-agent-fluent-bit",
-        "receiveTimestamp": "2025-07-11T01:48:52.716007518Z"
+        "receiveTimestamp": "2025-07-11T01:48:52.716007518Z",
     }
     event = create_event(example_log_entry)
 
@@ -2481,13 +2475,13 @@ def test_allows_fluent_bit_errors_outside_maintenance_window(
             "labels": {
                 "project_id": "ons-blaise-v2-prod",
                 "instance_id": "6542796480007992547",
-                "zone": "europe-west2-a"
-            }
+                "zone": "europe-west2-a",
+            },
         },
         "timestamp": "2025-07-15T10:00:35Z",
         "severity": "ERROR",
         "logName": "projects/ons-blaise-v2-prod/logs/ops-agent-fluent-bit",
-        "receiveTimestamp": "2025-07-15T10:00:36.718393938Z"
+        "receiveTimestamp": "2025-07-15T10:00:36.718393938Z",
     }
     event = create_event(example_log_entry)
 
@@ -2499,7 +2493,9 @@ def test_allows_fluent_bit_errors_outside_maintenance_window(
     assert response == "Alert sent"
     assert number_of_http_calls() == 1
     # Should not contain any fluent-bit maintenance skip messages
-    skip_messages = [record for record in caplog.record_tuples if "fluent-bit maintenance" in str(record)]
+    skip_messages = [
+        record
+        for record in caplog.record_tuples
+        if "fluent-bit maintenance" in str(record)
+    ]
     assert len(skip_messages) == 0
-
-

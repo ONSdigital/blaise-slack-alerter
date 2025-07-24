@@ -66,21 +66,29 @@ class TestIsInWeeklyMaintenanceWindow:
         # Friday 01:30 UTC - should be in maintenance window
         utc_time = datetime(2025, 7, 25, 1, 30, 0, tzinfo=timezone.utc)
         assert is_in_weekly_maintenance_window(utc_time) is True
-        
+
         # 02:30 with +1 hour offset (like London BST) = 01:30 UTC
-        london_offset = datetime(2025, 7, 25, 2, 30, 0, tzinfo=timezone(timedelta(hours=1)))
+        london_offset = datetime(
+            2025, 7, 25, 2, 30, 0, tzinfo=timezone(timedelta(hours=1))
+        )
         assert is_in_weekly_maintenance_window(london_offset) is True
-        
+
         # 21:30 previous day with -4 hour offset (like New York EDT) = 01:30 UTC Friday
-        ny_offset = datetime(2025, 7, 24, 21, 30, 0, tzinfo=timezone(timedelta(hours=-4)))
+        ny_offset = datetime(
+            2025, 7, 24, 21, 30, 0, tzinfo=timezone(timedelta(hours=-4))
+        )
         assert is_in_weekly_maintenance_window(ny_offset) is True
-        
+
         # 06:30 with +5 hour offset = 01:30 UTC
-        india_offset = datetime(2025, 7, 25, 6, 30, 0, tzinfo=timezone(timedelta(hours=5)))
+        india_offset = datetime(
+            2025, 7, 25, 6, 30, 0, tzinfo=timezone(timedelta(hours=5))
+        )
         assert is_in_weekly_maintenance_window(india_offset) is True
-        
+
         # 01:30 with -2 hour offset = 03:30 UTC (outside window)
-        outside_window = datetime(2025, 7, 25, 1, 30, 0, tzinfo=timezone(timedelta(hours=-2)))
+        outside_window = datetime(
+            2025, 7, 25, 1, 30, 0, tzinfo=timezone(timedelta(hours=-2))
+        )
         assert is_in_weekly_maintenance_window(outside_window) is False
 
     def test_naive_datetime_treated_as_utc(self):
@@ -97,7 +105,9 @@ class TestIsInWeeklyMaintenanceWindow:
         friday_exact_end = datetime(2025, 7, 25, 2, 0, 0, 0, tzinfo=timezone.utc)
         assert is_in_weekly_maintenance_window(friday_exact_end) is True
 
-        friday_just_before = datetime(2025, 7, 25, 0, 59, 59, 999999, tzinfo=timezone.utc)
+        friday_just_before = datetime(
+            2025, 7, 25, 0, 59, 59, 999999, tzinfo=timezone.utc
+        )
         assert is_in_weekly_maintenance_window(friday_just_before) is False
 
         friday_just_after = datetime(2025, 7, 25, 2, 0, 0, 1, tzinfo=timezone.utc)
@@ -105,10 +115,14 @@ class TestIsInWeeklyMaintenanceWindow:
 
     def test_different_friday_dates(self):
         friday_dates = [
-            datetime(2025, 1, 3, 1, 30, 0, tzinfo=timezone.utc),   # Friday, Jan 3, 2025
-            datetime(2025, 2, 7, 1, 30, 0, tzinfo=timezone.utc),   # Friday, Feb 7, 2025
-            datetime(2025, 3, 14, 1, 30, 0, tzinfo=timezone.utc),  # Friday, Mar 14, 2025
-            datetime(2025, 12, 26, 1, 30, 0, tzinfo=timezone.utc), # Friday, Dec 26, 2025
+            datetime(2025, 1, 3, 1, 30, 0, tzinfo=timezone.utc),  # Friday, Jan 3, 2025
+            datetime(2025, 2, 7, 1, 30, 0, tzinfo=timezone.utc),  # Friday, Feb 7, 2025
+            datetime(
+                2025, 3, 14, 1, 30, 0, tzinfo=timezone.utc
+            ),  # Friday, Mar 14, 2025
+            datetime(
+                2025, 12, 26, 1, 30, 0, tzinfo=timezone.utc
+            ),  # Friday, Dec 26, 2025
         ]
 
         for friday_date in friday_dates:
@@ -117,25 +131,41 @@ class TestIsInWeeklyMaintenanceWindow:
 
     def test_different_non_friday_dates(self):
         non_friday_dates = [
-            datetime(2025, 1, 4, 1, 30, 0, tzinfo=timezone.utc),   # Saturday, Jan 4, 2025
-            datetime(2025, 2, 6, 1, 30, 0, tzinfo=timezone.utc),   # Thursday, Feb 6, 2025
-            datetime(2025, 3, 15, 1, 30, 0, tzinfo=timezone.utc),  # Saturday, Mar 15, 2025
-            datetime(2025, 12, 25, 1, 30, 0, tzinfo=timezone.utc), # Thursday, Dec 25, 2025
+            datetime(
+                2025, 1, 4, 1, 30, 0, tzinfo=timezone.utc
+            ),  # Saturday, Jan 4, 2025
+            datetime(
+                2025, 2, 6, 1, 30, 0, tzinfo=timezone.utc
+            ),  # Thursday, Feb 6, 2025
+            datetime(
+                2025, 3, 15, 1, 30, 0, tzinfo=timezone.utc
+            ),  # Saturday, Mar 15, 2025
+            datetime(
+                2025, 12, 25, 1, 30, 0, tzinfo=timezone.utc
+            ),  # Thursday, Dec 25, 2025
         ]
 
         for non_friday_date in non_friday_dates:
-            assert non_friday_date.weekday() != 4, f"Date {non_friday_date} should not be a Friday"
+            assert (
+                non_friday_date.weekday() != 4
+            ), f"Date {non_friday_date} should not be a Friday"
             assert is_in_weekly_maintenance_window(non_friday_date) is False
 
     def test_timezone_conversion_changes_weekday(self):
         # Thursday 23:30 with -2 hour offset = Friday 01:30 UTC (should be True)
-        thursday_becomes_friday = datetime(2025, 7, 24, 23, 30, 0, tzinfo=timezone(timedelta(hours=-2)))
+        thursday_becomes_friday = datetime(
+            2025, 7, 24, 23, 30, 0, tzinfo=timezone(timedelta(hours=-2))
+        )
         assert is_in_weekly_maintenance_window(thursday_becomes_friday) is True
-        
+
         # Friday 02:30 with +2 hour offset = Friday 00:30 UTC (should be False - outside window)
-        friday_stays_friday_but_outside = datetime(2025, 7, 25, 2, 30, 0, tzinfo=timezone(timedelta(hours=2)))
+        friday_stays_friday_but_outside = datetime(
+            2025, 7, 25, 2, 30, 0, tzinfo=timezone(timedelta(hours=2))
+        )
         assert is_in_weekly_maintenance_window(friday_stays_friday_but_outside) is False
-        
+
         # Saturday 01:30 with +1 hour offset = Friday 00:30 UTC (should be False - outside window)
-        saturday_becomes_friday_outside = datetime(2025, 7, 26, 1, 30, 0, tzinfo=timezone(timedelta(hours=1)))
+        saturday_becomes_friday_outside = datetime(
+            2025, 7, 26, 1, 30, 0, tzinfo=timezone(timedelta(hours=1))
+        )
         assert is_in_weekly_maintenance_window(saturday_becomes_friday_outside) is False

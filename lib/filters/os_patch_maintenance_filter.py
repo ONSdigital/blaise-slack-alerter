@@ -9,7 +9,7 @@ def os_patch_maintenance_filter(log_entry: ProcessedLogEntry) -> bool:
     """
     Filter harmless VM shutdown/restart logs during OS patch weekly maintenance windows.
     Activates only on Fridays around 01:30 AM UTC (1:00-2:00 AM window) when VMs restart for patches.
-    
+
     Handles:
     - VM service termination/restart logs (Google Compute Engine services)
     - Metadata context canceled errors (GCE Guest Agent)
@@ -19,11 +19,11 @@ def os_patch_maintenance_filter(log_entry: ProcessedLogEntry) -> bool:
         log_entry,
         required_platform="gce_instance",
         require_message=True,
-        require_timestamp=True
+        require_timestamp=True,
     ):
         return False
 
-    if not is_in_weekly_maintenance_window(log_entry.timestamp):
+    if not log_entry.timestamp or is_in_weekly_maintenance_window(log_entry.timestamp):
         return False
 
     service_termination_indicators = [
@@ -41,7 +41,11 @@ def os_patch_maintenance_filter(log_entry: ProcessedLogEntry) -> bool:
         indicator in log_entry.message for indicator in service_termination_indicators
     )
 
-    if service_termination_match and log_entry.log_name and "windows_event_log" in log_entry.log_name:
+    if (
+        service_termination_match
+        and log_entry.log_name
+        and "windows_event_log" in log_entry.log_name
+    ):
         logging.info(
             f"Skipping OS patch weekly maintenance window alert for {log_entry.application}"
         )
@@ -51,7 +55,11 @@ def os_patch_maintenance_filter(log_entry: ProcessedLogEntry) -> bool:
         indicator in log_entry.message for indicator in metadata_context_indicators
     )
 
-    if metadata_context_match and log_entry.log_name and "GCEGuestAgent" in log_entry.log_name:
+    if (
+        metadata_context_match
+        and log_entry.log_name
+        and "GCEGuestAgent" in log_entry.log_name
+    ):
         logging.info(
             f"Skipping metadata context canceled alert during maintenance window for {log_entry.application}"
         )

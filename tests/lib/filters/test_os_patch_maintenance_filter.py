@@ -7,19 +7,6 @@ from lib.log_processor import ProcessedLogEntry
 from lib.filters.os_patch_maintenance_filter import os_patch_maintenance_filter
 
 @pytest.fixture()
-def processed_log_entry_metadata_context_canceled() -> ProcessedLogEntry:
-    return ProcessedLogEntry(
-        message="Error watching metadata: context canceled",
-        data={"localTimestamp": "2025-07-18T01:30:46.3700+00:00", "omitempty": None},
-        severity="ERROR",
-        platform="gce_instance",
-        application="restapi-1",
-        log_name="projects/ons-blaise-v2-prod/logs/GCEGuestAgent",
-        timestamp=datetime.datetime(2025, 7, 18, 1, 30, 46, tzinfo=timezone.utc), 
-        log_query={"resource.type": "gce_instance"},
-    )
-
-@pytest.fixture()
 def processed_log_entry_service_terminated() -> ProcessedLogEntry:
     return ProcessedLogEntry(
         message="The Google Compute Engine Agent Manager service terminated unexpectedly.  It has done this 2 time(s).  The following corrective action will be taken in 2000 milliseconds: Restart the service.\r\n",
@@ -40,8 +27,8 @@ def processed_log_entry_service_terminated() -> ProcessedLogEntry:
         application="restapi-1",
         log_name="projects/ons-blaise-v2-prod/logs/windows_event_log",
         timestamp=datetime.datetime(
-            2025, 7, 11, 1, 30, 46
-        , tzinfo=timezone.utc),  # 1:30 AM - weekly maintenance window
+            2025, 7, 11, 1, 30, 46, tzinfo=timezone.utc
+        ),  # 1:30 AM - weekly maintenance window
         log_query={"resource.type": "gce_instance"},
     )
 
@@ -56,8 +43,8 @@ def processed_log_entry_metadata_context_canceled() -> ProcessedLogEntry:
         application="restapi-1",
         log_name="projects/ons-blaise-v2-prod/logs/GCEGuestAgent",
         timestamp=datetime.datetime(
-            2025, 7, 11, 1, 30, 46
-        , tzinfo=timezone.utc),  # 1:30 AM - weekly maintenance window
+            2025, 7, 11, 1, 30, 46, tzinfo=timezone.utc
+        ),  # 1:30 AM - weekly maintenance window
         log_query={"resource.type": "gce_instance"},
     )
 
@@ -83,8 +70,8 @@ def processed_log_entry_compat_manager_terminated() -> ProcessedLogEntry:
         application="blaise-gusty-data-entry-3",
         log_name="projects/ons-blaise-v2-prod/logs/windows_event_log",
         timestamp=datetime.datetime(
-            2025, 7, 11, 1, 40, 25
-        , tzinfo=timezone.utc),  # 1:40 AM - weekly maintenance window
+            2025, 7, 11, 1, 40, 25, tzinfo=timezone.utc
+        ),  # 1:40 AM - weekly maintenance window
         log_query={"resource.type": "gce_instance"},
     )
 
@@ -163,8 +150,5 @@ def test_metadata_canceled_is_not_skipped_outside_maintenance_window(
         processed_log_entry_metadata_context_canceled,
         timestamp=datetime.datetime(2025, 7, 11, 10, 30, 46, tzinfo=timezone.utc),
     )
-    log_is_skipped = os_patch_maintenance_filter(
-        log_entry_outside_window
-    )
+    log_is_skipped = os_patch_maintenance_filter(log_entry_outside_window)
     assert log_is_skipped is False
-

@@ -18,14 +18,14 @@ def fluent_bit_maintenance_filter(log_entry: ProcessedLogEntry) -> bool:
         log_entry,
         required_platform="gce_instance",
         require_message=True,
-        require_timestamp=True
+        require_timestamp=True,
     ):
         return False
 
     if not isinstance(log_entry.severity, str) or log_entry.severity != "ERROR":
         return False
 
-    if not is_in_weekly_maintenance_window(log_entry.timestamp):
+    if not log_entry.timestamp or is_in_weekly_maintenance_window(log_entry.timestamp):
         return False
 
     if not (log_entry.log_name and "ops-agent-fluent-bit" in log_entry.log_name):
@@ -37,11 +37,12 @@ def fluent_bit_maintenance_filter(log_entry: ProcessedLogEntry) -> bool:
         "[error] [http_client] broken connection to logging.googleapis.com:",
         "No error",
         "DH lib",
-        "broken connection"
+        "broken connection",
     ]
 
     message_matches = any(
-        indicator in log_entry.message for indicator in fluent_bit_maintenance_indicators
+        indicator in log_entry.message
+        for indicator in fluent_bit_maintenance_indicators
     )
 
     if message_matches:

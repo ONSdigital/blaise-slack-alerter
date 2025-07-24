@@ -4,7 +4,7 @@ from unittest.mock import Mock
 
 from lib.utilities.log_validation import (
     validate_log_entry_fields,
-    validate_gce_instance_log_entry
+    validate_gce_instance_log_entry,
 )
 from lib.log_processor.processed_log_entry import ProcessedLogEntry
 
@@ -23,7 +23,7 @@ class TestValidateLogEntryFields:
         """Helper method to create a ProcessedLogEntry for testing."""
         if timestamp is None:
             timestamp = datetime(2025, 7, 25, 12, 0, 0, tzinfo=timezone.utc)
-        
+
         return ProcessedLogEntry(
             message=message,
             platform=platform,
@@ -40,32 +40,41 @@ class TestValidateLogEntryFields:
     def test_returns_true_for_valid_entry_with_none_values_no_requirements(self):
         """Test that function returns True for entry with None values when no requirements are set."""
         log_entry = ProcessedLogEntry(
-            message=None,
-            platform=None,
-            log_name=None,
-            timestamp=None
+            message=None, platform=None, log_name=None, timestamp=None
         )
         assert validate_log_entry_fields(log_entry) is True
 
     def test_required_platform_valid(self):
         """Test validation passes when required platform matches."""
         log_entry = self.create_log_entry(platform="gce_instance")
-        assert validate_log_entry_fields(log_entry, required_platform="gce_instance") is True
+        assert (
+            validate_log_entry_fields(log_entry, required_platform="gce_instance")
+            is True
+        )
 
     def test_required_platform_invalid_mismatch(self):
         """Test validation fails when required platform doesn't match."""
         log_entry = self.create_log_entry(platform="cloud_run")
-        assert validate_log_entry_fields(log_entry, required_platform="gce_instance") is False
+        assert (
+            validate_log_entry_fields(log_entry, required_platform="gce_instance")
+            is False
+        )
 
     def test_required_platform_invalid_none(self):
         """Test validation fails when platform is None but required."""
         log_entry = self.create_log_entry(platform=None)
-        assert validate_log_entry_fields(log_entry, required_platform="gce_instance") is False
+        assert (
+            validate_log_entry_fields(log_entry, required_platform="gce_instance")
+            is False
+        )
 
     def test_required_platform_invalid_non_string(self):
         """Test validation fails when platform is not a string."""
         log_entry = self.create_log_entry(platform=123)
-        assert validate_log_entry_fields(log_entry, required_platform="gce_instance") is False
+        assert (
+            validate_log_entry_fields(log_entry, required_platform="gce_instance")
+            is False
+        )
 
     def test_require_message_valid(self):
         """Test validation passes when message is required and is a valid string."""
@@ -121,61 +130,82 @@ class TestValidateLogEntryFields:
             message="Valid message",
             platform="gce_instance",
             log_name="valid_log",
-            timestamp=datetime(2025, 7, 25, 12, 0, 0, tzinfo=timezone.utc)
+            timestamp=datetime(2025, 7, 25, 12, 0, 0, tzinfo=timezone.utc),
         )
-        assert validate_log_entry_fields(
-            log_entry,
-            required_platform="gce_instance",
-            require_message=True,
-            require_log_name=True,
-            require_timestamp=True
-        ) is True
+        assert (
+            validate_log_entry_fields(
+                log_entry,
+                required_platform="gce_instance",
+                require_message=True,
+                require_log_name=True,
+                require_timestamp=True,
+            )
+            is True
+        )
 
     def test_multiple_requirements_platform_fails_due_to_platform_mismatch(self):
         log_entry = self.create_log_entry(
             message="Valid message",
-            platform="cloud_run",  
+            platform="cloud_run",
             log_name="valid_log",
-            timestamp=datetime(2025, 7, 25, 12, 0, 0, tzinfo=timezone.utc)
+            timestamp=datetime(2025, 7, 25, 12, 0, 0, tzinfo=timezone.utc),
         )
-        assert validate_log_entry_fields(
-            log_entry,
-            required_platform="gce_instance",
-            require_message=True,
-            require_log_name=True,
-            require_timestamp=True
-        ) is False
+        assert (
+            validate_log_entry_fields(
+                log_entry,
+                required_platform="gce_instance",
+                require_message=True,
+                require_log_name=True,
+                require_timestamp=True,
+            )
+            is False
+        )
 
     def test_multiple_requirements_message_fails_due_to_invalid_message(self):
         log_entry = self.create_log_entry(
-            message=None, 
+            message=None,
             platform="gce_instance",
             log_name="valid_log",
-            timestamp=datetime(2025, 7, 25, 12, 0, 0, tzinfo=timezone.utc)
+            timestamp=datetime(2025, 7, 25, 12, 0, 0, tzinfo=timezone.utc),
         )
-        assert validate_log_entry_fields(
-            log_entry,
-            required_platform="gce_instance",
-            require_message=True,
-            require_log_name=True,
-            require_timestamp=True
-        ) is False
+        assert (
+            validate_log_entry_fields(
+                log_entry,
+                required_platform="gce_instance",
+                require_message=True,
+                require_log_name=True,
+                require_timestamp=True,
+            )
+            is False
+        )
 
     def test_required_platform_none_allows_any_platform(self):
         log_entry_with_platform = self.create_log_entry(platform="any_platform")
         log_entry_with_none = self.create_log_entry(platform=None)
         log_entry_with_number = self.create_log_entry(platform=123)
 
-        assert validate_log_entry_fields(log_entry_with_platform, required_platform=None) is True
-        assert validate_log_entry_fields(log_entry_with_none, required_platform=None) is True
-        assert validate_log_entry_fields(log_entry_with_number, required_platform=None) is True
+        assert (
+            validate_log_entry_fields(log_entry_with_platform, required_platform=None)
+            is True
+        )
+        assert (
+            validate_log_entry_fields(log_entry_with_none, required_platform=None)
+            is True
+        )
+        assert (
+            validate_log_entry_fields(log_entry_with_number, required_platform=None)
+            is True
+        )
 
     def test_edge_case_empty_string_platform(self):
         log_entry = self.create_log_entry(platform="")
-        
+
         assert validate_log_entry_fields(log_entry, required_platform="") is True
-        
-        assert validate_log_entry_fields(log_entry, required_platform="gce_instance") is False
+
+        assert (
+            validate_log_entry_fields(log_entry, required_platform="gce_instance")
+            is False
+        )
 
 
 class TestValidateGceInstanceLogEntry:
@@ -189,7 +219,7 @@ class TestValidateGceInstanceLogEntry:
     ) -> ProcessedLogEntry:
         if timestamp is None:
             timestamp = datetime(2025, 7, 25, 12, 0, 0, tzinfo=timezone.utc)
-        
+
         return ProcessedLogEntry(
             message=message,
             platform=platform,
@@ -246,10 +276,7 @@ class TestValidateGceInstanceLogEntry:
 
     def test_multiple_invalid_fields(self):
         log_entry = ProcessedLogEntry(
-            message=None,          
-            platform="cloud_run", 
-            log_name=None,         
-            timestamp=None         
+            message=None, platform="cloud_run", log_name=None, timestamp=None
         )
         assert validate_gce_instance_log_entry(log_entry) is False
 
@@ -258,7 +285,7 @@ class TestValidateGceInstanceLogEntry:
             message="Error in application",
             platform="gce_instance",
             log_name="projects/test-project/logs/test-log",
-            timestamp=datetime(2025, 7, 25, 12, 0, 0, tzinfo=timezone.utc)
+            timestamp=datetime(2025, 7, 25, 12, 0, 0, tzinfo=timezone.utc),
         )
         assert validate_gce_instance_log_entry(log_entry) is True
 
@@ -270,6 +297,6 @@ class TestValidateGceInstanceLogEntry:
             timestamp=datetime(2025, 7, 25, 12, 0, 0, tzinfo=timezone.utc),
             severity="ERROR",
             application="test-app",
-            data={"key": "value"}
+            data={"key": "value"},
         )
         assert validate_gce_instance_log_entry(log_entry) is True

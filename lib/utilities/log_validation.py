@@ -15,19 +15,19 @@ def validate_log_entry_fields(
             return False
         if log_entry.platform != required_platform:
             return False
-    
+
     if require_message:
         if not isinstance(log_entry.message, str):
             return False
-    
+
     if require_log_name:
         if not isinstance(log_entry.log_name, str):
             return False
-    
+
     if require_timestamp:
         if not isinstance(log_entry.timestamp, datetime):
             return False
-    
+
     return True
 
 
