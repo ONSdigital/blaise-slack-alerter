@@ -6,6 +6,7 @@ from datetime import timezone
 from lib.log_processor import ProcessedLogEntry
 from lib.filters.os_patch_maintenance_filter import os_patch_maintenance_filter
 
+
 @pytest.fixture()
 def processed_log_entry_service_terminated() -> ProcessedLogEntry:
     return ProcessedLogEntry(
