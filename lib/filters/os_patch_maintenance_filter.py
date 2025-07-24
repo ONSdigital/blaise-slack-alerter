@@ -23,7 +23,9 @@ def os_patch_maintenance_filter(log_entry: ProcessedLogEntry) -> bool:
     ):
         return False
 
-    if not log_entry.timestamp or is_in_weekly_maintenance_window(log_entry.timestamp):
+    if not log_entry.timestamp or not is_in_weekly_maintenance_window(
+        log_entry.timestamp
+    ):
         return False
 
     service_termination_indicators = [

@@ -25,7 +25,9 @@ def fluent_bit_maintenance_filter(log_entry: ProcessedLogEntry) -> bool:
     if not isinstance(log_entry.severity, str) or log_entry.severity != "ERROR":
         return False
 
-    if not log_entry.timestamp or is_in_weekly_maintenance_window(log_entry.timestamp):
+    if not log_entry.timestamp or not is_in_weekly_maintenance_window(
+        log_entry.timestamp
+    ):
         return False
 
     if not (log_entry.log_name and "ops-agent-fluent-bit" in log_entry.log_name):
