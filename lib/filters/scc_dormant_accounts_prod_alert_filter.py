@@ -3,6 +3,13 @@ from lib.log_processor import ProcessedLogEntry
 
 
 def scc_dormant_accounts_prod_alert_filter(log_entry: ProcessedLogEntry) -> bool:
+    """
+    Filters out ERROR alerts from an organisation level service account.
+
+    This organisation level service account queries for service accounts in projects to check if they exist,
+    and if not found, generates "Service account does not exist" errors that clutter alert channels.
+    These alerts are deemed safe to ignore.
+    """
     TARGET_EXTERNAL_SERVICE_ACCOUNT = (
         "scc-dormant-accounts-alert@ons-gcp-monitoring-prod.iam.gserviceaccount.com"
     )

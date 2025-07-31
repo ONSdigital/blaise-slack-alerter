@@ -1,35 +1,35 @@
 import pytest
 import datetime
 import dataclasses
+from typing import Any
 
 from lib.log_processor import ProcessedLogEntry
 from lib.filters.scc_dormant_accounts_prod_alert_filter import (
     scc_dormant_accounts_prod_alert_filter,
 )
 
-SERVICE_ACCOUNT_EMAILS = {
-    "target_external_service_account": "scc-dormant-accounts-alert@ons-gcp-monitoring-prod.iam.gserviceaccount.com",
-    "random_external_service_account": "google-service-account@example.com",
-}
 
-POTENTIAL_ERROR_MESSAGES = {
-    "key_error": "Service account key 8fb56338d14c4624c7687dfd50ad4b66357d224a does not exist.",
-    "account_error": "Service account projects/ons-blaise-v2-prod/serviceAccounts/blaise-cloud-functions@ons-blaise-v2-prod.iam.gserviceaccount.com does not exist.",
-}
+# Test constants
+TARGET_SERVICE_ACCOUNT = (
+    "scc-dormant-accounts-alert@ons-gcp-monitoring-prod.iam.gserviceaccount.com"
+)
+RANDOM_SERVICE_ACCOUNT = "google-service-account@example.com"
+SERVICE_ACCOUNT_KEY_ERROR = (
+    "Service account key test8fb56338d14c4624c7687dfd50ad4b66357d224a does not exist."
+)
+SERVICE_ACCOUNT_NOT_FOUND_ERROR = "Service account projects/ons-blaise-v2-prod/serviceAccounts/blaise-cloud-functions-test@ons-blaise-v2-prod.iam.gserviceaccount.com does not exist."
 
 
-@pytest.fixture()
-def processed_scc_dormant_accounts_prod_alert_log() -> ProcessedLogEntry:
+@pytest.fixture
+def base_scc_log() -> ProcessedLogEntry:
     return ProcessedLogEntry(
         message="dummy",
-        data=dict(
-            description="dummy",
-            authenticationInfo=dict(
-                principalEmail=SERVICE_ACCOUNT_EMAILS[
-                    "target_external_service_account"
-                ],
-            ),
-        ),
+        data={
+            "description": "dummy",
+            "authenticationInfo": {
+                "principalEmail": TARGET_SERVICE_ACCOUNT,
+            },
+        },
         severity="ERROR",
         platform="service_account",
         application="unknown",
@@ -42,161 +42,109 @@ def processed_scc_dormant_accounts_prod_alert_log() -> ProcessedLogEntry:
     )
 
 
-def test_log_is_skipped_when_its_from_external_service_account(
-    processed_scc_dormant_accounts_prod_alert_log: ProcessedLogEntry,
+def create_log_with_field(
+    base_log: ProcessedLogEntry, **kwargs: Any
+) -> ProcessedLogEntry:
+    return dataclasses.replace(base_log, **kwargs)
+
+
+def create_log_with_message(
+    base_log: ProcessedLogEntry, message: str
+) -> ProcessedLogEntry:
+    return dataclasses.replace(base_log, message=message)
+
+
+def create_log_with_data(base_log: ProcessedLogEntry, data: Any) -> ProcessedLogEntry:
+    return dataclasses.replace(base_log, data=data)
+
+
+def test_log_is_skipped_when_from_target_service_account(
+    base_scc_log: ProcessedLogEntry,
 ):
-    log_is_skipped = scc_dormant_accounts_prod_alert_filter(
-        processed_scc_dormant_accounts_prod_alert_log
-    )
-    assert log_is_skipped is True
+    assert scc_dormant_accounts_prod_alert_filter(base_scc_log) is True
 
 
-def test_log_is_skipped_when_its_a_service_account_key_error(
-    processed_scc_dormant_accounts_prod_alert_log: ProcessedLogEntry,
+@pytest.mark.parametrize(
+    "error_message",
+    [
+        SERVICE_ACCOUNT_KEY_ERROR,
+        SERVICE_ACCOUNT_NOT_FOUND_ERROR,
+    ],
+)
+def test_log_is_skipped_for_service_account_errors(
+    base_scc_log: ProcessedLogEntry, error_message: str
 ):
-    processed_scc_dormant_accounts_prod_alert_log = dataclasses.replace(
-        processed_scc_dormant_accounts_prod_alert_log,
-        message=POTENTIAL_ERROR_MESSAGES["key_error"],
-    )
-    log_is_skipped = scc_dormant_accounts_prod_alert_filter(
-        processed_scc_dormant_accounts_prod_alert_log
-    )
-
-    assert log_is_skipped is True
-
-
-def test_log_is_skipped_when_its_a_service_account_not_found_error(
-    processed_scc_dormant_accounts_prod_alert_log: ProcessedLogEntry,
-):
-    processed_scc_dormant_accounts_prod_alert_log = dataclasses.replace(
-        processed_scc_dormant_accounts_prod_alert_log,
-        message=POTENTIAL_ERROR_MESSAGES["account_error"],
-    )
-    log_is_skipped = scc_dormant_accounts_prod_alert_filter(
-        processed_scc_dormant_accounts_prod_alert_log
-    )
-
-    assert log_is_skipped is True
+    log = create_log_with_message(base_scc_log, error_message)
+    assert scc_dormant_accounts_prod_alert_filter(log) is True
 
 
 def test_log_is_not_skipped_when_log_entry_is_none():
-    log_is_skipped = scc_dormant_accounts_prod_alert_filter(None)
-    assert log_is_skipped is False
+    assert scc_dormant_accounts_prod_alert_filter(None) is False
 
 
-def test_log_is_not_skipped_when_platform_is_not_string(
-    processed_scc_dormant_accounts_prod_alert_log: ProcessedLogEntry,
+@pytest.mark.parametrize("invalid_platform", [123, "different_platform", None])
+def test_log_is_not_skipped_for_invalid_platform(
+    base_scc_log: ProcessedLogEntry, invalid_platform: Any
 ):
-    processed_log = dataclasses.replace(
-        processed_scc_dormant_accounts_prod_alert_log, platform=123
-    )
-    log_is_skipped = scc_dormant_accounts_prod_alert_filter(processed_log)
-    assert log_is_skipped is False
+    log = create_log_with_field(base_scc_log, platform=invalid_platform)
+    assert scc_dormant_accounts_prod_alert_filter(log) is False
 
 
-def test_log_is_not_skipped_when_platform_is_not_service_account(
-    processed_scc_dormant_accounts_prod_alert_log: ProcessedLogEntry,
+@pytest.mark.parametrize(
+    "invalid_data",
+    [
+        "not_a_dict",
+        {"description": "dummy", "authenticationInfo": "not_a_dict"},
+        {"description": "dummy"},
+        {"description": "dummy", "authenticationInfo": {}},
+    ],
+)
+def test_log_is_not_skipped_for_invalid_data(
+    base_scc_log: ProcessedLogEntry, invalid_data: Any
 ):
-    processed_log = dataclasses.replace(
-        processed_scc_dormant_accounts_prod_alert_log, platform="different_platform"
-    )
-    log_is_skipped = scc_dormant_accounts_prod_alert_filter(processed_log)
-    assert log_is_skipped is False
+    log = create_log_with_data(base_scc_log, invalid_data)
+    assert scc_dormant_accounts_prod_alert_filter(log) is False
 
 
-def test_log_is_not_skipped_when_data_is_not_dict(
-    processed_scc_dormant_accounts_prod_alert_log: ProcessedLogEntry,
+@pytest.mark.parametrize("invalid_message", [1234, None, []])
+def test_log_is_not_skipped_for_invalid_message(
+    base_scc_log: ProcessedLogEntry, invalid_message: Any
 ):
-    processed_log = dataclasses.replace(
-        processed_scc_dormant_accounts_prod_alert_log, data="not_a_dict"
-    )
-    log_is_skipped = scc_dormant_accounts_prod_alert_filter(processed_log)
-    assert log_is_skipped is False
+    log = create_log_with_field(base_scc_log, message=invalid_message)
+    assert scc_dormant_accounts_prod_alert_filter(log) is False
 
 
-def test_log_is_not_skipped_when_authentication_info_is_not_dict(
-    processed_scc_dormant_accounts_prod_alert_log: ProcessedLogEntry,
+def test_log_is_not_skipped_for_different_service_account(
+    base_scc_log: ProcessedLogEntry,
 ):
-    processed_log = dataclasses.replace(
-        processed_scc_dormant_accounts_prod_alert_log,
-        data={"description": "dummy", "authenticationInfo": "not_a_dict"},
-    )
-    log_is_skipped = scc_dormant_accounts_prod_alert_filter(processed_log)
-    assert log_is_skipped is False
-
-
-def test_log_is_not_skipped_when_authentication_info_is_missing(
-    processed_scc_dormant_accounts_prod_alert_log: ProcessedLogEntry,
-):
-    processed_log = dataclasses.replace(
-        processed_scc_dormant_accounts_prod_alert_log, data={"description": "dummy"}
-    )
-    log_is_skipped = scc_dormant_accounts_prod_alert_filter(processed_log)
-    assert log_is_skipped is False
-
-
-def test_log_is_not_skipped_when_principal_email_is_missing(
-    processed_scc_dormant_accounts_prod_alert_log: ProcessedLogEntry,
-):
-    processed_log = dataclasses.replace(
-        processed_scc_dormant_accounts_prod_alert_log,
-        data={
-            "description": "dummy",
-            "authenticationInfo": {},
+    data = {
+        "description": "dummy",
+        "authenticationInfo": {
+            "principalEmail": RANDOM_SERVICE_ACCOUNT,
         },
-    )
-    log_is_skipped = scc_dormant_accounts_prod_alert_filter(processed_log)
-    assert log_is_skipped is False
+    }
+    log = create_log_with_data(base_scc_log, data)
+    log = create_log_with_message(log, SERVICE_ACCOUNT_KEY_ERROR)
+    assert scc_dormant_accounts_prod_alert_filter(log) is False
 
 
-def test_log_is_not_skipped_when_message_is_not_a_string(
-    processed_scc_dormant_accounts_prod_alert_log: ProcessedLogEntry,
+def test_log_is_not_skipped_for_invalid_principal_email_type(
+    base_scc_log: ProcessedLogEntry,
 ):
-    processed_scc_dormant_accounts_prod_alert_log = dataclasses.replace(
-        processed_scc_dormant_accounts_prod_alert_log, message=1234
-    )
-    log_is_skipped = scc_dormant_accounts_prod_alert_filter(
-        processed_scc_dormant_accounts_prod_alert_log
-    )
+    data = {
+        "description": "dummy",
+        "authenticationInfo": {
+            "principalEmail": 123,  # Invalid type
+        },
+    }
+    log = create_log_with_data(base_scc_log, data)
+    log = create_log_with_message(log, "Invalid service account")
+    assert scc_dormant_accounts_prod_alert_filter(log) is False
 
-    assert log_is_skipped is False
 
-
-def test_log_is_not_skipped_when_it_contains_a_different_service_account(
-    processed_scc_dormant_accounts_prod_alert_log: ProcessedLogEntry,
+@pytest.mark.parametrize("invalid_severity", ["INFO", "WARNING", "DEBUG", None, 123])
+def test_log_is_not_skipped_for_invalid_severity(
+    base_scc_log: ProcessedLogEntry, invalid_severity: Any
 ):
-    processed_scc_dormant_accounts_prod_alert_log = dataclasses.replace(
-        processed_scc_dormant_accounts_prod_alert_log,
-        message=POTENTIAL_ERROR_MESSAGES["key_error"],
-        data=dict(
-            description="dummy",
-            authenticationInfo=dict(
-                principalEmail=SERVICE_ACCOUNT_EMAILS[
-                    "random_external_service_account"
-                ],
-            ),
-        ),
-    )
-    log_is_skipped = scc_dormant_accounts_prod_alert_filter(
-        processed_scc_dormant_accounts_prod_alert_log
-    )
-    assert log_is_skipped is False
-
-
-def test_log_is_not_skipped_when_it_does_not_contain_a_valid_service_account(
-    processed_scc_dormant_accounts_prod_alert_log: ProcessedLogEntry,
-):
-    processed_scc_dormant_accounts_prod_alert_log = dataclasses.replace(
-        processed_scc_dormant_accounts_prod_alert_log,
-        data=dict(
-            description="dummy",
-            authenticationInfo=dict(
-                principalEmail=123,
-            ),
-        ),
-        message="Invalid service account",
-    )
-    log_is_skipped = scc_dormant_accounts_prod_alert_filter(
-        processed_scc_dormant_accounts_prod_alert_log
-    )
-    assert log_is_skipped is False
+    log = create_log_with_field(base_scc_log, severity=invalid_severity)
+    assert scc_dormant_accounts_prod_alert_filter(log) is False
