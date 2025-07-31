@@ -79,7 +79,7 @@ def test_create_from_processed_log_entry(processed_log_entry, log_query_link):
             "1. Add some :eyes: to show you are investigating\n"
             "2. <https://console.cloud.google.com/monitoring/uptime?referrer=search&project=example-gcp-project | Check the system is online>\n"
             f"3. <{log_query_link} | View the logs>\n"
-            "4. Follow the <https://confluence.ons.gov.uk/pages/viewpage.action?pageId=98502389 | Managing Prod Alerts> process"
+            "4. Follow the <https://officefornationalstatistics.atlassian.net/wiki/spaces/QSS/pages/50299787/Troubleshooting+Playbook+-+Slack+Alerts | Managing Prod Alerts> process"
         ),
     )
 
@@ -109,7 +109,7 @@ def test_create_from_processed_log_entry_with_timestamp_in_gmt(
             "1. Add some :eyes: to show you are investigating\n"
             "2. <https://console.cloud.google.com/monitoring/uptime?referrer=search&project=example-gcp-project | Check the system is online>\n"
             f"3. <{log_query_link_in_gmt} | View the logs>\n"
-            "4. Follow the <https://confluence.ons.gov.uk/pages/viewpage.action?pageId=98502389 | Managing Prod Alerts> process"
+            "4. Follow the <https://officefornationalstatistics.atlassian.net/wiki/spaces/QSS/pages/50299787/Troubleshooting+Playbook+-+Slack+Alerts | Managing Prod Alerts> process"
         ),
     )
 
@@ -142,7 +142,7 @@ def test_create_from_processed_log_entry_with_most_important_fields(
             "1. Add some :eyes: to show you are investigating\n"
             "2. <https://console.cloud.google.com/monitoring/uptime?referrer=search&project=example-gcp-project | Check the system is online>\n"
             f"3. <{log_query_link} | View the logs>\n"
-            "4. Follow the <https://confluence.ons.gov.uk/pages/viewpage.action?pageId=98502389 | Managing Prod Alerts> process"
+            "4. Follow the <https://officefornationalstatistics.atlassian.net/wiki/spaces/QSS/pages/50299787/Troubleshooting+Playbook+-+Slack+Alerts | Managing Prod Alerts> process"
         ),
     )
 
@@ -175,7 +175,7 @@ def test_create_from_processed_log_entry_with_most_important_field_not_found(
             "1. Add some :eyes: to show you are investigating\n"
             "2. <https://console.cloud.google.com/monitoring/uptime?referrer=search&project=example-gcp-project | Check the system is online>\n"
             f"3. <{log_query_link} | View the logs>\n"
-            "4. Follow the <https://confluence.ons.gov.uk/pages/viewpage.action?pageId=98502389 | Managing Prod Alerts> process"
+            "4. Follow the <https://officefornationalstatistics.atlassian.net/wiki/spaces/QSS/pages/50299787/Troubleshooting+Playbook+-+Slack+Alerts | Managing Prod Alerts> process"
         ),
     )
 
@@ -210,7 +210,7 @@ def test_create_from_processed_log_entry_with_no_important_fields(
             "1. Add some :eyes: to show you are investigating\n"
             "2. <https://console.cloud.google.com/monitoring/uptime?referrer=search&project=example-gcp-project | Check the system is online>\n"
             f"3. <{log_query_link} | View the logs>\n"
-            "4. Follow the <https://confluence.ons.gov.uk/pages/viewpage.action?pageId=98502389 | Managing Prod Alerts> process"
+            "4. Follow the <https://officefornationalstatistics.atlassian.net/wiki/spaces/QSS/pages/50299787/Troubleshooting+Playbook+-+Slack+Alerts | Managing Prod Alerts> process"
         ),
     )
 
@@ -242,7 +242,7 @@ def test_create_from_processed_log_query_fields(processed_log_entry, log_timesta
         "1. Add some :eyes: to show you are investigating\n"
         "2. <https://console.cloud.google.com/monitoring/uptime?referrer=search&project=example-gcp-project | Check the system is online>\n"
         f"3. <{log_query_link} | View the logs>\n"
-        "4. Follow the <https://confluence.ons.gov.uk/pages/viewpage.action?pageId=98502389 | Managing Prod Alerts> process"
+        "4. Follow the <https://officefornationalstatistics.atlassian.net/wiki/spaces/QSS/pages/50299787/Troubleshooting+Playbook+-+Slack+Alerts | Managing Prod Alerts> process"
     )
 
 
@@ -282,7 +282,7 @@ def test_create_from_processed_log_with_no_timestamp(processed_log_entry):
         "1. Add some :eyes: to show you are investigating\n"
         "2. <https://console.cloud.google.com/monitoring/uptime?referrer=search&project=example-gcp-project | Check the system is online>\n"
         "3. Determine the cause of the error\n"
-        "4. Follow the <https://confluence.ons.gov.uk/pages/viewpage.action?pageId=98502389 | Managing Prod Alerts> process"
+        "4. Follow the <https://officefornationalstatistics.atlassian.net/wiki/spaces/QSS/pages/50299787/Troubleshooting+Playbook+-+Slack+Alerts | Managing Prod Alerts> process"
     )
 
 
@@ -494,7 +494,7 @@ def test_create_footnote_returns_default_instructions_with_view_the_logs_line(
         "1. Add some :eyes: to show you are investigating\n"
         "2. <https://console.cloud.google.com/monitoring/uptime?referrer=search&project=foobar | Check the system is online>\n"
         "3. <https://console.cloud.google.com/logs/query;query=severity%3D%28WARNING%20OR%20ERROR%20OR%20CRITICAL%20OR%20ALERT%20OR%20EMERGENCY%20OR%20DEBUG%29;timeRange=2022-08-10T14:54:03.318939Z%2F2022-08-10T14:54:03.318939Z--PT1M?referrer=search&project=foobar | View the logs>\n"
-        "4. Follow the <https://confluence.ons.gov.uk/pages/viewpage.action?pageId=98502389 | Managing Prod Alerts> process"
+        "4. Follow the <https://officefornationalstatistics.atlassian.net/wiki/spaces/QSS/pages/50299787/Troubleshooting+Playbook+-+Slack+Alerts | Managing Prod Alerts> process"
     )
 
 
@@ -516,7 +516,7 @@ def test_create_footnote_returns_default_instructions_without_view_the_logs_line
         "1. Add some :eyes: to show you are investigating\n"
         "2. <https://console.cloud.google.com/monitoring/uptime?referrer=search&project=foobar | Check the system is online>\n"
         "3. Determine the cause of the error\n"
-        "4. Follow the <https://confluence.ons.gov.uk/pages/viewpage.action?pageId=98502389 | Managing Prod Alerts> process"
+        "4. Follow the <https://officefornationalstatistics.atlassian.net/wiki/spaces/QSS/pages/50299787/Troubleshooting+Playbook+-+Slack+Alerts | Managing Prod Alerts> process"
     )
 
 
@@ -547,7 +547,7 @@ def test_create_footnote_returns_data_delivery_instructions_with_view_the_logs_l
         "1. Add some :eyes: to show you are investigating\n"
         "2. <https://console.cloud.google.com/monitoring/uptime?referrer=search&project=foobar | Check the system is online>\n"
         "3. <https://console.cloud.google.com/logs/query;query=severity%3D%28WARNING%20OR%20ERROR%20OR%20CRITICAL%20OR%20ALERT%20OR%20EMERGENCY%20OR%20DEBUG%29;timeRange=2022-08-10T14:54:03.318939Z%2F2022-08-10T14:54:03.318939Z--PT1M?referrer=search&project=foobar | View the logs>\n"
-        "4. <https://confluence.ons.gov.uk/display/QSS/Troubleshooting+Playbook+-+Data+Delivery | View the Data Delivery Troubleshooting Playbook>"
+        "4. <https://officefornationalstatistics.atlassian.net/wiki/spaces/QSS/pages/50299847/Troubleshooting+Playbook+-+Data+Delivery | View the Data Delivery Troubleshooting Playbook>"
     )
 
 
@@ -578,7 +578,7 @@ def test_create_footnote_returns_data_delivery_instructions_without_view_the_log
         "1. Add some :eyes: to show you are investigating\n"
         "2. <https://console.cloud.google.com/monitoring/uptime?referrer=search&project=foobar | Check the system is online>\n"
         "3. Determine the cause of the error\n"
-        "4. <https://confluence.ons.gov.uk/display/QSS/Troubleshooting+Playbook+-+Data+Delivery | View the Data Delivery Troubleshooting Playbook>"
+        "4. <https://officefornationalstatistics.atlassian.net/wiki/spaces/QSS/pages/50299847/Troubleshooting+Playbook+-+Data+Delivery | View the Data Delivery Troubleshooting Playbook>"
     )
 
 
@@ -609,7 +609,7 @@ def test_create_footnote_returns_totalmobile_instructions_with_view_the_logs_lin
         "1. Add some :eyes: to show you are investigating\n"
         "2. <https://console.cloud.google.com/monitoring/uptime?referrer=search&project=foobar | Check the system is online>\n"
         "3. <https://console.cloud.google.com/logs/query;query=severity%3D%28WARNING%20OR%20ERROR%20OR%20CRITICAL%20OR%20ALERT%20OR%20EMERGENCY%20OR%20DEBUG%29;timeRange=2022-08-10T14:54:03.318939Z%2F2022-08-10T14:54:03.318939Z--PT1M?referrer=search&project=foobar | View the logs>\n"
-        "4. <https://confluence.ons.gov.uk/pages/viewpage.action?pageId=173124107 | View the BTS/Totalmobile Troubleshooting Playbook>"
+        "4. <https://officefornationalstatistics.atlassian.net/wiki/spaces/QSS/pages/50326799/Troubleshooting+Playbook+-+BTS+Totalmobile | View the BTS/Totalmobile Troubleshooting Playbook>"
     )
 
 
@@ -640,7 +640,7 @@ def test_create_footnote_returns_totalmobile_instructions_without_view_the_logs_
         "1. Add some :eyes: to show you are investigating\n"
         "2. <https://console.cloud.google.com/monitoring/uptime?referrer=search&project=foobar | Check the system is online>\n"
         "3. Determine the cause of the error\n"
-        "4. <https://confluence.ons.gov.uk/pages/viewpage.action?pageId=173124107 | View the BTS/Totalmobile Troubleshooting Playbook>"
+        "4. <https://officefornationalstatistics.atlassian.net/wiki/spaces/QSS/pages/50326799/Troubleshooting+Playbook+-+BTS+Totalmobile | View the BTS/Totalmobile Troubleshooting Playbook>"
     )
 
 
@@ -669,7 +669,7 @@ def test_create_footnote_returns_totalmobile_instructions_from_cloud_scheduler_j
         "1. Add some :eyes: to show you are investigating\n"
         "2. <https://console.cloud.google.com/monitoring/uptime?referrer=search&project=foobar | Check the system is online>\n"
         "3. <https://console.cloud.google.com/logs/query;query=@type:%22type.googleapis.com/google.cloud.scheduler.logging.AttemptFinished%22%20jobName:%22projects/foobar/locations/europe-west2/jobs/bts-delete-totalmobile-jobs-completed-in-blaise%22%20status:%22UNKNOWN%22%20targetType:%22HTTP%22%20url:%22https://bts-delete-totalmobile-jobs-completed-in-blaise-jogztar7aa-nw.a.run.app/%22%20severity%3D%28WARNING%20OR%20ERROR%20OR%20CRITICAL%20OR%20ALERT%20OR%20EMERGENCY%20OR%20DEBUG%29;timeRange=2022-08-10T14:54:03.318939Z%2F2022-08-10T14:54:03.318939Z--PT1M?referrer=search&project=foobar | View the logs>\n"
-        "4. <https://confluence.ons.gov.uk/pages/viewpage.action?pageId=173124107 | View the BTS/Totalmobile Troubleshooting Playbook>"
+        "4. <https://officefornationalstatistics.atlassian.net/wiki/spaces/QSS/pages/50326799/Troubleshooting+Playbook+-+BTS+Totalmobile | View the BTS/Totalmobile Troubleshooting Playbook>"
     )
 
 
@@ -698,7 +698,7 @@ def test_create_footnote_returns_nisra_instructions_from_nisra_application_with_
         "1. Add some :eyes: to show you are investigating\n"
         "2. <https://console.cloud.google.com/monitoring/uptime?referrer=search&project=foobar | Check the system is online>\n"
         "3. <https://console.cloud.google.com/logs/query;query=severity%3D%28WARNING%20OR%20ERROR%20OR%20CRITICAL%20OR%20ALERT%20OR%20EMERGENCY%20OR%20DEBUG%29;timeRange=2022-08-10T14:54:03.318939Z%2F2022-08-10T14:54:03.318939Z--PT1M?referrer=search&project=foobar | View the logs>\n"
-        "4. <https://confluence.ons.gov.uk/display/QSS/Troubleshooting+Playbook+-+NISRA | View the NISRA Troubleshooting Playbook>"
+        "4. <https://officefornationalstatistics.atlassian.net/wiki/spaces/QSS/pages/50326981/Troubleshooting+Playbook+-+NISRA | View the NISRA Troubleshooting Playbook>"
     )
 
 
@@ -727,7 +727,7 @@ def test_create_footnote_returns_nisra_instructions_from_nisra_application_witho
         "1. Add some :eyes: to show you are investigating\n"
         "2. <https://console.cloud.google.com/monitoring/uptime?referrer=search&project=foobar | Check the system is online>\n"
         "3. Determine the cause of the error\n"
-        "4. <https://confluence.ons.gov.uk/display/QSS/Troubleshooting+Playbook+-+NISRA | View the NISRA Troubleshooting Playbook>"
+        "4. <https://officefornationalstatistics.atlassian.net/wiki/spaces/QSS/pages/50326981/Troubleshooting+Playbook+-+NISRA | View the NISRA Troubleshooting Playbook>"
     )
 
 
@@ -756,7 +756,7 @@ def test_create_footnote_returns_nisra_instructions_from_cloud_scheduler_job_wit
         "1. Add some :eyes: to show you are investigating\n"
         "2. <https://console.cloud.google.com/monitoring/uptime?referrer=search&project=foobar | Check the system is online>\n"
         "3. <https://console.cloud.google.com/logs/query;query=@type:%22type.googleapis.com/google.cloud.scheduler.logging.AttemptFinished%22%20jobName:%22projects/foobar/locations/europe-west2/jobs/nisra-trigger-lms%22%20pubsubTopic:%22projects/ons-blaise-v2-prod/topics/ons-blaise-v2-prod-nisra-trigger%22%20status:%22DEADLINE_EXCEEDED%22%20targetType:%22PUB_SUB%22%20severity%3D%28WARNING%20OR%20ERROR%20OR%20CRITICAL%20OR%20ALERT%20OR%20EMERGENCY%20OR%20DEBUG%29;timeRange=2022-08-10T14:54:03.318939Z%2F2022-08-10T14:54:03.318939Z--PT1M?referrer=search&project=foobar | View the logs>\n"
-        "4. <https://confluence.ons.gov.uk/display/QSS/Troubleshooting+Playbook+-+NISRA | View the NISRA Troubleshooting Playbook>"
+        "4. <https://officefornationalstatistics.atlassian.net/wiki/spaces/QSS/pages/50326981/Troubleshooting+Playbook+-+NISRA | View the NISRA Troubleshooting Playbook>"
     )
 
 
@@ -786,5 +786,5 @@ def test_create_footnote_returns_nisra_instructions_from_cloud_scheduler_job_wit
         "1. Add some :eyes: to show you are investigating\n"
         "2. <https://console.cloud.google.com/monitoring/uptime?referrer=search&project=foobar | Check the system is online>\n"
         "3. Determine the cause of the error\n"
-        "4. <https://confluence.ons.gov.uk/display/QSS/Troubleshooting+Playbook+-+NISRA | View the NISRA Troubleshooting Playbook>"
+        "4. <https://officefornationalstatistics.atlassian.net/wiki/spaces/QSS/pages/50326981/Troubleshooting+Playbook+-+NISRA | View the NISRA Troubleshooting Playbook>"
     )

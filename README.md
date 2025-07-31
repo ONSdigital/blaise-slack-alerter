@@ -64,16 +64,17 @@ Note, `make test` also runs the typechecker and linter.
 
 Linting errors can usually be fixed quickly with `make format`.
 
-### How to silence specific event logs
+### How to create a filter to silence GCP logs
 
-1. Navigate to the log entry in GCP Console and copy the entry to the clipboard
+1. Navigate to the log entry in GCP Console and copy the entry (in JSON format) to the clipboard
 2. Create a test in the `test_main.py` file using the copied log entry
 3. Run tests using `make format test` - the test you just created should fail!
 4. Navigate to the `lib/filters` dir and create a new `.py` file
-5. Add new functionality to the newly created file (see `osconfig_agent_filter.py` for an example)
+5. Add new functionality to the newly created file (see `scc_dormant_accounts_prod_alert.py` for an example)
+    - **NB** To support maintenance efforts, it is recommended to add a short but concise docstring that briefly explains the context behind the filter.
 6. Navigate to the `tests/lib/filters` dir and create a new `test_XX.py` file
-7. Create unit tests that test the actual filter functionality (again, check `test_osconfig_agent_filter.py` for an example). You will need to change the fixture!
-    - **NB** Event logs can be difficult to replicate in a sandbox, so it is important that the unit tests are present and accurately written before it is deployed to an environment.
+7. Create unit tests that test the actual filter functionality (again, check `test_scc_dormant_accounts_prod_alert.py` for an example). You will need to change the fixture!
+    - **NB** Event logs can be difficult to replicate in a sandbox, so it is important that the unit tests are present and accurately written before it is deployed to a formal environment.
 8. In `send_alerts.py`, import the function you just created and add it to the filter array `[]` in the `log_entry_skipped` function
 
 ```python
