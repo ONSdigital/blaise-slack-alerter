@@ -138,7 +138,7 @@ def test_send_raw_string_slack_alert(get_webhook_payload, run_slack_alerter):
                 "2. <https://console.cloud.google.com/monitoring/uptime?referrer=search&project=project-dev "
                 "| Check the system is online>\n"
                 "3. Determine the cause of the error\n"
-                "4. Follow the <https://confluence.ons.gov.uk/pages/viewpage.action?pageId=98502389 "
+                "4. Follow the <https://officefornationalstatistics.atlassian.net/wiki/spaces/QSS/pages/50299787/Troubleshooting+Playbook+-+Slack+Alerts "
                 "| Managing Prod Alerts> process"
             ),
         )
@@ -193,7 +193,7 @@ def test_send_gce_instance_slack_alert(run_slack_alerter, get_webhook_payload):
                 "2. <https://console.cloud.google.com/monitoring/uptime?referrer=search&project=project-dev "
                 "| Check the system is online>\n"
                 f"3. <{expected_log_query_link} | View the logs>\n"
-                "4. Follow the <https://confluence.ons.gov.uk/pages/viewpage.action?pageId=98502389 "
+                "4. Follow the <https://officefornationalstatistics.atlassian.net/wiki/spaces/QSS/pages/50299787/Troubleshooting+Playbook+-+Slack+Alerts "
                 "| Managing Prod Alerts> process"
             ),
         )
@@ -243,7 +243,7 @@ def test_send_cloud_run_revision_slack_alert(run_slack_alerter, get_webhook_payl
                 "2. <https://console.cloud.google.com/monitoring/uptime?referrer=search&project=project-dev "
                 "| Check the system is online>\n"
                 f"3. <{expected_log_query_link} | View the logs>\n"
-                "4. Follow the <https://confluence.ons.gov.uk/pages/viewpage.action?pageId=98502389 "
+                "4. Follow the <https://officefornationalstatistics.atlassian.net/wiki/spaces/QSS/pages/50299787/Troubleshooting+Playbook+-+Slack+Alerts "
                 "| Managing Prod Alerts> process"
             ),
         )
@@ -294,7 +294,7 @@ def test_send_cloud_run_revision_timeout_slack_alert(
                 "2. <https://console.cloud.google.com/monitoring/uptime?referrer=search&project=project-dev "
                 "| Check the system is online>\n"
                 f"3. <{expected_log_query_link} | View the logs>\n"
-                "4. Follow the <https://confluence.ons.gov.uk/pages/viewpage.action?pageId=98502389 "
+                "4. Follow the <https://officefornationalstatistics.atlassian.net/wiki/spaces/QSS/pages/50299787/Troubleshooting+Playbook+-+Slack+Alerts "
                 "| Managing Prod Alerts> process"
             ),
         )
@@ -366,7 +366,7 @@ def test_send_app_engine_slack_alert(
                 "| Check the system is online>\n"
                 f"3. <{expected_log_query_link} | View the logs>\n"
                 "4. Follow the "
-                "<https://confluence.ons.gov.uk/pages/viewpage.action?pageId=98502389 "
+                "<https://officefornationalstatistics.atlassian.net/wiki/spaces/QSS/pages/50299787/Troubleshooting+Playbook+-+Slack+Alerts "
                 "| Managing Prod Alerts> process"
             ),
         )
@@ -431,7 +431,7 @@ def test_send_audit_log_slack_alert(
                 "| Check the system is online>\n"
                 f"3. <{expected_log_query_link} | View the logs>\n"
                 "4. Follow the "
-                "<https://confluence.ons.gov.uk/pages/viewpage.action?pageId=98502389 "
+                "<https://officefornationalstatistics.atlassian.net/wiki/spaces/QSS/pages/50299787/Troubleshooting+Playbook+-+Slack+Alerts "
                 "| Managing Prod Alerts> process"
             ),
         )
@@ -509,7 +509,7 @@ def test_send_erroneous_questionnaire_for_preprod_alerts(
                 "1. Add some :eyes: to show you are investigating\n"
                 "2. <https://console.cloud.google.com/monitoring/uptime?referrer=search&project=project-dev | Check the system is online>\n"
                 f"3. <{expected_log_query_link} | View the logs>\n"
-                "4. Follow the <https://confluence.ons.gov.uk/pages/viewpage.action?pageId=98502389 | Managing Prod Alerts> process"
+                "4. Follow the <https://officefornationalstatistics.atlassian.net/wiki/spaces/QSS/pages/50299787/Troubleshooting+Playbook+-+Slack+Alerts | Managing Prod Alerts> process"
             ),
         )
     )
@@ -2165,11 +2165,11 @@ def test_skip_google_compute_engine_compat_manager_service_terminated_during_mai
                 "project_id": "ons-blaise-v2-prod",
             },
         },
-        "timestamp": "2025-07-11T02:40:25Z",
+        "timestamp": "2025-07-11T01:30:25Z",
         "severity": "ERROR",
         "labels": {"compute.googleapis.com/resource_name": "blaise-gusty-data-entry-3"},
         "logName": "projects/ons-blaise-v2-prod/logs/windows_event_log",
-        "receiveTimestamp": "2025-07-11T01:40:27.653108664Z",
+        "receiveTimestamp": "2025-07-11T01:30:27.653108664Z",
     }
     event = create_event(example_log_entry)
 
@@ -2402,10 +2402,10 @@ def test_skip_fluent_bit_syscall_error_during_maintenance_window(
                 "instance_id": "test6542796480007992547",
             },
         },
-        "timestamp": "2025-07-11T01:48:51Z",
+        "timestamp": "2025-07-11T01:30:51Z",
         "severity": "ERROR",
         "logName": "projects/ons-blaise-v2-prod/logs/ops-agent-fluent-bit",
-        "receiveTimestamp": "2025-07-11T01:48:52.716007518Z",
+        "receiveTimestamp": "2025-07-11T01:30:52.716007518Z",
     }
     event = create_event(example_log_entry)
 
@@ -2440,10 +2440,10 @@ def test_skip_fluent_bit_broken_connection_during_maintenance_window(
                 "instance_id": "test6542796480007992547",
             },
         },
-        "timestamp": "2025-07-11T01:48:51Z",
+        "timestamp": "2025-07-11T01:30:51Z",
         "severity": "ERROR",
         "logName": "projects/ons-blaise-v2-prod/logs/ops-agent-fluent-bit",
-        "receiveTimestamp": "2025-07-11T01:48:52.716007518Z",
+        "receiveTimestamp": "2025-07-11T01:30:52.716007518Z",
     }
     event = create_event(example_log_entry)
 
@@ -2492,7 +2492,159 @@ def test_allows_fluent_bit_errors_outside_maintenance_window(
     # assert - Should NOT be skipped since it's outside maintenance window
     assert response == "Alert sent"
     assert number_of_http_calls() == 1
-    # Should not contain any fluent-bit maintenance skip messages
+    skip_messages = [
+        record
+        for record in caplog.record_tuples
+        if "fluent-bit maintenance" in str(record)
+    ]
+    assert len(skip_messages) == 0
+
+
+def test_skip_fluent_bit_winlog_security_error_during_maintenance_window(
+    run_slack_alerter, number_of_http_calls, caplog
+):
+    # arrange - Friday July 25, 2025 at 01:25 AM UTC (within maintenance window)
+    example_log_entry = {
+        "insertId": "1rjve2ff2jo6ma",
+        "jsonPayload": {
+            "message": "[2025/07/25 16:04:44] [error] [input:winlog:winlog.1] failed to read 'Security'"
+        },
+        "resource": {
+            "type": "gce_instance",
+            "labels": {
+                "zone": "europe-west2-a",
+                "project_id": "ons-blaise-v2-prod",
+                "instance_id": "test3794693884996202543",
+            },
+        },
+        "timestamp": "2025-07-25T01:25:44Z",  # Friday 1:25 AM UTC - within maintenance window
+        "severity": "ERROR",
+        "logName": "projects/ons-blaise-v2-prod/logs/ops-agent-fluent-bit",
+        "receiveTimestamp": "2025-07-25T01:25:45.418435858Z",
+    }
+    event = create_event(example_log_entry)
+
+    # act
+    with caplog.at_level(logging.INFO):
+        response = run_slack_alerter(event)
+
+    # assert
+    assert response == "Alert skipped"
+    assert number_of_http_calls() == 0
+    assert (
+        "root",
+        logging.INFO,
+        "Skipping fluent-bit maintenance error for test3794693884996202543",
+    ) in caplog.record_tuples
+
+
+def test_skip_fluent_bit_winlog_system_error_during_maintenance_window(
+    run_slack_alerter, number_of_http_calls, caplog
+):
+    # arrange - Friday July 25, 2025 at 01:25 AM UTC (within maintenance window)
+    example_log_entry = {
+        "insertId": "2abc3def4ghi5jk",
+        "jsonPayload": {
+            "message": "[2025/07/25 16:04:45] [error] [input:winlog:winlog.1] failed to read 'System'"
+        },
+        "resource": {
+            "type": "gce_instance",
+            "labels": {
+                "zone": "europe-west2-a",
+                "project_id": "ons-blaise-v2-prod",
+                "instance_id": "3794693884996202543",
+            },
+        },
+        "timestamp": "2025-07-25T01:25:45Z",  # Friday 1:25 AM UTC - within maintenance window
+        "severity": "ERROR",
+        "logName": "projects/ons-blaise-v2-prod/logs/ops-agent-fluent-bit",
+        "receiveTimestamp": "2025-07-25T01:25:46.418435858Z",
+    }
+    event = create_event(example_log_entry)
+
+    # act
+    with caplog.at_level(logging.INFO):
+        response = run_slack_alerter(event)
+
+    # assert
+    assert response == "Alert skipped"
+    assert number_of_http_calls() == 0
+    assert (
+        "root",
+        logging.INFO,
+        "Skipping fluent-bit maintenance error for 3794693884996202543",
+    ) in caplog.record_tuples
+
+
+def test_skip_fluent_bit_winlog_cannot_read_error_during_maintenance_window(
+    run_slack_alerter, number_of_http_calls, caplog
+):
+    # arrange - Friday July 25, 2025 at 01:25 AM UTC (within maintenance window)
+    example_log_entry = {
+        "insertId": "3lmn4opq5rst6uv",
+        "jsonPayload": {
+            "message": "[2025/07/25 16:04:45] [error] [in_winlog] cannot read 'Application' (1722)"
+        },
+        "resource": {
+            "type": "gce_instance",
+            "labels": {
+                "zone": "europe-west2-a",
+                "project_id": "ons-blaise-v2-prod",
+                "instance_id": "3794693884996202543",
+            },
+        },
+        "timestamp": "2025-07-25T01:25:45Z",  # Friday 1:25 AM UTC - within maintenance window
+        "severity": "ERROR",
+        "logName": "projects/ons-blaise-v2-prod/logs/ops-agent-fluent-bit",
+        "receiveTimestamp": "2025-07-25T01:25:46.418435858Z",
+    }
+    event = create_event(example_log_entry)
+
+    # act
+    with caplog.at_level(logging.INFO):
+        response = run_slack_alerter(event)
+
+    # assert
+    assert response == "Alert skipped"
+    assert number_of_http_calls() == 0
+    assert (
+        "root",
+        logging.INFO,
+        "Skipping fluent-bit maintenance error for 3794693884996202543",
+    ) in caplog.record_tuples
+
+
+def test_allows_fluent_bit_winlog_errors_outside_maintenance_window(
+    run_slack_alerter, number_of_http_calls, caplog
+):
+    # arrange - Tuesday at 10:00 AM UTC (outside maintenance window)
+    example_log_entry = {
+        "insertId": "1rjve2ff2jo6ma_outside",
+        "jsonPayload": {
+            "message": "[2025/07/25 16:04:44] [error] [input:winlog:winlog.1] failed to read 'Security'"
+        },
+        "resource": {
+            "type": "gce_instance",
+            "labels": {
+                "zone": "europe-west2-a",
+                "project_id": "ons-blaise-v2-prod",
+                "instance_id": "3794693884996202543",
+            },
+        },
+        "timestamp": "2025-07-15T10:00:44Z",  # Tuesday 10:00 AM UTC - outside maintenance window
+        "severity": "ERROR",
+        "logName": "projects/ons-blaise-v2-prod/logs/ops-agent-fluent-bit",
+        "receiveTimestamp": "2025-07-15T10:00:45.418435858Z",
+    }
+    event = create_event(example_log_entry)
+
+    # act
+    with caplog.at_level(logging.INFO):
+        response = run_slack_alerter(event)
+
+    # assert - Should NOT be skipped since it's outside maintenance window
+    assert response == "Alert sent"
+    assert number_of_http_calls() == 1
     skip_messages = [
         record
         for record in caplog.record_tuples

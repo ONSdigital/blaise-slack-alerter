@@ -1,6 +1,6 @@
 import logging
 from lib.log_processor import ProcessedLogEntry
-from lib.utilities.weekly_maintenance_window import is_in_weekly_maintenance_window
+from lib.utilities.friday_maintenance_window import is_in_friday_maintenance_window
 from lib.utilities.log_validation import validate_log_entry_fields
 
 
@@ -8,7 +8,12 @@ def fluent_bit_maintenance_filter(log_entry: ProcessedLogEntry) -> bool:
     """
     Filter fluent-bit related errors during weekly maintenance windows.
     These errors are expected during VM maintenance when connections are disrupted.
-    Activates only on Fridays around 01:30 AM UTC (1:00-2:00 AM window).
+    Activates only on Fridays around 01:30 AM UTC (1:25-1:35 AM window).
+
+    Handles:
+    - TLS/SSL connection errors to Google Cloud Logging
+    - HTTP client broken connection errors
+    - Windows event log read errors (winlog input failures)
     """
 
     if log_entry is None:
@@ -25,7 +30,7 @@ def fluent_bit_maintenance_filter(log_entry: ProcessedLogEntry) -> bool:
     if not isinstance(log_entry.severity, str) or log_entry.severity != "ERROR":
         return False
 
-    if not log_entry.timestamp or not is_in_weekly_maintenance_window(
+    if not log_entry.timestamp or not is_in_friday_maintenance_window(
         log_entry.timestamp
     ):
         return False
@@ -40,6 +45,15 @@ def fluent_bit_maintenance_filter(log_entry: ProcessedLogEntry) -> bool:
         "No error",
         "DH lib",
         "broken connection",
+        # Windows event log read errors
+        "failed to read 'Security'",
+        "failed to read 'System'",
+        "failed to read 'Application'",
+        "cannot read 'System'",
+        "cannot read 'Application'",
+        "cannot read 'Security'",
+        "[error] [input:winlog:",
+        "[error] [in_winlog]",
     ]
 
     message_matches = any(

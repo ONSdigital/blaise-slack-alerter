@@ -1,7 +1,12 @@
 from datetime import datetime, time, timezone
 
 
-def is_in_weekly_maintenance_window(timestamp: datetime) -> bool:
+def is_in_friday_maintenance_window(timestamp: datetime) -> bool:
+    """
+    Check if timestamp falls within weekly maintenance window for the production environment (Friday 01:30 UTC).
+    During this window, GCP performs routine maintenance causing expected non-critical errors
+    that should be filtered from alerts.
+    """
     if not isinstance(timestamp, datetime):
         return False
 
@@ -10,9 +15,9 @@ def is_in_weekly_maintenance_window(timestamp: datetime) -> bool:
     else:
         utc_timestamp = timestamp.replace(tzinfo=timezone.utc)
 
-    # Weekly maintenance window - Friday around 01:30 AM UTC (±30 minutes)
-    maintenance_start = time(1, 0)
-    maintenance_end = time(2, 0)
+    # Weekly maintenance window - Friday around 01:30 AM UTC (±5 minutes)
+    maintenance_start = time(1, 25)
+    maintenance_end = time(1, 35)
 
     log_time = utc_timestamp.time()
     log_weekday = utc_timestamp.weekday()
