@@ -192,15 +192,15 @@ def _is_nisra_alert(processed_log_entry: ProcessedLogEntry) -> bool:
 
 def _populate_instructions_line(processed_log_entry: ProcessedLogEntry):
     if _is_data_delivery_alert(processed_log_entry):
-        return f"4. <https://confluence.ons.gov.uk/display/QSS/Troubleshooting+Playbook+-+Data+Delivery | View the Data Delivery Troubleshooting Playbook>"
+        return f"4. <https://officefornationalstatistics.atlassian.net/wiki/spaces/QSS/pages/50299847/Troubleshooting+Playbook+-+Data+Delivery | View the Data Delivery Troubleshooting Playbook>"
 
     if _is_totalmobile_alert(processed_log_entry):
-        return f"4. <https://confluence.ons.gov.uk/pages/viewpage.action?pageId=173124107 | View the BTS/Totalmobile Troubleshooting Playbook>"
+        return f"4. <https://officefornationalstatistics.atlassian.net/wiki/spaces/QSS/pages/50326799/Troubleshooting+Playbook+-+BTS+Totalmobile | View the BTS/Totalmobile Troubleshooting Playbook>"
 
     if _is_nisra_alert(processed_log_entry):
-        return "4. <https://confluence.ons.gov.uk/display/QSS/Troubleshooting+Playbook+-+NISRA | View the NISRA Troubleshooting Playbook>"
+        return "4. <https://officefornationalstatistics.atlassian.net/wiki/spaces/QSS/pages/50326981/Troubleshooting+Playbook+-+NISRA | View the NISRA Troubleshooting Playbook>"
 
-    return f"4. Follow the <https://confluence.ons.gov.uk/pages/viewpage.action?pageId=98502389 | Managing Prod Alerts> process"
+    return f"4. Follow the <https://officefornationalstatistics.atlassian.net/wiki/spaces/QSS/pages/50299787/Troubleshooting+Playbook+-+Slack+Alerts | Managing Prod Alerts> process"
 
 
 def _create_footnote(processed_log_entry: ProcessedLogEntry, project_name: str) -> str:

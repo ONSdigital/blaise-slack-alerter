@@ -25,5 +25,9 @@ check-types:
 test: lint check-types
 	@poetry run python -m pytest
 
+.PHONY=test-bail
+test-bail: lint check-types
+	@poetry run python -m pytest -x
+
 requirements.txt:
 	@poetry export -f requirements.txt --without-hashes --output requirements.txt
