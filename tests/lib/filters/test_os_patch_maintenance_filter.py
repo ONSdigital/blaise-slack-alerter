@@ -43,7 +43,7 @@ def create_log_with_field(
     return dataclasses.replace(base_log, **kwargs)
 
 
-MAINTENANCE_LOG_PATTERNS = {
+MAINTENANCE_LOG_PATTERNS: Dict[str, List[Dict[str, str]]] = {
     "service_termination": [
         {
             "message": "The Google Compute Engine Agent Manager service terminated unexpectedly.  It has done this 2 time(s).  The following corrective action will be taken in 2000 milliseconds: Restart the service.\r\n",
@@ -135,7 +135,7 @@ def test_maintenance_window_boundary_conditions(
 def test_logs_not_matching_patterns_are_not_skipped(
     base_maintenance_log: ProcessedLogEntry,
 ):
-    test_cases = [
+    test_cases: List[Dict[str, Any]] = [
         {
             "message": "Some completely different error message",
             "log_name": "projects/ons-blaise-v2-prod/logs/windows_event_log",

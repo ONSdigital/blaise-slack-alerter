@@ -2,7 +2,7 @@ import pytest
 import datetime
 import dataclasses
 from datetime import timezone
-from typing import Any
+from typing import Any, Dict, List
 from lib.log_processor import ProcessedLogEntry
 from lib.filters.fluent_bit_maintenance_filter import fluent_bit_maintenance_filter
 
@@ -37,7 +37,7 @@ def base_non_maintenance_log() -> ProcessedLogEntry:
         log_name="projects/ons-blaise-v2-prod/logs/ops-agent-fluent-bit",
         timestamp=datetime.datetime(
             2025, 7, 15, 10, 0, 0, tzinfo=timezone.utc
-        ),  # Tuesday at 10:00 AM UTC
+        ),
         log_query={
             "resource.type": "gce_instance",
             "resource.labels.instance_id": "test123",
@@ -105,11 +105,11 @@ def test_maintenance_window_boundary_conditions(
         (
             datetime.datetime(2025, 7, 11, 0, 35, 0, tzinfo=timezone.utc),
             True,
-        ),  
+        ),
         (
             datetime.datetime(2025, 7, 11, 0, 24, 59, tzinfo=timezone.utc),
             False,
-        ), 
+        ),
         (
             datetime.datetime(2025, 7, 11, 0, 35, 1, tzinfo=timezone.utc),
             False,
@@ -127,7 +127,7 @@ def test_maintenance_window_boundary_conditions(
 def test_logs_not_matching_patterns_are_not_skipped(
     base_maintenance_log: ProcessedLogEntry,
 ):
-    test_cases = [
+    test_cases: List[Dict[str, Any]] = [
         {"platform": 123, "description": "Invalid platform type"},
         {"platform": "cloud_run_revision", "description": "Wrong platform type"},
         {"message": 123, "description": "Invalid message type"},
