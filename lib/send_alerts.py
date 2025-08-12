@@ -48,8 +48,8 @@ from lib.filters.fluent_bit_maintenance_filter import fluent_bit_maintenance_fil
 
 def log_entry_skipped(log_entry: ProcessedLogEntry):
     filters = [
-        # sandbox_filter,
-        # all_preprod_and_training_alerts_except_erroneous_questionnaire_filter,
+        sandbox_filter,
+        all_preprod_and_training_alerts_except_erroneous_questionnaire_filter,
         os_patch_maintenance_filter,
         fluent_bit_maintenance_filter,
         osconfig_agent_filter,
