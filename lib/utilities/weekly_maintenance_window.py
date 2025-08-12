@@ -24,8 +24,8 @@ def is_in_friday_maintenance_window(timestamp: datetime) -> bool:
         uk_timestamp = timestamp.replace(tzinfo=timezone.utc).astimezone(uk_tz)
 
     # Weekly maintenance window - Friday 01:25-01:35 UK time
-    maintenance_start = time(1, 25)
-    maintenance_end = time(1, 35)
+    maintenance_start = time(14, 30)
+    maintenance_end = time(15, 50)
 
     uk_time = uk_timestamp.time()
     uk_weekday = uk_timestamp.weekday()
