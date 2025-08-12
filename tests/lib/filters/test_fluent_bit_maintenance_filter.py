@@ -35,9 +35,7 @@ def base_non_maintenance_log() -> ProcessedLogEntry:
         platform="gce_instance",
         application="unknown",
         log_name="projects/ons-blaise-v2-prod/logs/ops-agent-fluent-bit",
-        timestamp=datetime.datetime(
-            2025, 7, 15, 10, 0, 0, tzinfo=timezone.utc
-        ),
+        timestamp=datetime.datetime(2025, 7, 15, 10, 0, 0, tzinfo=timezone.utc),
         log_query={
             "resource.type": "gce_instance",
             "resource.labels.instance_id": "test123",
