@@ -30,7 +30,7 @@ def is_in_friday_maintenance_window(timestamp: datetime) -> bool:
     uk_time = uk_timestamp.time()
     uk_weekday = uk_timestamp.weekday()
 
-    is_friday = uk_weekday == 4
+    is_friday = uk_weekday == 1
     is_maintenance_time = maintenance_start <= uk_time <= maintenance_end
 
     return is_friday and is_maintenance_time
