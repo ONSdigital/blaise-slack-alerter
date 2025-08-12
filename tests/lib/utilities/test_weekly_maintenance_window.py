@@ -35,8 +35,6 @@ def test_returns_false_for_non_datetime_input(invalid_input: Any):
     assert is_in_friday_maintenance_window(invalid_input) is False
 
 
-# TEMPORARILY DISABLED - maintenance window timing needs to be corrected
-@pytest.mark.skip(reason="Maintenance window timing needs to be corrected")
 @pytest.mark.parametrize(
     "test_time,expected",
     [
@@ -74,8 +72,6 @@ def test_non_friday_during_maintenance_hours(target_weekday: int):
     assert is_in_friday_maintenance_window(non_friday) is False
 
 
-# TEMPORARILY DISABLED - maintenance window timing needs to be corrected
-@pytest.mark.skip(reason="Maintenance window timing needs to be corrected")
 @pytest.mark.parametrize(
     "test_time,expected,description",
     [
@@ -115,8 +111,6 @@ def test_timezone_conversions(test_time: datetime, expected: bool, description: 
     assert is_in_friday_maintenance_window(test_time) is expected
 
 
-# TEMPORARILY DISABLED - maintenance window timing needs to be corrected
-@pytest.mark.skip(reason="Maintenance window timing needs to be corrected")
 @pytest.mark.parametrize(
     "test_time,expected",
     [
@@ -150,8 +144,6 @@ def test_different_non_friday_dates(month: int, day: int, expected_weekday: int)
     assert is_in_friday_maintenance_window(non_friday_date) is False
 
 
-# TEMPORARILY DISABLED - maintenance window timing needs to be corrected
-@pytest.mark.skip(reason="Maintenance window timing needs to be corrected")
 def test_fixtures_work_correctly(
     maintenance_friday: datetime, non_maintenance_tuesday: datetime
 ):

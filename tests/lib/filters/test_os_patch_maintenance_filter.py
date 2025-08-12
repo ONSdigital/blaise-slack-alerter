@@ -77,8 +77,6 @@ MAINTENANCE_LOG_PATTERNS: Dict[str, List[Dict[str, str]]] = {
 }
 
 
-# TEMPORARILY DISABLED - maintenance window timing needs to be corrected
-@pytest.mark.skip(reason="Maintenance window timing needs to be corrected")
 def test_os_patch_maintenance_log_patterns_are_skipped_during_maintenance(
     base_maintenance_log: ProcessedLogEntry,
 ):
@@ -109,8 +107,6 @@ def test_patterns_are_not_skipped_outside_maintenance_window(
             ), f"Pattern '{pattern_name}' should not be skipped outside maintenance window"
 
 
-# TEMPORARILY DISABLED - maintenance window timing needs to be corrected
-@pytest.mark.skip(reason="Maintenance window timing needs to be corrected")
 def test_maintenance_window_boundary_conditions(
     base_maintenance_log: ProcessedLogEntry,
 ):

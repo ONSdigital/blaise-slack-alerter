@@ -49,8 +49,6 @@ def create_log_with_field(
     return dataclasses.replace(base_log, **kwargs)
 
 
-# TEMPORARILY DISABLED - maintenance window timing needs to be corrected
-@pytest.mark.skip(reason="Maintenance window timing needs to be corrected")
 def test_fluent_bit_error_patterns_are_skipped_during_maintenance(
     base_maintenance_log: ProcessedLogEntry,
 ):
@@ -93,8 +91,6 @@ def test_logs_are_not_skipped_outside_maintenance_window(
         ), f"Message '{message}' should not be skipped outside maintenance"
 
 
-# TEMPORARILY DISABLED - maintenance window timing needs to be corrected
-@pytest.mark.skip(reason="Maintenance window timing needs to be corrected")
 def test_maintenance_window_boundary_conditions(
     base_maintenance_log: ProcessedLogEntry,
 ):
@@ -159,8 +155,6 @@ def test_logs_not_matching_patterns_are_not_skipped(
         ), f"{description} should not be skipped"
 
 
-# TEMPORARILY DISABLED - maintenance window timing needs to be corrected
-@pytest.mark.skip(reason="Maintenance window timing needs to be corrected")
 def test_log_name_variations_are_accepted(base_maintenance_log: ProcessedLogEntry):
     valid_log_names = [
         "projects/ons-blaise-v2-prod/logs/ops-agent-fluent-bit",
