@@ -2144,7 +2144,7 @@ def test_skip_google_compute_engine_compat_manager_service_terminated_during_mai
     caplog,
     timestamp,
 ):
-    # arrange - Friday during maintenance window 
+    # arrange - Friday during maintenance window
     example_log_entry = {
         "insertId": "test1a2sfo7e84rqe",
         "jsonPayload": {
@@ -2647,12 +2647,12 @@ def test_skip_fluent_bit_winlog_security_error_during_maintenance_window(
 
 
 @pytest.mark.parametrize(
-    "timestamp,comment_season,utc_time,uk_time",
+    "timestamp",
     [
         # Summer (BST) - July: UK time = UTC + 1 hour
-        ("2025-07-25T00:25:45Z", "Summer BST", "00:25 UTC", "01:25 BST"),
+        "2025-07-25T00:25:45Z",  # 00:25 UTC = 01:25 BST
         # Winter (GMT) - January: UK time = UTC + 0 hours
-        ("2026-01-09T01:25:45Z", "Winter GMT", "01:25 UTC", "01:25 GMT"),
+        "2026-01-09T01:25:45Z",  # 01:25 UTC = 01:25 GMT
     ],
 )
 def test_skip_fluent_bit_winlog_system_error_during_maintenance_window(
