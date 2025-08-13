@@ -5,11 +5,11 @@ import zoneinfo
 
 def is_in_friday_maintenance_window(timestamp: datetime) -> bool:
     """
-    Check if timestamp falls within weekly maintenance window for the production environment (Friday 01:25-01:35 UK time).
+    Check if timestamp falls within weekly maintenance window for the production environment.
     During this window, GCP performs routine maintenance causing expected non-critical errors
     that should be filtered from alerts.
 
-    The maintenance window is 01:25-01:35 UK time every Friday, which automatically handles:
+    The maintenance window is 01:25-01:35 UK time every Friday:
     - GMT (winter): 01:25-01:35 UTC
     - BST (summer): 00:25-00:35 UTC
     """
