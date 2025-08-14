@@ -2129,15 +2129,29 @@ def test_skip_org_policy_constraint_disableServiceAccountHmacKeyCreation_not_fou
     ) in caplog.record_tuples
 
 
+@pytest.mark.parametrize(
+    "timestamp",
+    [
+        # Summer (BST) - July: UK time = UTC + 1 hour
+        "2025-07-11T00:30:25Z",
+        # Winter (GMT) - January: UK time = UTC + 0 hours
+        "2026-01-09T01:30:25Z",
+    ],
+)
 def test_skip_google_compute_engine_compat_manager_service_terminated_during_maintenance_window(
-    run_slack_alerter, number_of_http_calls, caplog
+    run_slack_alerter,
+    number_of_http_calls,
+    caplog,
+    timestamp,
 ):
-    # arrange - Friday July 11, 2025 at 01:40 AM UTC (within maintenance window)
+    # arrange - Friday during maintenance window
     example_log_entry = {
         "insertId": "test1a2sfo7e84rqe",
         "jsonPayload": {
             "Channel": "System",
-            "TimeGenerated": "2025-07-11 02:40:25 +0100",
+            "TimeGenerated": "2025-07-11 01:30:25 +0100"
+            if "2025-07" in timestamp
+            else "2026-01-09 01:30:25 +0000",
             "Data": "470043004500570069006e0064006f007700730043006f006d007000610074004d0061006e0061006700650072000000",
             "message": "The Google Compute Engine Compat Manager service terminated unexpectedly.  It has done this 1 time(s).  The following corrective action will be taken in 1000 milliseconds: Restart the service.\r\n",
             "EventID": 7031,
@@ -2154,7 +2168,9 @@ def test_skip_google_compute_engine_compat_manager_service_terminated_during_mai
             "RecordNumber": 2420520,
             "Sid": "",
             "EventCategory": 0,
-            "TimeWritten": "2025-07-11 02:40:25 +0100",
+            "TimeWritten": "2025-07-11 01:30:25 +0100"
+            if "2025-07" in timestamp
+            else "2026-01-09 01:30:25 +0000",
             "computer_name": "blaise-gusty-data-entry-3",
         },
         "resource": {
@@ -2165,11 +2181,13 @@ def test_skip_google_compute_engine_compat_manager_service_terminated_during_mai
                 "project_id": "ons-blaise-v2-prod",
             },
         },
-        "timestamp": "2025-07-11T01:30:25Z",
+        "timestamp": timestamp,
         "severity": "ERROR",
         "labels": {"compute.googleapis.com/resource_name": "blaise-gusty-data-entry-3"},
         "logName": "projects/ons-blaise-v2-prod/logs/windows_event_log",
-        "receiveTimestamp": "2025-07-11T01:30:27.653108664Z",
+        "receiveTimestamp": timestamp.replace(
+            "T00:30:25Z", "T00:30:27.653108664Z"
+        ).replace("T01:30:25Z", "T01:30:27.653108664Z"),
     }
     event = create_event(example_log_entry)
 
@@ -2187,10 +2205,22 @@ def test_skip_google_compute_engine_compat_manager_service_terminated_during_mai
     ) in caplog.record_tuples
 
 
+@pytest.mark.parametrize(
+    "timestamp",
+    [
+        # Summer (BST) - July: UK time = UTC + 1 hour
+        "2025-07-11T00:30:46Z",
+        # Winter (GMT) - January: UK time = UTC + 0 hours
+        "2026-01-09T01:30:46Z",
+    ],
+)
 def test_skip_google_compute_engine_agent_manager_service_terminated_during_maintenance_window(
-    run_slack_alerter, number_of_http_calls, caplog
+    run_slack_alerter,
+    number_of_http_calls,
+    caplog,
+    timestamp,
 ):
-    # arrange - Friday July 11, 2025 at 01:30 AM UTC (within maintenance window)
+    # arrange - Friday during maintenance window
     example_log_entry = {
         "insertId": "testyfq1u7e4umi2",
         "jsonPayload": {
@@ -2206,10 +2236,14 @@ def test_skip_google_compute_engine_agent_manager_service_terminated_during_main
                 "Restart the service",
             ],
             "Channel": "System",
-            "TimeWritten": "2025-07-11 02:30:46 +0100",
+            "TimeWritten": "2025-07-11 01:30:46 +0100"
+            if "2025-07" in timestamp
+            else "2026-01-09 01:30:46 +0000",
             "computer_name": "restapi-1",
             "source_name": "Service Control Manager",
-            "TimeGenerated": "2025-07-11 02:30:46 +0100",
+            "TimeGenerated": "2025-07-11 01:30:46 +0100"
+            if "2025-07" in timestamp
+            else "2026-01-09 01:30:46 +0000",
             "Qualifiers": 49152,
             "EventType": "Error",
             "Sid": "",
@@ -2223,11 +2257,13 @@ def test_skip_google_compute_engine_agent_manager_service_terminated_during_main
                 "instance_id": "9876543210987654321",
             },
         },
-        "timestamp": "2025-07-11T01:30:46Z",
+        "timestamp": timestamp,
         "severity": "ERROR",
         "labels": {"compute.googleapis.com/resource_name": "restapi-1"},
         "logName": "projects/ons-blaise-v2-prod/logs/windows_event_log",
-        "receiveTimestamp": "2025-07-11T01:32:14.031295294Z",
+        "receiveTimestamp": timestamp.replace(
+            "T00:30:46Z", "T00:32:14.031295294Z"
+        ).replace("T01:30:46Z", "T01:32:14.031295294Z"),
     }
     event = create_event(example_log_entry)
 
@@ -2245,14 +2281,28 @@ def test_skip_google_compute_engine_agent_manager_service_terminated_during_main
     ) in caplog.record_tuples
 
 
+@pytest.mark.parametrize(
+    "timestamp",
+    [
+        # Summer (BST) - July: UK time = UTC + 1 hour
+        "2025-07-11T00:30:46Z",
+        # Winter (GMT) - January: UK time = UTC + 0 hours
+        "2026-01-09T01:30:46Z",
+    ],
+)
 def test_skip_gce_guest_agent_metadata_context_canceled_during_maintenance_window(
-    run_slack_alerter, number_of_http_calls, caplog
+    run_slack_alerter,
+    number_of_http_calls,
+    caplog,
+    timestamp,
 ):
-    # arrange - Friday July 11, 2025 at 01:30 AM UTC (within maintenance window)
+    # arrange - Friday during maintenance window
     example_log_entry = {
         "insertId": "testjhigkve7mleb",
         "jsonPayload": {
-            "localTimestamp": "2025-07-11T02:00:46.3700+01:00",
+            "localTimestamp": "2025-07-11T01:30:46.3700+01:00"
+            if "2025-07" in timestamp
+            else "2026-01-09T01:30:46.3700+00:00",
             "message": "Error watching metadata: context canceled",
             "omitempty": None,
         },
@@ -2264,7 +2314,7 @@ def test_skip_gce_guest_agent_metadata_context_canceled_during_maintenance_windo
                 "project_id": "ons-blaise-v2-prod",
             },
         },
-        "timestamp": "2025-07-11T01:30:46.452563300Z",
+        "timestamp": timestamp,
         "severity": "ERROR",
         "labels": {"instance_name": "restapi-1"},
         "logName": "projects/ons-blaise-v2-prod/logs/GCEGuestAgent",
@@ -2273,7 +2323,9 @@ def test_skip_gce_guest_agent_metadata_context_canceled_during_maintenance_windo
             "line": "68",
             "function": "github.com/GoogleCloudPlatform/guest-agent/google_guest_agent/events/metadata.(*Watcher).Run",
         },
-        "receiveTimestamp": "2025-07-11T01:30:46.567692609Z",
+        "receiveTimestamp": timestamp.replace(
+            "T00:30:46Z", "T00:30:46.567692609Z"
+        ).replace("T01:30:46Z", "T01:30:46.567692609Z"),
     }
     event = create_event(example_log_entry)
 
@@ -2347,10 +2399,22 @@ def test_allows_google_compute_engine_service_terminated_outside_maintenance_win
     assert len(skip_messages) == 0
 
 
+@pytest.mark.parametrize(
+    "timestamp",
+    [
+        # Summer (BST) - July: UK time = UTC + 1 hour
+        "2025-07-11T00:30:35Z",
+        # Winter (GMT) - January: UK time = UTC + 0 hours
+        "2026-01-09T01:30:35Z",
+    ],
+)
 def test_skip_fluent_bit_tls_error_during_maintenance_window(
-    run_slack_alerter, number_of_http_calls, caplog
+    run_slack_alerter,
+    number_of_http_calls,
+    caplog,
+    timestamp,
 ):
-    # arrange - Friday July 11, 2025 at 01:30 AM UTC (within maintenance window)
+    # arrange - Friday during maintenance window
     example_log_entry = {
         "insertId": "testnmg0smfqwksg9",
         "jsonPayload": {
@@ -2364,10 +2428,12 @@ def test_skip_fluent_bit_tls_error_during_maintenance_window(
                 "zone": "europe-west2-a",
             },
         },
-        "timestamp": "2025-07-11T01:30:35Z",
+        "timestamp": timestamp,
         "severity": "ERROR",
         "logName": "projects/ons-blaise-v2-prod/logs/ops-agent-fluent-bit",
-        "receiveTimestamp": "2025-07-11T01:30:36.718393938Z",
+        "receiveTimestamp": timestamp.replace(
+            "T00:30:35Z", "T00:30:36.718393938Z"
+        ).replace("T01:30:35Z", "T01:30:36.718393938Z"),
     }
     event = create_event(example_log_entry)
 
@@ -2385,10 +2451,22 @@ def test_skip_fluent_bit_tls_error_during_maintenance_window(
     ) in caplog.record_tuples
 
 
+@pytest.mark.parametrize(
+    "timestamp",
+    [
+        # Summer (BST) - July: UK time = UTC + 1 hour
+        "2025-07-11T00:30:51Z",
+        # Winter (GMT) - January: UK time = UTC + 0 hours
+        "2026-01-09T01:30:51Z",
+    ],
+)
 def test_skip_fluent_bit_syscall_error_during_maintenance_window(
-    run_slack_alerter, number_of_http_calls, caplog
+    run_slack_alerter,
+    number_of_http_calls,
+    caplog,
+    timestamp,
 ):
-    # arrange - Friday July 11, 2025 at 01:48 AM UTC (within maintenance window)
+    # arrange - Friday during maintenance window
     example_log_entry = {
         "insertId": "test14j6phjfqtmdxg",
         "jsonPayload": {
@@ -2402,10 +2480,12 @@ def test_skip_fluent_bit_syscall_error_during_maintenance_window(
                 "instance_id": "test6542796480007992547",
             },
         },
-        "timestamp": "2025-07-11T01:30:51Z",
+        "timestamp": timestamp,
         "severity": "ERROR",
         "logName": "projects/ons-blaise-v2-prod/logs/ops-agent-fluent-bit",
-        "receiveTimestamp": "2025-07-11T01:30:52.716007518Z",
+        "receiveTimestamp": timestamp.replace(
+            "T00:30:51Z", "T00:30:52.716007518Z"
+        ).replace("T01:30:51Z", "T01:30:52.716007518Z"),
     }
     event = create_event(example_log_entry)
 
@@ -2423,10 +2503,22 @@ def test_skip_fluent_bit_syscall_error_during_maintenance_window(
     ) in caplog.record_tuples
 
 
+@pytest.mark.parametrize(
+    "timestamp",
+    [
+        # Summer (BST) - July: UK time = UTC + 1 hour
+        "2025-07-11T00:30:51Z",
+        # Winter (GMT) - January: UK time = UTC + 0 hours
+        "2026-01-09T01:30:51Z",
+    ],
+)
 def test_skip_fluent_bit_broken_connection_during_maintenance_window(
-    run_slack_alerter, number_of_http_calls, caplog
+    run_slack_alerter,
+    number_of_http_calls,
+    caplog,
+    timestamp,
 ):
-    # arrange - Friday July 11, 2025 at 01:48 AM UTC (within maintenance window)
+    # arrange - Friday during maintenance window
     example_log_entry = {
         "insertId": "test14j6phjfqtmdxh",
         "jsonPayload": {
@@ -2440,10 +2532,12 @@ def test_skip_fluent_bit_broken_connection_during_maintenance_window(
                 "instance_id": "test6542796480007992547",
             },
         },
-        "timestamp": "2025-07-11T01:30:51Z",
+        "timestamp": timestamp,
         "severity": "ERROR",
         "logName": "projects/ons-blaise-v2-prod/logs/ops-agent-fluent-bit",
-        "receiveTimestamp": "2025-07-11T01:30:52.716007518Z",
+        "receiveTimestamp": timestamp.replace(
+            "T00:30:51Z", "T00:30:52.716007518Z"
+        ).replace("T01:30:51Z", "T01:30:52.716007518Z"),
     }
     event = create_event(example_log_entry)
 
@@ -2500,10 +2594,22 @@ def test_allows_fluent_bit_errors_outside_maintenance_window(
     assert len(skip_messages) == 0
 
 
+@pytest.mark.parametrize(
+    "timestamp",
+    [
+        # Summer (BST) - July: UK time = UTC + 1 hour
+        "2025-07-25T00:25:44Z",
+        # Winter (GMT) - January: UK time = UTC + 0 hours
+        "2026-01-09T01:25:44Z",
+    ],
+)
 def test_skip_fluent_bit_winlog_security_error_during_maintenance_window(
-    run_slack_alerter, number_of_http_calls, caplog
+    run_slack_alerter,
+    number_of_http_calls,
+    caplog,
+    timestamp,
 ):
-    # arrange - Friday July 25, 2025 at 01:25 AM UTC (within maintenance window)
+    # arrange - Friday during maintenance window
     example_log_entry = {
         "insertId": "1rjve2ff2jo6ma",
         "jsonPayload": {
@@ -2517,10 +2623,12 @@ def test_skip_fluent_bit_winlog_security_error_during_maintenance_window(
                 "instance_id": "test3794693884996202543",
             },
         },
-        "timestamp": "2025-07-25T01:25:44Z",  # Friday 1:25 AM UTC - within maintenance window
+        "timestamp": timestamp,
         "severity": "ERROR",
         "logName": "projects/ons-blaise-v2-prod/logs/ops-agent-fluent-bit",
-        "receiveTimestamp": "2025-07-25T01:25:45.418435858Z",
+        "receiveTimestamp": timestamp.replace(
+            "T00:25:44Z", "T00:25:45.418435858Z"
+        ).replace("T01:25:44Z", "T01:25:45.418435858Z"),
     }
     event = create_event(example_log_entry)
 
@@ -2538,10 +2646,22 @@ def test_skip_fluent_bit_winlog_security_error_during_maintenance_window(
     ) in caplog.record_tuples
 
 
+@pytest.mark.parametrize(
+    "timestamp",
+    [
+        # Summer (BST) - July: UK time = UTC + 1 hour
+        "2025-07-25T00:25:45Z",  # 00:25 UTC = 01:25 BST
+        # Winter (GMT) - January: UK time = UTC + 0 hours
+        "2026-01-09T01:25:45Z",  # 01:25 UTC = 01:25 GMT
+    ],
+)
 def test_skip_fluent_bit_winlog_system_error_during_maintenance_window(
-    run_slack_alerter, number_of_http_calls, caplog
+    run_slack_alerter,
+    number_of_http_calls,
+    caplog,
+    timestamp,
 ):
-    # arrange - Friday July 25, 2025 at 01:25 AM UTC (within maintenance window)
+    # arrange - Friday during maintenance window
     example_log_entry = {
         "insertId": "2abc3def4ghi5jk",
         "jsonPayload": {
@@ -2555,10 +2675,12 @@ def test_skip_fluent_bit_winlog_system_error_during_maintenance_window(
                 "instance_id": "3794693884996202543",
             },
         },
-        "timestamp": "2025-07-25T01:25:45Z",  # Friday 1:25 AM UTC - within maintenance window
+        "timestamp": timestamp,
         "severity": "ERROR",
         "logName": "projects/ons-blaise-v2-prod/logs/ops-agent-fluent-bit",
-        "receiveTimestamp": "2025-07-25T01:25:46.418435858Z",
+        "receiveTimestamp": timestamp.replace(
+            "T00:25:45Z", "T00:25:46.418435858Z"
+        ).replace("T01:25:45Z", "T01:25:46.418435858Z"),
     }
     event = create_event(example_log_entry)
 
@@ -2576,10 +2698,22 @@ def test_skip_fluent_bit_winlog_system_error_during_maintenance_window(
     ) in caplog.record_tuples
 
 
+@pytest.mark.parametrize(
+    "timestamp",
+    [
+        # Summer (BST) - July: UK time = UTC + 1 hour
+        "2025-07-25T00:25:45Z",  # 00:25 UTC = 01:25 BST
+        # Winter (GMT) - January: UK time = UTC + 0 hours
+        "2026-01-09T01:25:45Z",  # 01:25 UTC = 01:25 GMT
+    ],
+)
 def test_skip_fluent_bit_winlog_cannot_read_error_during_maintenance_window(
-    run_slack_alerter, number_of_http_calls, caplog
+    run_slack_alerter,
+    number_of_http_calls,
+    caplog,
+    timestamp,
 ):
-    # arrange - Friday July 25, 2025 at 01:25 AM UTC (within maintenance window)
+    # arrange - Friday during maintenance window
     example_log_entry = {
         "insertId": "3lmn4opq5rst6uv",
         "jsonPayload": {
@@ -2593,10 +2727,12 @@ def test_skip_fluent_bit_winlog_cannot_read_error_during_maintenance_window(
                 "instance_id": "3794693884996202543",
             },
         },
-        "timestamp": "2025-07-25T01:25:45Z",  # Friday 1:25 AM UTC - within maintenance window
+        "timestamp": timestamp,
         "severity": "ERROR",
         "logName": "projects/ons-blaise-v2-prod/logs/ops-agent-fluent-bit",
-        "receiveTimestamp": "2025-07-25T01:25:46.418435858Z",
+        "receiveTimestamp": timestamp.replace(
+            "T00:25:45Z", "T00:25:46.418435858Z"
+        ).replace("T01:25:45Z", "T01:25:46.418435858Z"),
     }
     event = create_event(example_log_entry)
 
