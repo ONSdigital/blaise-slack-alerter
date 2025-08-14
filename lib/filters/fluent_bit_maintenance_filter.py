@@ -1,6 +1,6 @@
 import logging
 from lib.log_processor import ProcessedLogEntry
-from lib.utilities.friday_maintenance_window import is_in_friday_maintenance_window
+from lib.utilities.weekly_maintenance_window import is_in_friday_maintenance_window
 from lib.utilities.log_validation import validate_log_entry_fields
 
 
@@ -39,13 +39,15 @@ def fluent_bit_maintenance_filter(log_entry: ProcessedLogEntry) -> bool:
         return False
 
     fluent_bit_maintenance_indicators = [
+        # TLS/OpenSSL patterns
         "[error] [C:\\work\\submodules\\fluent-bit\\src\\tls\\openssl.c:",
         "[error] [tls] syscall error:",
+        # HTTP client connection patterns
         "[error] [http_client] broken connection to logging.googleapis.com:",
+        # Windows event log read failures
         "No error",
         "DH lib",
         "broken connection",
-        # Windows event log read errors
         "failed to read 'Security'",
         "failed to read 'System'",
         "failed to read 'Application'",
