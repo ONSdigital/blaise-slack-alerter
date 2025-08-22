@@ -27,7 +27,7 @@ def no_instance_filter(log_entry: ProcessedLogEntry) -> bool:
         "bert-deliver-mi-hub-reports-processor",
         "bert-call-history-cleanup",
         "bts-create-totalmobile-jobs-processor",
-        "publishMsg",
+        "nifi-notify",
         "daybatch-create",
     ]:
         return False

@@ -1122,7 +1122,7 @@ def test_skip_all_preprod_and_training_alerts_except_erroneous_questionnaire(
         "bert-deliver-mi-hub-reports-processor",
         "bert-call-history-cleanup",
         "bts-create-totalmobile-jobs-processor",
-        "publishMsg",
+        "nifi-notify",
         "daybatch-create",
     ],
 )
