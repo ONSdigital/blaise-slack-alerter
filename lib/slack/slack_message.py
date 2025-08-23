@@ -147,7 +147,7 @@ def _is_data_delivery_alert(processed_log_entry: ProcessedLogEntry) -> bool:
     if processed_log_entry.application in (
         "data-delivery",
         "NiFiEncryptFunction",
-        "publishMsg",
+        "nifi-notify",
         "nifi-receipt",
     ):
         return True
