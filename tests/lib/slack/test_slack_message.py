@@ -525,7 +525,7 @@ def test_create_footnote_returns_default_instructions_without_view_the_logs_line
     [
         "data-delivery",
         "NiFiEncryptFunction",
-        "publishMsg",
+        "nifi-notify",
         "nifi-receipt",
     ],
 )
@@ -556,7 +556,7 @@ def test_create_footnote_returns_data_delivery_instructions_with_view_the_logs_l
     [
         "data-delivery",
         "NiFiEncryptFunction",
-        "publishMsg",
+        "nifi-notify",
         "nifi-receipt",
     ],
 )
