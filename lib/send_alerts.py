@@ -44,6 +44,7 @@ from lib.filters.gcp_constraint_not_found_filter import (
 )
 from lib.filters.os_patch_maintenance_filter import os_patch_maintenance_filter
 from lib.filters.fluent_bit_maintenance_filter import fluent_bit_maintenance_filter
+from lib.filters.get_role_filter import get_role_filter
 
 
 def log_entry_skipped(log_entry: ProcessedLogEntry):
@@ -70,6 +71,7 @@ def log_entry_skipped(log_entry: ProcessedLogEntry):
         permission_denied_by_iam_filter,
         physical_zone_separation_constraint_filter,
         service_account_hmac_key_constraint_filter,
+        get_role_filter,
     ]
 
     for filter in filters:
