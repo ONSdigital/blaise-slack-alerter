@@ -2787,3 +2787,80 @@ def test_allows_fluent_bit_winlog_errors_outside_maintenance_window(
         if "fluent-bit maintenance" in str(record)
     ]
     assert len(skip_messages) == 0
+
+
+def test_skip_get_role_alerts_latest(run_slack_alerter, number_of_http_calls, caplog):
+    # arrange - Tuesday at 10:00 AM UTC (outside maintenance window)
+    example_log_entry = {
+        "protoPayload": {
+            "@type": "type.googleapis.com/google.cloud.audit.AuditLog",
+            "status": {
+                "code": 7,
+                "message": "You don't have permission to get the role at projects/ons-blaise-v2-prod/roles/CustomConcourseSARole.",
+                "details": [
+                    {
+                        "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+                        "reason": "IAM_PERMISSION_DENIED",
+                        "domain": "iam.googleapis.com",
+                        "metadata": {
+                            "resource": "projects/ons-blaise-v2-prod/roles/CustomConcourseSARole",
+                            "permission": "iam.roles.get",
+                        },
+                    }
+                ],
+            },
+            "authenticationInfo": {
+                "principalEmail": "service-org-425126312691@security-center-api.iam.gserviceaccount.com"
+            },
+            "requestMetadata": {
+                "callerIp": "private",
+                "requestAttributes": {
+                    "time": "2025-08-28T21:18:43.210626106Z",
+                    "auth": {},
+                },
+                "destinationAttributes": {},
+            },
+            "serviceName": "iam.googleapis.com",
+            "methodName": "google.iam.admin.v1.GetRole",
+            "authorizationInfo": [
+                {
+                    "resource": "projects/ons-blaise-v2-prod/roles/CustomConcourseSARole",
+                    "permission": "iam.roles.get",
+                    "granted": False,
+                    "resourceAttributes": {
+                        "service": "iam",
+                        "name": "projects/ons-blaise-v2-prod/roles/CustomConcourseSARole",
+                        "type": "iam.roles",
+                    },
+                    "permissionType": "ADMIN_READ",
+                }
+            ],
+            "resourceName": "projects/ons-blaise-v2-prod/roles/CustomConcourseSARole",
+            "request": {
+                "@type": "type.googleapis.com/google.iam.admin.v1.GetRoleRequest",
+                "name": "projects/ons-blaise-v2-prod/roles/CustomConcourseSARole",
+            },
+        },
+        "insertId": "1e9fdzycxnz",
+        "resource": {
+            "type": "iam_role",
+            "labels": {
+                "role_name": "projects/ons-blaise-v2-prod/roles/CustomConcourseSARole",
+                "project_id": "ons-blaise-v2-prod",
+            },
+        },
+        "timestamp": "2025-08-28T21:18:43.102458066Z",
+        "severity": "ERROR",
+        "logName": "projects/ons-blaise-v2-prod/logs/cloudaudit.googleapis.com%2Fdata_access",
+        "receiveTimestamp": "2025-08-28T21:18:44.540504623Z",
+    }
+    event = create_event(example_log_entry)
+
+    # act
+    with caplog.at_level(logging.INFO):
+        response = run_slack_alerter(event)
+
+    # assert
+    assert response == "Alert skipped"
+    assert number_of_http_calls() == 0
+    assert ("root", logging.INFO, "Skipping get role alert") in caplog.record_tuples
