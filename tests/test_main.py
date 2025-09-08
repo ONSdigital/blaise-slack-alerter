@@ -2149,9 +2149,11 @@ def test_skip_google_compute_engine_compat_manager_service_terminated_during_mai
         "insertId": "test1a2sfo7e84rqe",
         "jsonPayload": {
             "Channel": "System",
-            "TimeGenerated": "2025-07-11 01:30:25 +0100"
-            if "2025-07" in timestamp
-            else "2026-01-09 01:30:25 +0000",
+            "TimeGenerated": (
+                "2025-07-11 01:30:25 +0100"
+                if "2025-07" in timestamp
+                else "2026-01-09 01:30:25 +0000"
+            ),
             "Data": "470043004500570069006e0064006f007700730043006f006d007000610074004d0061006e0061006700650072000000",
             "message": "The Google Compute Engine Compat Manager service terminated unexpectedly.  It has done this 1 time(s).  The following corrective action will be taken in 1000 milliseconds: Restart the service.\r\n",
             "EventID": 7031,
@@ -2168,9 +2170,11 @@ def test_skip_google_compute_engine_compat_manager_service_terminated_during_mai
             "RecordNumber": 2420520,
             "Sid": "",
             "EventCategory": 0,
-            "TimeWritten": "2025-07-11 01:30:25 +0100"
-            if "2025-07" in timestamp
-            else "2026-01-09 01:30:25 +0000",
+            "TimeWritten": (
+                "2025-07-11 01:30:25 +0100"
+                if "2025-07" in timestamp
+                else "2026-01-09 01:30:25 +0000"
+            ),
             "computer_name": "blaise-gusty-data-entry-3",
         },
         "resource": {
@@ -2236,14 +2240,18 @@ def test_skip_google_compute_engine_agent_manager_service_terminated_during_main
                 "Restart the service",
             ],
             "Channel": "System",
-            "TimeWritten": "2025-07-11 01:30:46 +0100"
-            if "2025-07" in timestamp
-            else "2026-01-09 01:30:46 +0000",
+            "TimeWritten": (
+                "2025-07-11 01:30:46 +0100"
+                if "2025-07" in timestamp
+                else "2026-01-09 01:30:46 +0000"
+            ),
             "computer_name": "restapi-1",
             "source_name": "Service Control Manager",
-            "TimeGenerated": "2025-07-11 01:30:46 +0100"
-            if "2025-07" in timestamp
-            else "2026-01-09 01:30:46 +0000",
+            "TimeGenerated": (
+                "2025-07-11 01:30:46 +0100"
+                if "2025-07" in timestamp
+                else "2026-01-09 01:30:46 +0000"
+            ),
             "Qualifiers": 49152,
             "EventType": "Error",
             "Sid": "",
@@ -2300,9 +2308,11 @@ def test_skip_gce_guest_agent_metadata_context_canceled_during_maintenance_windo
     example_log_entry = {
         "insertId": "testjhigkve7mleb",
         "jsonPayload": {
-            "localTimestamp": "2025-07-11T01:30:46.3700+01:00"
-            if "2025-07" in timestamp
-            else "2026-01-09T01:30:46.3700+00:00",
+            "localTimestamp": (
+                "2025-07-11T01:30:46.3700+01:00"
+                if "2025-07" in timestamp
+                else "2026-01-09T01:30:46.3700+00:00"
+            ),
             "message": "Error watching metadata: context canceled",
             "omitempty": None,
         },

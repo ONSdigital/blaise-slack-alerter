@@ -36,7 +36,7 @@ def parse_resource(raw: Dict[str, Any]) -> Tuple[Optional[str], Dict[str, str]]:
 
 
 def parse_payload(
-    raw: Dict[str, Any]
+    raw: Dict[str, Any],
 ) -> Tuple[PayloadType, Union[str, Dict[str, Any]]]:
     if "textPayload" in raw:
         return PayloadType.TEXT, raw["textPayload"]

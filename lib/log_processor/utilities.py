@@ -5,7 +5,7 @@ Return = TypeVar("Return")
 
 
 def first_successful(
-    factories: List[Callable[[], Optional[Return]]]
+    factories: List[Callable[[], Optional[Return]]],
 ) -> Optional[Return]:
     for create in factories:
         result = create()
