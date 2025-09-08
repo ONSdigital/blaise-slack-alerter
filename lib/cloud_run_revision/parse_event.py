@@ -3,9 +3,8 @@ import binascii
 import json
 
 from lib.cloud_run_revision.event import Event
-from lib.cloud_run_revision.invalid_cloud_run_revision_event import (
-    InvalidCloudRunRevisionEvent,
-)
+from lib.cloud_run_revision.invalid_cloud_run_revision_event import \
+    InvalidCloudRunRevisionEvent
 
 
 def assert_field_in_event(field_name: str, event: dict) -> None:

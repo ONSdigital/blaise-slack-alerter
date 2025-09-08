@@ -1,10 +1,11 @@
-import typing
-import pytest
-import datetime
 import dataclasses
+import datetime
+import typing
 
-from lib.log_processor.processed_log_entry import ProcessedLogEntry
+import pytest
+
 from lib.filters.ip_space_exhausted_filter import ip_space_exhausted_filter
+from lib.log_processor.processed_log_entry import ProcessedLogEntry
 
 
 @pytest.fixture()

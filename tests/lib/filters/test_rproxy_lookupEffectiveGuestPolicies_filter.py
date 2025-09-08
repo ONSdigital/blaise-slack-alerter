@@ -1,11 +1,11 @@
-import pytest
-import datetime
 import dataclasses
+import datetime
 
+import pytest
+
+from lib.filters.rproxy_lookupEffectiveGuestPolicies_filter import \
+    rproxy_lookupEffectiveGuestPolicies_filter
 from lib.log_processor.processed_log_entry import ProcessedLogEntry
-from lib.filters.rproxy_lookupEffectiveGuestPolicies_filter import (
-    rproxy_lookupEffectiveGuestPolicies_filter,
-)
 
 
 @pytest.fixture()

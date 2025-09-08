@@ -1,10 +1,10 @@
-from typing import cast
-import pytest
 import datetime
-import dataclasses
+from typing import cast
 
-from lib.log_processor.processed_log_entry import ProcessedLogEntry
+import pytest
+
 from lib.filters.auditlog_filter import auditlog_filter
+from lib.log_processor.processed_log_entry import ProcessedLogEntry
 
 
 @pytest.fixture()

@@ -1,9 +1,10 @@
-import pytest
-import datetime
 import dataclasses
+import datetime
 
-from lib.log_processor.processed_log_entry import ProcessedLogEntry
+import pytest
+
 from lib.filters.sandbox_filter import sandbox_filter
+from lib.log_processor.processed_log_entry import ProcessedLogEntry
 
 
 @pytest.fixture()

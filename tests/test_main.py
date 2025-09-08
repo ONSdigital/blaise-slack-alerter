@@ -5,7 +5,6 @@ import os
 from typing import Any, Callable, Union
 
 import pytest
-from lib.log_processor.processed_log_entry import ProcessedLogEntry
 import pytz
 import requests_mock
 from dateutil.parser import parse
@@ -73,7 +72,7 @@ def run_slack_alerter(
 def get_webhook_payload(http_mock: requests_mock.mocker.Mocker) -> Callable[[], str]:
     def get() -> str:
         assert (
-            http_mock.call_count is 1
+            http_mock.call_count == 1
         ), f"Expected one call to the Slack webhook, got {http_mock.call_count}"
         return json.loads(http_mock.request_history[0].text)
 

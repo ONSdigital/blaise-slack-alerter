@@ -1,15 +1,15 @@
-from typing import Any
-import typing
-import pytest
-import datetime
 import dataclasses
+import datetime
+import typing
+from typing import Any
 
-from lib.log_processor.processed_log_entry import ProcessedLogEntry
+import pytest
+
 from lib.filters.gcp_constraint_not_found_filter import (
     org_policy_constraint_not_found_filter,
     physical_zone_separation_constraint_filter,
-    service_account_hmac_key_constraint_filter,
-)
+    service_account_hmac_key_constraint_filter)
+from lib.log_processor.processed_log_entry import ProcessedLogEntry
 
 CONSTRAINT_NAMES = {
     "physical_zone_separation": "constraints/gcp.requiresPhysicalZoneSeparation",

@@ -27,5 +27,5 @@ def sandbox_filter(log_entry: ProcessedLogEntry) -> bool:
     if _is_formal_environment(log_entry.log_name):
         return False
 
-    logging.info(f"Skipping sandbox alert")
+    logging.info("Skipping sandbox alert")
     return True

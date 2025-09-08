@@ -1,10 +1,11 @@
-import pytest
-from datetime import datetime, timezone, timedelta
-from typing import Any
 import zoneinfo
+from datetime import datetime, timedelta, timezone
+from typing import Any
 
-from lib.utilities.weekly_maintenance_window import is_in_friday_maintenance_window
+import pytest
 
+from lib.utilities.weekly_maintenance_window import \
+    is_in_friday_maintenance_window
 
 # Test constants
 UK_TZ = zoneinfo.ZoneInfo("Europe/London")

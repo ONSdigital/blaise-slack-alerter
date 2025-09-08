@@ -1,12 +1,11 @@
-import typing
-import pytest
-import datetime
 import dataclasses
+import datetime
+import typing
 
+import pytest
+
+from lib.filters.get_role_filter import get_role_filter
 from lib.log_processor.processed_log_entry import ProcessedLogEntry
-from lib.filters.get_role_filter import (
-    get_role_filter,
-)
 
 
 @pytest.fixture()

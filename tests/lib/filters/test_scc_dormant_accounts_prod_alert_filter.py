@@ -1,13 +1,12 @@
-import pytest
-import datetime
 import dataclasses
+import datetime
 from typing import Any
 
-from lib.log_processor.processed_log_entry import ProcessedLogEntry
-from lib.filters.scc_dormant_accounts_prod_alert_filter import (
-    scc_dormant_accounts_prod_alert_filter,
-)
+import pytest
 
+from lib.filters.scc_dormant_accounts_prod_alert_filter import \
+    scc_dormant_accounts_prod_alert_filter
+from lib.log_processor.processed_log_entry import ProcessedLogEntry
 
 # Test constants
 TARGET_SERVICE_ACCOUNT = (

@@ -1,8 +1,9 @@
 import logging
-from datetime import datetime
+
 from lib.log_processor import ProcessedLogEntry
-from lib.utilities.weekly_maintenance_window import is_in_friday_maintenance_window
 from lib.utilities.log_validation import validate_log_entry_fields
+from lib.utilities.weekly_maintenance_window import \
+    is_in_friday_maintenance_window
 
 
 def os_patch_maintenance_filter(log_entry: ProcessedLogEntry) -> bool:

@@ -1,12 +1,12 @@
-import typing
-import pytest
-import datetime
 import dataclasses
+import datetime
+import typing
 
+import pytest
+
+from lib.filters.requested_entity_was_not_found_filter import \
+    requested_entity_was_not_found_filter
 from lib.log_processor.processed_log_entry import ProcessedLogEntry
-from lib.filters.requested_entity_was_not_found_filter import (
-    requested_entity_was_not_found_filter,
-)
 
 
 @pytest.fixture()

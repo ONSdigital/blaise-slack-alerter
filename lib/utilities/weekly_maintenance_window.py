@@ -1,6 +1,5 @@
-from datetime import datetime, time, timezone
-import logging
 import zoneinfo
+from datetime import datetime, time, timezone
 
 
 def is_in_friday_maintenance_window(timestamp: datetime) -> bool:

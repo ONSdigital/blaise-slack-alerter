@@ -1,8 +1,5 @@
-from lib.log_processor.utilities import (
-    apply_argument_to_all,
-    apply_argument,
-    first_successful,
-)
+from lib.log_processor.utilities import (apply_argument, apply_argument_to_all,
+                                         first_successful)
 
 
 class TestFirstSuccessful:
@@ -13,7 +10,7 @@ class TestFirstSuccessful:
         assert first_successful([lambda: None, lambda: None]) is None
 
     def test_it_returns_the_first_successful_result(self):
-        assert first_successful([lambda: None, lambda: 1, lambda: 2]) is 1
+        assert first_successful([lambda: None, lambda: 1, lambda: 2]) == 1
 
 
 class TestApplyArgumentToAll:
@@ -30,7 +27,8 @@ class TestApplyArgumentToAll:
 
 class TestApplyArgument:
     def test_it_returns_a_function_with_the_argument_already_applied(self):
-        f = lambda arg: arg + 2
+        def f(arg: int) -> int:
+            return arg + 2
 
         applied_f = apply_argument(f, 5)
 

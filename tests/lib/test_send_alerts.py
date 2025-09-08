@@ -4,13 +4,13 @@ import logging
 from unittest.mock import Mock
 
 import pytest
-from dateutil.parser import parse
 import pytz
+from dateutil.parser import parse
 
 from lib import send_alerts
 from lib.alerter import Alerter
-from lib.log_processor.processed_log_entry import ProcessedLogEntry
 from lib.log_processor import APP_LOG_PAYLOAD_FACTORIES
+from lib.log_processor.processed_log_entry import ProcessedLogEntry
 from lib.slack.slack_message import SlackMessage
 
 

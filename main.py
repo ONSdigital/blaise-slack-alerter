@@ -2,7 +2,8 @@ import logging
 import os
 
 from flask import Request
-from google.cloud.logging_v2.handlers import StructuredLogHandler, setup_logging
+from google.cloud.logging_v2.handlers import (StructuredLogHandler,
+                                              setup_logging)
 
 from lib import send_alerts
 from lib.log_processor import APP_LOG_PAYLOAD_FACTORIES

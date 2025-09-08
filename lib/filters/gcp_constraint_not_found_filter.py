@@ -1,5 +1,6 @@
 import logging
 from typing import Optional
+
 from lib.log_processor import ProcessedLogEntry
 
 

@@ -16,5 +16,5 @@ def ip_space_exhausted_filter(log_entry: ProcessedLogEntry) -> bool:
     if ("IP_SPACE_EXHAUSTED" or "ip_space_exhausted") not in log_entry.message:
         return False
 
-    logging.info(f"Skipping ip space exhausted alert")
+    logging.info("Skipping ip space exhausted alert")
     return True

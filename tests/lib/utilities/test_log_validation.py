@@ -1,14 +1,11 @@
-import pytest
 from datetime import datetime, timezone
 from typing import Any, Dict, Optional
-from unittest.mock import Mock
 
-from lib.utilities.log_validation import (
-    validate_log_entry_fields,
-    validate_gce_instance_log_entry,
-)
+import pytest
+
 from lib.log_processor.processed_log_entry import ProcessedLogEntry
-
+from lib.utilities.log_validation import (validate_gce_instance_log_entry,
+                                          validate_log_entry_fields)
 
 # Test constants
 DEFAULT_TIMESTAMP = datetime(2025, 7, 25, 12, 0, 0, tzinfo=timezone.utc)

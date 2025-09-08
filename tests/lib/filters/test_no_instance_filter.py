@@ -1,10 +1,11 @@
-import typing
-import pytest
-import datetime
 import dataclasses
+import datetime
+import typing
 
-from lib.log_processor.processed_log_entry import ProcessedLogEntry
+import pytest
+
 from lib.filters.no_instance_filter import no_instance_filter
+from lib.log_processor.processed_log_entry import ProcessedLogEntry
 
 
 @pytest.fixture()

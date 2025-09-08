@@ -1,10 +1,13 @@
-import pytest
-import datetime
 import dataclasses
+import datetime
 from datetime import timezone
 from typing import Any, Dict, List
+
+import pytest
+
+from lib.filters.fluent_bit_maintenance_filter import \
+    fluent_bit_maintenance_filter
 from lib.log_processor.processed_log_entry import ProcessedLogEntry
-from lib.filters.fluent_bit_maintenance_filter import fluent_bit_maintenance_filter
 
 
 @pytest.fixture()

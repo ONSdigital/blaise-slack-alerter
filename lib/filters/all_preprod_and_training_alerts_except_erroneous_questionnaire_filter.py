@@ -39,5 +39,5 @@ def all_preprod_and_training_alerts_except_erroneous_questionnaire_filter(
     ) and _is_failed_to_install(log_entry):
         return False
 
-    logging.info(f"Skipping preprod/training alert")
+    logging.info("Skipping preprod/training alert")
     return True

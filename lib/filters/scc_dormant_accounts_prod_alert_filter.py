@@ -1,5 +1,6 @@
 import logging
 from typing import Optional
+
 from lib.log_processor import ProcessedLogEntry
 
 
@@ -48,7 +49,5 @@ def scc_dormant_accounts_prod_alert_filter(
     ):
         return False
 
-    logging.info(
-        f"Skipping external 'SCC Dormant Accounts Alert' service account alert"
-    )
+    logging.info("Skipping external 'SCC Dormant Accounts Alert' service account alert")
     return True

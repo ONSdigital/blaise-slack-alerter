@@ -1,11 +1,11 @@
-import pytest
-import datetime
 import dataclasses
+import datetime
 
+import pytest
+
+from lib.filters.watching_metadata_invalid_character_filter import \
+    watching_metadata_invalid_character_filter
 from lib.log_processor.processed_log_entry import ProcessedLogEntry
-from lib.filters.watching_metadata_invalid_character_filter import (
-    watching_metadata_invalid_character_filter,
-)
 
 
 @pytest.fixture()

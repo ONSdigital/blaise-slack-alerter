@@ -1,10 +1,12 @@
-import pytest
-import datetime
 import dataclasses
+import datetime
 from datetime import timezone
 from typing import Any, Dict, List
-from lib.log_processor.processed_log_entry import ProcessedLogEntry
+
+import pytest
+
 from lib.filters.os_patch_maintenance_filter import os_patch_maintenance_filter
+from lib.log_processor.processed_log_entry import ProcessedLogEntry
 
 
 @pytest.fixture()
