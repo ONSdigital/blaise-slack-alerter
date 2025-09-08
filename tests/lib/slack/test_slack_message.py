@@ -7,8 +7,11 @@ from dateutil.parser import parse
 
 from lib.cloud_logging.log_query_link import create_log_query_link
 from lib.log_processor.processed_log_entry import ProcessedLogEntry
-from lib.slack.slack_message import (SlackMessage, _create_footnote,
-                                     create_from_processed_log_entry)
+from lib.slack.slack_message import (
+    SlackMessage,
+    _create_footnote,
+    create_from_processed_log_entry,
+)
 
 
 @pytest.fixture()

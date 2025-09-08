@@ -4,8 +4,7 @@ from typing import Any
 
 import pytest
 
-from lib.utilities.weekly_maintenance_window import \
-    is_in_friday_maintenance_window
+from lib.utilities.weekly_maintenance_window import is_in_friday_maintenance_window
 
 # Test constants
 UK_TZ = zoneinfo.ZoneInfo("Europe/London")

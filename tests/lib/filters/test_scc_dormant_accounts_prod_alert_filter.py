@@ -4,8 +4,9 @@ from typing import Any
 
 import pytest
 
-from lib.filters.scc_dormant_accounts_prod_alert_filter import \
-    scc_dormant_accounts_prod_alert_filter
+from lib.filters.scc_dormant_accounts_prod_alert_filter import (
+    scc_dormant_accounts_prod_alert_filter,
+)
 from lib.log_processor.processed_log_entry import ProcessedLogEntry
 
 # Test constants

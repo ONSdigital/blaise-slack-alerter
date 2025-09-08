@@ -3,8 +3,9 @@ import datetime
 
 import pytest
 
-from lib.filters.rproxy_lookupEffectiveGuestPolicies_filter import \
-    rproxy_lookupEffectiveGuestPolicies_filter
+from lib.filters.rproxy_lookupEffectiveGuestPolicies_filter import (
+    rproxy_lookupEffectiveGuestPolicies_filter,
+)
 from lib.log_processor.processed_log_entry import ProcessedLogEntry
 
 

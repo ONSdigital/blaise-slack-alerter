@@ -3,8 +3,7 @@ from typing import Optional
 
 from lib.log_processor import ProcessedLogEntry
 from lib.utilities.log_validation import validate_log_entry_fields
-from lib.utilities.weekly_maintenance_window import \
-    is_in_friday_maintenance_window
+from lib.utilities.weekly_maintenance_window import is_in_friday_maintenance_window
 
 
 def fluent_bit_maintenance_filter(log_entry: Optional[ProcessedLogEntry]) -> bool:

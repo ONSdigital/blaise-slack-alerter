@@ -2,9 +2,15 @@ from typing import Callable, List, Optional
 
 from lib.cloud_logging import LogEntry
 from lib.log_processor.app_log_payload import AppLogPayload
-from lib.log_processor.log_types import (audit_log, cloud_run_revision,
-                                         gae_app, gce_instance, json_payload,
-                                         text_payload, unknown_payload)
+from lib.log_processor.log_types import (
+    audit_log,
+    cloud_run_revision,
+    gae_app,
+    gce_instance,
+    json_payload,
+    text_payload,
+    unknown_payload,
+)
 
 CreateAppLogPayloadFromLogEntry = Callable[[LogEntry], Optional[AppLogPayload]]
 

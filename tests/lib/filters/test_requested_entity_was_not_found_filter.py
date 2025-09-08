@@ -4,8 +4,9 @@ import typing
 
 import pytest
 
-from lib.filters.requested_entity_was_not_found_filter import \
-    requested_entity_was_not_found_filter
+from lib.filters.requested_entity_was_not_found_filter import (
+    requested_entity_was_not_found_filter,
+)
 from lib.log_processor.processed_log_entry import ProcessedLogEntry
 
 

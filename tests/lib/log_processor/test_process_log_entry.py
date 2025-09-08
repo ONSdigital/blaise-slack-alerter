@@ -3,8 +3,12 @@ from unittest.mock import Mock
 import pytest
 
 from lib.cloud_logging import LogEntry, PayloadType
-from lib.log_processor import (AppLogPayload, NoMatchingLogTypeFound,
-                               ProcessedLogEntry, process_log_entry)
+from lib.log_processor import (
+    AppLogPayload,
+    NoMatchingLogTypeFound,
+    ProcessedLogEntry,
+    process_log_entry,
+)
 
 
 @pytest.fixture()

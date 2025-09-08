@@ -2,8 +2,7 @@ from dateutil.parser import parse
 
 from lib.cloud_logging import LogEntry, PayloadType
 from lib.log_processor import process_log_entry
-from lib.log_processor.app_log_payload_factories import \
-    APP_LOG_PAYLOAD_FACTORIES
+from lib.log_processor.app_log_payload_factories import APP_LOG_PAYLOAD_FACTORIES
 from lib.log_processor.processed_log_entry import ProcessedLogEntry
 
 

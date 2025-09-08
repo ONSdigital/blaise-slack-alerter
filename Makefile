@@ -8,8 +8,8 @@ help:
 .PHONY=format
 ## Format python
 format:
-	@poetry run black .
 	@poetry run isort .
+	@poetry run black .
 
 .PHONY=lint
 ## Run styling checks for python

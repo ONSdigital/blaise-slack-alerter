@@ -4,8 +4,7 @@ import typing
 
 import pytest
 
-from lib.filters.permission_denied_by_iam_filter import \
-    permission_denied_by_iam_filter
+from lib.filters.permission_denied_by_iam_filter import permission_denied_by_iam_filter
 from lib.log_processor.processed_log_entry import ProcessedLogEntry
 
 

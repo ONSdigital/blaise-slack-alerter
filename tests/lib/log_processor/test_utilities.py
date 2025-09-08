@@ -1,5 +1,8 @@
-from lib.log_processor.utilities import (apply_argument, apply_argument_to_all,
-                                         first_successful)
+from lib.log_processor.utilities import (
+    apply_argument,
+    apply_argument_to_all,
+    first_successful,
+)
 
 
 class TestFirstSuccessful:

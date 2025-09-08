@@ -3,8 +3,10 @@ from dateutil.parser import parse
 
 from lib.cloud_logging import LogEntry, PayloadType
 from lib.log_processor import AppLogPayload
-from lib.log_processor.processed_log_entry import (ProcessedLogEntry,
-                                                   create_processed_log_entry)
+from lib.log_processor.processed_log_entry import (
+    ProcessedLogEntry,
+    create_processed_log_entry,
+)
 
 
 def test_create_processed_log_entry():

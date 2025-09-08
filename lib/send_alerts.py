@@ -6,39 +6,45 @@ from lib.alerter import Alerter
 from lib.cloud_logging import parse_log_entry
 from lib.cloud_run_revision import InvalidCloudRunRevisionEvent, parse_event
 from lib.filters.agent_connect_filter import agent_connect_filter
-from lib.filters.all_preprod_and_training_alerts_except_erroneous_questionnaire_filter import \
-    all_preprod_and_training_alerts_except_erroneous_questionnaire_filter
+from lib.filters.all_preprod_and_training_alerts_except_erroneous_questionnaire_filter import (
+    all_preprod_and_training_alerts_except_erroneous_questionnaire_filter,
+)
 from lib.filters.auditlog_filter import auditlog_filter
 from lib.filters.bootstrapper_filter import bootstrapper_filter
 from lib.filters.execute_sql_filter import execute_sql_filter
-from lib.filters.fluent_bit_maintenance_filter import \
-    fluent_bit_maintenance_filter
+from lib.filters.fluent_bit_maintenance_filter import fluent_bit_maintenance_filter
 from lib.filters.gcp_constraint_not_found_filter import (
     physical_zone_separation_constraint_filter,
-    service_account_hmac_key_constraint_filter)
+    service_account_hmac_key_constraint_filter,
+)
 from lib.filters.generic_not_found_filter import generic_not_found_filter
 from lib.filters.get_role_filter import get_role_filter
-from lib.filters.invalid_login_attempt_filter import \
-    invalid_login_attempt_filter
+from lib.filters.invalid_login_attempt_filter import invalid_login_attempt_filter
 from lib.filters.ip_space_exhausted_filter import ip_space_exhausted_filter
 from lib.filters.no_instance_filter import no_instance_filter
 from lib.filters.os_patch_maintenance_filter import os_patch_maintenance_filter
 from lib.filters.osconfig_agent_filter import osconfig_agent_filter
 from lib.filters.paramiko_filter import paramiko_filter
-from lib.filters.permission_denied_by_iam_filter import \
-    permission_denied_by_iam_filter
-from lib.filters.requested_entity_was_not_found_filter import \
-    requested_entity_was_not_found_filter
-from lib.filters.rproxy_lookupEffectiveGuestPolicies_filter import \
-    rproxy_lookupEffectiveGuestPolicies_filter
+from lib.filters.permission_denied_by_iam_filter import permission_denied_by_iam_filter
+from lib.filters.requested_entity_was_not_found_filter import (
+    requested_entity_was_not_found_filter,
+)
+from lib.filters.rproxy_lookupEffectiveGuestPolicies_filter import (
+    rproxy_lookupEffectiveGuestPolicies_filter,
+)
 from lib.filters.sandbox_filter import sandbox_filter
-from lib.filters.scc_dormant_accounts_prod_alert_filter import \
-    scc_dormant_accounts_prod_alert_filter
+from lib.filters.scc_dormant_accounts_prod_alert_filter import (
+    scc_dormant_accounts_prod_alert_filter,
+)
 from lib.filters.socket_exception_filter import socket_exception_filter
-from lib.filters.watching_metadata_invalid_character_filter import \
-    watching_metadata_invalid_character_filter
-from lib.log_processor import (CreateAppLogPayloadFromLogEntry,
-                               ProcessedLogEntry, process_log_entry)
+from lib.filters.watching_metadata_invalid_character_filter import (
+    watching_metadata_invalid_character_filter,
+)
+from lib.log_processor import (
+    CreateAppLogPayloadFromLogEntry,
+    ProcessedLogEntry,
+    process_log_entry,
+)
 
 
 def log_entry_skipped(log_entry: ProcessedLogEntry) -> bool:

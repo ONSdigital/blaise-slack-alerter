@@ -3,8 +3,9 @@ import datetime
 
 import pytest
 
-from lib.filters.watching_metadata_invalid_character_filter import \
-    watching_metadata_invalid_character_filter
+from lib.filters.watching_metadata_invalid_character_filter import (
+    watching_metadata_invalid_character_filter,
+)
 from lib.log_processor.processed_log_entry import ProcessedLogEntry
 
 

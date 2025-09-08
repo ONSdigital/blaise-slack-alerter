@@ -40,3 +40,6 @@ disallow_untyped_calls = true
 disallow_incomplete_defs = true
 disallow_untyped_decorators = true
 ignore_missing_imports = true
+
+[tool.isort]
+profile = "black"

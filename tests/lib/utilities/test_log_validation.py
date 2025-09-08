@@ -4,8 +4,10 @@ from typing import Any, Dict, Optional
 import pytest
 
 from lib.log_processor.processed_log_entry import ProcessedLogEntry
-from lib.utilities.log_validation import (validate_gce_instance_log_entry,
-                                          validate_log_entry_fields)
+from lib.utilities.log_validation import (
+    validate_gce_instance_log_entry,
+    validate_log_entry_fields,
+)
 
 # Test constants
 DEFAULT_TIMESTAMP = datetime(2025, 7, 25, 12, 0, 0, tzinfo=timezone.utc)
