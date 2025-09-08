@@ -4,7 +4,8 @@ from lib.log_processor import ProcessedLogEntry
 
 
 def _is_failed_to_install(log_entry: ProcessedLogEntry) -> bool:
-    if "AUDIT_LOG: Failed to install questionnaire" in log_entry.message:
+    message = log_entry.message or ""
+    if "AUDIT_LOG: Failed to install questionnaire" in message:
         return True
     return False
 

@@ -2,7 +2,7 @@ import pytest
 import datetime
 import dataclasses
 
-from lib.log_processor import ProcessedLogEntry
+from lib.log_processor.processed_log_entry import ProcessedLogEntry
 from lib.filters.bootstrapper_filter import bootstrapper_filter
 
 
@@ -25,16 +25,16 @@ def processed_log_entry_bootstrapper_error() -> ProcessedLogEntry:
 
 def test_log_is_skipped_when_its_from_gce_instance_when_bootstrapper_error(
     processed_log_entry_bootstrapper_error: ProcessedLogEntry,
-):
+) -> None:
     log_is_skipped = bootstrapper_filter(processed_log_entry_bootstrapper_error)
     assert log_is_skipped is True
 
 
 def test_log_message_is_not_a_string_when_bootstrapper_error(
     processed_log_entry_bootstrapper_error: ProcessedLogEntry,
-):
+) -> None:
     processed_log_entry_bootstrapper_error = dataclasses.replace(
-        processed_log_entry_bootstrapper_error, message=1234
+        processed_log_entry_bootstrapper_error, message="1234"
     )
     log_is_skipped = bootstrapper_filter(processed_log_entry_bootstrapper_error)
 
@@ -43,7 +43,7 @@ def test_log_message_is_not_a_string_when_bootstrapper_error(
 
 def test_log_message_is_not_skipped_when_it_contains_severity_info_for_bootstrapper_error(
     processed_log_entry_bootstrapper_error: ProcessedLogEntry,
-):
+) -> None:
     processed_log_entry_bootstrapper_error = dataclasses.replace(
         processed_log_entry_bootstrapper_error, severity="INFO"
     )
@@ -54,7 +54,7 @@ def test_log_message_is_not_skipped_when_it_contains_severity_info_for_bootstrap
 
 def test_log_message_does_not_contain_bootstrapper(
     processed_log_entry_bootstrapper_error: ProcessedLogEntry,
-):
+) -> None:
     processed_log_entry_bootstrapper_error = dataclasses.replace(
         processed_log_entry_bootstrapper_error,
         message="some other message",

@@ -1,8 +1,9 @@
+import typing
 import pytest
 import datetime
 import dataclasses
 
-from lib.log_processor import ProcessedLogEntry
+from lib.log_processor.processed_log_entry import ProcessedLogEntry
 from lib.filters.execute_sql_filter import (
     execute_sql_filter,
 )
@@ -27,16 +28,16 @@ def processed_log_entry_execute_sql_error() -> ProcessedLogEntry:
 
 def test_log_is_skipped_when_its_from_cloud_run_revision_when_execute_sql_error(
     processed_log_entry_execute_sql_error: ProcessedLogEntry,
-):
+) -> None:
     log_is_skipped = execute_sql_filter(processed_log_entry_execute_sql_error)
     assert log_is_skipped is True
 
 
 def test_log_message_is_not_a_string_when_execute_sql_error(
     processed_log_entry_execute_sql_error: ProcessedLogEntry,
-):
+) -> None:
     processed_log_entry_execute_sql_error = dataclasses.replace(
-        processed_log_entry_execute_sql_error, message=1234
+        processed_log_entry_execute_sql_error, message=typing.cast(typing.Any, 1234)
     )
     log_is_skipped = execute_sql_filter(processed_log_entry_execute_sql_error)
 
@@ -45,7 +46,7 @@ def test_log_message_is_not_a_string_when_execute_sql_error(
 
 def test_log_message_is_not_skipped_when_it_does_not_contain_execute_sql_error(
     processed_log_entry_execute_sql_error: ProcessedLogEntry,
-):
+) -> None:
     processed_log_entry_execute_sql_error = dataclasses.replace(
         processed_log_entry_execute_sql_error,
         data=dict(methodName="dummy"),
@@ -57,7 +58,7 @@ def test_log_message_is_not_skipped_when_it_does_not_contain_execute_sql_error(
 
 def test_log_message_is_not_skipped_when_it_contains_severity_info(
     processed_log_entry_execute_sql_error: ProcessedLogEntry,
-):
+) -> None:
     processed_log_entry_execute_sql_error = dataclasses.replace(
         processed_log_entry_execute_sql_error, severity="INFO"
     )

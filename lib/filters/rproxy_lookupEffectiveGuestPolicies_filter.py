@@ -3,7 +3,7 @@ import logging
 from lib.log_processor import ProcessedLogEntry
 
 
-def rproxy_lookupEffectiveGuestPolicies_filter(log_entry: ProcessedLogEntry):
+def rproxy_lookupEffectiveGuestPolicies_filter(log_entry: ProcessedLogEntry) -> bool:
     if not isinstance(log_entry.platform, str):
         return False
 

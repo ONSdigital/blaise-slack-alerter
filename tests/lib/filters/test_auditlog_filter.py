@@ -3,7 +3,7 @@ import pytest
 import datetime
 import dataclasses
 
-from lib.log_processor import ProcessedLogEntry
+from lib.log_processor.processed_log_entry import ProcessedLogEntry
 from lib.filters.auditlog_filter import auditlog_filter
 
 
@@ -38,7 +38,7 @@ def process_log_entry() -> ProcessedLogEntry:
 )
 def test_log_is_skipped_when_methodname_contains_storage(
     process_log_entry: ProcessedLogEntry, method_name: str
-):
+) -> None:
     cast(dict, process_log_entry.data)["methodName"] = method_name
     log_is_skipped = auditlog_filter(process_log_entry)
 
@@ -47,7 +47,7 @@ def test_log_is_skipped_when_methodname_contains_storage(
 
 def test_log_is_not_skipped_when_methodname_does_not_contain_storage(
     process_log_entry: ProcessedLogEntry,
-):
+) -> None:
     cast(dict, process_log_entry.data)["methodName"] = "method"
     log_is_skipped = auditlog_filter(process_log_entry)
 
@@ -56,7 +56,7 @@ def test_log_is_not_skipped_when_methodname_does_not_contain_storage(
 
 def test_log_is_not_skipped_when_type_is_not_auditlog(
     process_log_entry: ProcessedLogEntry,
-):
+) -> None:
     cast(dict, process_log_entry.data)["@type"] = "not_audit_log"
     log_is_skipped = auditlog_filter(process_log_entry)
 
@@ -65,7 +65,7 @@ def test_log_is_not_skipped_when_type_is_not_auditlog(
 
 def test_log_is_not_skipped_when_methjod_name_does_not_exist(
     process_log_entry: ProcessedLogEntry,
-):
+) -> None:
     del cast(dict, process_log_entry.data)["methodName"]
     log_is_skipped = auditlog_filter(process_log_entry)
 

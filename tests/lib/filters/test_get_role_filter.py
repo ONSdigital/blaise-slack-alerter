@@ -1,8 +1,9 @@
+import typing
 import pytest
 import datetime
 import dataclasses
 
-from lib.log_processor import ProcessedLogEntry
+from lib.log_processor.processed_log_entry import ProcessedLogEntry
 from lib.filters.get_role_filter import (
     get_role_filter,
 )
@@ -27,16 +28,16 @@ def processed_log_entry_get_role() -> ProcessedLogEntry:
 
 def test_log_is_skipped_when_get_role(
     processed_log_entry_get_role: ProcessedLogEntry,
-):
+) -> None:
     log_is_skipped = get_role_filter(processed_log_entry_get_role)
     assert log_is_skipped is True
 
 
 def test_log_message_is_not_a_string_when_get_role(
     processed_log_entry_get_role: ProcessedLogEntry,
-):
+) -> None:
     processed_log_entry_get_role = dataclasses.replace(
-        processed_log_entry_get_role, message=1234
+        processed_log_entry_get_role, message=typing.cast(typing.Any, 1234)
     )
     log_is_skipped = get_role_filter(processed_log_entry_get_role)
 
@@ -45,7 +46,7 @@ def test_log_message_is_not_a_string_when_get_role(
 
 def test_log_message_is_not_skipped_when_it_does_not_contain_get_role(
     processed_log_entry_get_role: ProcessedLogEntry,
-):
+) -> None:
     processed_log_entry_get_role = dataclasses.replace(
         processed_log_entry_get_role, message="dummy"
     )
@@ -56,7 +57,7 @@ def test_log_message_is_not_skipped_when_it_does_not_contain_get_role(
 
 def test_log_message_is_not_skipped_when_it_contains_severity_info(
     processed_log_entry_get_role: ProcessedLogEntry,
-):
+) -> None:
     processed_log_entry_get_role = dataclasses.replace(
         processed_log_entry_get_role, severity="INFO"
     )

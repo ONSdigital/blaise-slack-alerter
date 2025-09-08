@@ -1,8 +1,11 @@
 import logging
+from typing import Optional
 from lib.log_processor import ProcessedLogEntry
 
 
-def scc_dormant_accounts_prod_alert_filter(log_entry: ProcessedLogEntry) -> bool:
+def scc_dormant_accounts_prod_alert_filter(
+    log_entry: Optional[ProcessedLogEntry],
+) -> bool:
     """
     Filters out ERROR alerts from an organisation level service account.
 

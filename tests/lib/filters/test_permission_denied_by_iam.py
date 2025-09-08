@@ -1,8 +1,9 @@
+import typing
 import pytest
 import datetime
 import dataclasses
 
-from lib.log_processor import ProcessedLogEntry
+from lib.log_processor.processed_log_entry import ProcessedLogEntry
 from lib.filters.permission_denied_by_iam_filter import permission_denied_by_iam_filter
 
 
@@ -30,7 +31,7 @@ def processed_log_entry_permission_denied_by_iam_error() -> ProcessedLogEntry:
 
 def test_log_is_skipped_when_its_from_cloud_run_revision_when_permission_denied_by_iam_error(
     processed_log_entry_permission_denied_by_iam_error: ProcessedLogEntry,
-):
+) -> None:
     log_is_skipped = permission_denied_by_iam_filter(
         processed_log_entry_permission_denied_by_iam_error
     )
@@ -39,9 +40,10 @@ def test_log_is_skipped_when_its_from_cloud_run_revision_when_permission_denied_
 
 def test_log_message_is_not_a_string_when_permission_denied_by_iam_error(
     processed_log_entry_permission_denied_by_iam_error: ProcessedLogEntry,
-):
+) -> None:
     processed_log_entry_permission_denied_by_iam_error = dataclasses.replace(
-        processed_log_entry_permission_denied_by_iam_error, message=1234
+        processed_log_entry_permission_denied_by_iam_error,
+        message=typing.cast(typing.Any, 1234),
     )
     log_is_skipped = permission_denied_by_iam_filter(
         processed_log_entry_permission_denied_by_iam_error
@@ -52,7 +54,7 @@ def test_log_message_is_not_a_string_when_permission_denied_by_iam_error(
 
 def test_log_message_is_not_skipped_when_it_does_not_contain_permission_denied_by_iam_error(
     processed_log_entry_permission_denied_by_iam_error: ProcessedLogEntry,
-):
+) -> None:
     processed_log_entry_permission_denied_by_iam_error = dataclasses.replace(
         processed_log_entry_permission_denied_by_iam_error, message="foo"
     )
@@ -65,7 +67,7 @@ def test_log_message_is_not_skipped_when_it_does_not_contain_permission_denied_b
 
 def test_log_message_is_not_skipped_when_it_contains_severity_info(
     processed_log_entry_permission_denied_by_iam_error: ProcessedLogEntry,
-):
+) -> None:
     processed_log_entry_permission_denied_by_iam_error = dataclasses.replace(
         processed_log_entry_permission_denied_by_iam_error, severity="INFO"
     )

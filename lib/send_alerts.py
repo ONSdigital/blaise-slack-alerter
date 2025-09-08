@@ -47,7 +47,7 @@ from lib.filters.fluent_bit_maintenance_filter import fluent_bit_maintenance_fil
 from lib.filters.get_role_filter import get_role_filter
 
 
-def log_entry_skipped(log_entry: ProcessedLogEntry):
+def log_entry_skipped(log_entry: ProcessedLogEntry) -> bool:
     filters = [
         sandbox_filter,
         all_preprod_and_training_alerts_except_erroneous_questionnaire_filter,
@@ -82,7 +82,7 @@ def log_entry_skipped(log_entry: ProcessedLogEntry):
 
 
 def send_alerts(
-    event,
+    event: dict,
     alerter: Alerter,
     app_log_payload_factories: List[CreateAppLogPayloadFromLogEntry],
 ) -> str:

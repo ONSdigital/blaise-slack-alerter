@@ -2,9 +2,10 @@ import base64
 import json
 import logging
 import os
-from typing import Union
+from typing import Any, Callable, Union
 
 import pytest
+from lib.log_processor.processed_log_entry import ProcessedLogEntry
 import pytz
 import requests_mock
 from dateutil.parser import parse
@@ -39,7 +40,7 @@ def run_around_tests():
 
 
 @pytest.fixture
-def context():
+def context() -> dict:
     return dict()
 
 
@@ -58,8 +59,10 @@ def number_of_http_calls(http_mock):
 
 
 @pytest.fixture()
-def run_slack_alerter(context, http_mock):
-    def run(event):
+def run_slack_alerter(
+    context: dict[str, str], http_mock: requests_mock.mocker.Mocker
+) -> Callable[[Any], str]:
+    def run(event: Any) -> str:
         http_mock.post("https://slack.co/webhook/1234")
         return send_slack_alert(event, context)
 
@@ -67,8 +70,8 @@ def run_slack_alerter(context, http_mock):
 
 
 @pytest.fixture()
-def get_webhook_payload(http_mock):
-    def get():
+def get_webhook_payload(http_mock: requests_mock.mocker.Mocker) -> Callable[[], str]:
+    def get() -> str:
         assert (
             http_mock.call_count is 1
         ), f"Expected one call to the Slack webhook, got {http_mock.call_count}"
@@ -87,7 +90,9 @@ def create_event(data: Union[dict, str]) -> dict:
     }
 
 
-def test_bad_pubsub_envelope(get_webhook_payload, run_slack_alerter):
+def test_bad_pubsub_envelope(
+    get_webhook_payload: Callable, run_slack_alerter: Callable
+) -> None:
     event = create_event("")
     del event["data"]
 
@@ -117,7 +122,9 @@ def test_bad_pubsub_envelope(get_webhook_payload, run_slack_alerter):
     )
 
 
-def test_send_raw_string_slack_alert(get_webhook_payload, run_slack_alerter):
+def test_send_raw_string_slack_alert(
+    get_webhook_payload: Callable, run_slack_alerter: Callable
+) -> None:
     event = create_event("This is a raw string message")
     response = run_slack_alerter(event)
 
@@ -145,7 +152,9 @@ def test_send_raw_string_slack_alert(get_webhook_payload, run_slack_alerter):
     )
 
 
-def test_send_gce_instance_slack_alert(run_slack_alerter, get_webhook_payload):
+def test_send_gce_instance_slack_alert(
+    run_slack_alerter: Callable, get_webhook_payload: Callable
+) -> None:
     gce_instance_log_entry = {
         "jsonPayload": {
             "computer_name": "vm-mgmt",
@@ -200,7 +209,9 @@ def test_send_gce_instance_slack_alert(run_slack_alerter, get_webhook_payload):
     )
 
 
-def test_send_cloud_run_revision_slack_alert(run_slack_alerter, get_webhook_payload):
+def test_send_cloud_run_revision_slack_alert(
+    run_slack_alerter: Callable, get_webhook_payload: Callable
+) -> None:
     cloud_run_revision_log_entry = {
         "receiveTimestamp": "2022-07-22T20:36:22.219592062Z",
         "resource": {
@@ -251,8 +262,8 @@ def test_send_cloud_run_revision_slack_alert(run_slack_alerter, get_webhook_payl
 
 
 def test_send_cloud_run_revision_timeout_slack_alert(
-    run_slack_alerter, get_webhook_payload
-):
+    run_slack_alerter: Callable, get_webhook_payload: Callable
+) -> None:
     cloud_run_revision_log_entry = {
         "receiveTimestamp": "2022-12-15T04:09:02.428095884Z",
         "resource": {
@@ -302,8 +313,11 @@ def test_send_cloud_run_revision_timeout_slack_alert(
 
 
 def test_send_app_engine_slack_alert(
-    run_slack_alerter, caplog, log_matching, get_webhook_payload
-):
+    run_slack_alerter: Callable,
+    caplog: Any,
+    log_matching: Any,
+    get_webhook_payload: Callable,
+) -> None:
     app_engine_log_entry = {
         "protoPayload": {
             "host": "0.20220803t140821.app-name.project-name.nw.r.appspot.com",
@@ -374,8 +388,11 @@ def test_send_app_engine_slack_alert(
 
 
 def test_send_audit_log_slack_alert(
-    run_slack_alerter, caplog, log_matching, get_webhook_payload
-):
+    run_slack_alerter: Callable,
+    caplog: Any,
+    log_matching: Any,
+    get_webhook_payload: Callable,
+) -> None:
     audit_log_log_entry = {
         "protoPayload": {
             "@type": "type.googleapis.com/google.cloud.audit.AuditLog",
@@ -439,8 +456,8 @@ def test_send_audit_log_slack_alert(
 
 
 def test_send_erroneous_questionnaire_for_preprod_alerts(
-    run_slack_alerter, get_webhook_payload
-):
+    run_slack_alerter: Callable, get_webhook_payload: Callable
+) -> None:
     # arrange
     example_log_entry = {
         "insertId": "6538efc60003b62c3cbdd1b4",
@@ -515,7 +532,9 @@ def test_send_erroneous_questionnaire_for_preprod_alerts(
     )
 
 
-def test_skip_data_delivery_json_error(run_slack_alerter, number_of_http_calls, caplog):
+def test_skip_data_delivery_json_error(
+    run_slack_alerter: Callable, number_of_http_calls: Callable, caplog: Any
+) -> None:
     # arrange
     example_log_entry = {
         "insertId": "yhmlfg26ror8hccek",
@@ -566,7 +585,9 @@ def test_skip_data_delivery_json_error(run_slack_alerter, number_of_http_calls, 
     ) in caplog.record_tuples
 
 
-def test_skip_audit_logs_error(run_slack_alerter, number_of_http_calls, caplog):
+def test_skip_audit_logs_error(
+    run_slack_alerter: Callable, number_of_http_calls: Callable, caplog: Any
+) -> None:
     # arrange
     example_log_entry = {
         "protoPayload": {
@@ -625,8 +646,8 @@ def test_skip_audit_logs_error(run_slack_alerter, number_of_http_calls, caplog):
 
 
 def test_skip_osconfig_agent_unexpected_end_of_json_input_error(
-    run_slack_alerter, number_of_http_calls, caplog
-):
+    run_slack_alerter: Callable, number_of_http_calls: Callable, caplog: Any
+) -> None:
     # arrange
     example_log_entry = {
         "insertId": "ak4u0bf38r70c",
@@ -673,7 +694,9 @@ def test_skip_osconfig_agent_unexpected_end_of_json_input_error(
     ) in caplog.record_tuples
 
 
-def test_skip_agent_connect_error(run_slack_alerter, number_of_http_calls, caplog):
+def test_skip_agent_connect_error(
+    run_slack_alerter: Callable, number_of_http_calls: Callable, caplog: Any
+) -> None:
     # arrange
     example_log_entry = {
         "insertId": "qysctppk7v9cttt1g",
@@ -725,8 +748,8 @@ def test_skip_agent_connect_error(run_slack_alerter, number_of_http_calls, caplo
 
 
 def test_skip_rproxy_lookupEffectiveGuestPolicies_error(
-    run_slack_alerter, number_of_http_calls, caplog
-):
+    run_slack_alerter: Callable, number_of_http_calls: Callable, caplog: Any
+) -> None:
     # arrange
     example_log_entry = {
         "insertId": "i1tjpyftm0qks",
@@ -769,8 +792,8 @@ def test_skip_rproxy_lookupEffectiveGuestPolicies_error(
 
 
 def test_skip_watching_metadata_invalid_character_error(
-    run_slack_alerter, number_of_http_calls, caplog
-):
+    run_slack_alerter: Callable, number_of_http_calls: Callable, caplog: Any
+) -> None:
     # arrange
     example_log_entry = {
         "insertId": "19s550gfh2251m",
@@ -815,8 +838,8 @@ def test_skip_watching_metadata_invalid_character_error(
 
 
 def test_skip_watching_metadata_invalid_character_second_version_error(
-    run_slack_alerter, number_of_http_calls, caplog
-):
+    run_slack_alerter: Callable, number_of_http_calls: Callable, caplog: Any
+) -> None:
     # arrange
     example_log_entry = {
         "insertId": "hohgijl11degyrvc0",
@@ -868,8 +891,8 @@ def test_skip_watching_metadata_invalid_character_second_version_error(
 
 
 def test_skip_watching_ip_space_exhausted_error(
-    run_slack_alerter, number_of_http_calls, caplog
-):
+    run_slack_alerter: Callable, number_of_http_calls: Callable, caplog: Any
+) -> None:
     # arrange
     example_log_entry = {
         "protoPayload": {
@@ -943,8 +966,8 @@ def test_skip_watching_ip_space_exhausted_error(
 
 
 def test_skip_sandbox_alerts_skips_alerts_for_sandboxes(
-    run_slack_alerter, number_of_http_calls, caplog
-):
+    run_slack_alerter: Callable, number_of_http_calls: Callable, caplog: Any
+) -> None:
     # arrange
     example_log_entry = {
         "insertId": "65675a1e000906c02cfcdb54",
@@ -991,8 +1014,8 @@ def test_skip_sandbox_alerts_skips_alerts_for_sandboxes(
 
 
 def test_skip_sandbox_alerts_does_not_skip_alerts_for_formal_environments(
-    run_slack_alerter, number_of_http_calls, caplog
-):
+    run_slack_alerter: Callable, number_of_http_calls: Callable, caplog: Any
+) -> None:
     # arrange
     example_log_entry = {
         "insertId": "65675a1e000906c02cfcdb54",
@@ -1039,8 +1062,8 @@ def test_skip_sandbox_alerts_does_not_skip_alerts_for_formal_environments(
 
 
 def test_skip_all_preprod_and_training_alerts_except_erroneous_questionnaire(
-    run_slack_alerter, number_of_http_calls, caplog
-):
+    run_slack_alerter: Callable, number_of_http_calls: Callable, caplog: Any
+) -> None:
     # arrange
     example_log_entry = {
         "protoPayload": {
@@ -1127,8 +1150,11 @@ def test_skip_all_preprod_and_training_alerts_except_erroneous_questionnaire(
     ],
 )
 def test_skip_all_prod_aborted_where_no_available_instance_alerts(
-    run_slack_alerter, number_of_http_calls, caplog, application_input
-):
+    run_slack_alerter: Callable,
+    number_of_http_calls: Callable,
+    caplog: Any,
+    application_input: str,
+) -> None:
     # arrange
     example_log_entry = {
         "textPayload": "The request was aborted because there was no available instance. Additional troubleshooting documentation can be found at: https://cloud.google.com/functions/docs/troubleshooting#scalability",
@@ -1177,8 +1203,8 @@ def test_skip_all_prod_aborted_where_no_available_instance_alerts(
 
 
 def test_skip_invalid_login_attempt_alerts(
-    run_slack_alerter, number_of_http_calls, caplog
-):
+    run_slack_alerter: Callable, number_of_http_calls: Callable, caplog: Any
+) -> None:
     # arrange
     example_log_entry = {
         "protoPayload": {
@@ -1243,8 +1269,8 @@ def test_skip_invalid_login_attempt_alerts(
 
 
 def test_skip_requested_entity_was_not_found_alerts(
-    run_slack_alerter, number_of_http_calls, caplog
-):
+    run_slack_alerter: Callable, number_of_http_calls: Callable, caplog: Any
+) -> None:
     # arrange
     example_log_entry = {
         "protoPayload": {
@@ -1316,7 +1342,9 @@ def test_skip_requested_entity_was_not_found_alerts(
     ) in caplog.record_tuples
 
 
-def test_skip_execute_sql_alerts_error(run_slack_alerter, number_of_http_calls, caplog):
+def test_skip_execute_sql_alerts_error(
+    run_slack_alerter: Callable, number_of_http_calls: Callable, caplog: Any
+) -> None:
     # arrange
     example_log_entry = {
         "protoPayload": {
@@ -1388,7 +1416,9 @@ def test_skip_execute_sql_alerts_error(run_slack_alerter, number_of_http_calls, 
     ) in caplog.record_tuples
 
 
-def test_skip_paramiko_alerts_error(run_slack_alerter, number_of_http_calls, caplog):
+def test_skip_paramiko_alerts_error(
+    run_slack_alerter: Callable, number_of_http_calls: Callable, caplog: Any
+) -> None:
     # arrange
     example_log_entry = {
         "textPayload": 'Traceback (most recent call last):\n  File "/layers/google.python.pip/pip/lib/python3.9/site-packages/paramiko/sftp_file.py", line 76, in __del__\n    self._close(async_=True)\n  File "/layers/google.python.pip/pip/lib/python3.9/site-packages/paramiko/sftp_file.py", line 97, in _close\n    BufferedFile.close(self)\n  File "/layers/google.python.pip/pip/lib/python3.9/site-packages/paramiko/file.py", line 85, in close\n    self.flush()\n  File "/layers/google.python.pip/pip/lib/python3.9/site-packages/paramiko/file.py", line 93, in flush\n    self._write_all(self._wbuffer.getvalue())\nValueError: I/O operation on closed file.',
@@ -1430,7 +1460,9 @@ def test_skip_paramiko_alerts_error(run_slack_alerter, number_of_http_calls, cap
     ) in caplog.record_tuples
 
 
-def test_skip_bootstrapper_alerts(run_slack_alerter, number_of_http_calls, caplog):
+def test_skip_bootstrapper_alerts(
+    run_slack_alerter: Callable, number_of_http_calls: Callable, caplog: Any
+) -> None:
     # arrange
     example_log_entry = {
         "insertId": "g4ydtwlpwtc5vggzg",
@@ -1483,8 +1515,8 @@ def test_skip_bootstrapper_alerts(run_slack_alerter, number_of_http_calls, caplo
 
 
 def test_skip_generic_not_found_alerts_latest(
-    run_slack_alerter, number_of_http_calls, caplog
-):
+    run_slack_alerter: Callable, number_of_http_calls: Callable, caplog: Any
+) -> None:
     # arrange
     example_log_entry = {
         "protoPayload": {
@@ -1564,8 +1596,8 @@ def test_skip_generic_not_found_alerts_latest(
 
 
 def test_skip_generic_not_found_alerts_version(
-    run_slack_alerter, number_of_http_calls, caplog
-):
+    run_slack_alerter: Callable, number_of_http_calls: Callable, caplog: Any
+) -> None:
     # arrange
     example_log_entry = {
         "protoPayload": {
@@ -1645,8 +1677,8 @@ def test_skip_generic_not_found_alerts_version(
 
 
 def test_skip_generic_not_found_alerts_with_uuid(
-    run_slack_alerter, number_of_http_calls, caplog
-):
+    run_slack_alerter: Callable, number_of_http_calls: Callable, caplog: Any
+) -> None:
     # arrange
     example_log_entry = {
         "protoPayload": {
@@ -1725,7 +1757,9 @@ def test_skip_generic_not_found_alerts_with_uuid(
     ) in caplog.record_tuples
 
 
-def test_skip_socket_exception_alerts(run_slack_alerter, number_of_http_calls, caplog):
+def test_skip_socket_exception_alerts(
+    run_slack_alerter: Callable, number_of_http_calls: Callable, caplog: Any
+) -> None:
     # arrange
     example_log_entry = {
         "textPayload": "Socket exception: Connection reset by peer (104)",
@@ -1773,8 +1807,8 @@ def test_skip_socket_exception_alerts(run_slack_alerter, number_of_http_calls, c
 
 
 def test_skip_scc_dormant_accounts_prod_alert_service_account_keys_error(
-    run_slack_alerter, number_of_http_calls, caplog
-):
+    run_slack_alerter: Callable, number_of_http_calls: Callable, caplog: Any
+) -> None:
     # arrange
     example_log_entry = {
         "protoPayload": {
@@ -1853,8 +1887,8 @@ def test_skip_scc_dormant_accounts_prod_alert_service_account_keys_error(
 
 
 def test_skip_scc_dormant_accounts_prod_alert_service_account_not_found_error(
-    run_slack_alerter, number_of_http_calls, caplog
-):
+    run_slack_alerter: Callable, number_of_http_calls: Callable, caplog: Any
+) -> None:
     # arrange
     example_log_entry = {
         "protoPayload": {
@@ -1930,7 +1964,9 @@ def test_skip_scc_dormant_accounts_prod_alert_service_account_not_found_error(
     ) in caplog.record_tuples
 
 
-def test_skip_permission_denied_by_iam(run_slack_alerter, number_of_http_calls, caplog):
+def test_skip_permission_denied_by_iam(
+    run_slack_alerter: Callable, number_of_http_calls: Callable, caplog: Any
+) -> None:
     # arrange
     example_log_entry = {
         "protoPayload": {
@@ -1994,8 +2030,8 @@ def test_skip_permission_denied_by_iam(run_slack_alerter, number_of_http_calls, 
 
 
 def test_skip_org_policy_constraint_physicalZoneSeparation_not_found_alerts(
-    run_slack_alerter, number_of_http_calls, caplog
-):
+    run_slack_alerter: Callable, number_of_http_calls: Callable, caplog: Any
+) -> None:
     # arrange
     example_log_entry = {
         "protoPayload": {
@@ -2062,8 +2098,8 @@ def test_skip_org_policy_constraint_physicalZoneSeparation_not_found_alerts(
 
 
 def test_skip_org_policy_constraint_disableServiceAccountHmacKeyCreation_not_found_alerts(
-    run_slack_alerter, number_of_http_calls, caplog
-):
+    run_slack_alerter: Callable, number_of_http_calls: Callable, caplog: Any
+) -> None:
     # arrange
     example_log_entry = {
         "protoPayload": {
@@ -2139,11 +2175,11 @@ def test_skip_org_policy_constraint_disableServiceAccountHmacKeyCreation_not_fou
     ],
 )
 def test_skip_google_compute_engine_compat_manager_service_terminated_during_maintenance_window(
-    run_slack_alerter,
-    number_of_http_calls,
-    caplog,
-    timestamp,
-):
+    run_slack_alerter: Callable,
+    number_of_http_calls: Callable,
+    caplog: Any,
+    timestamp: str,
+) -> None:
     # arrange - Friday during maintenance window
     example_log_entry = {
         "insertId": "test1a2sfo7e84rqe",
@@ -2219,11 +2255,11 @@ def test_skip_google_compute_engine_compat_manager_service_terminated_during_mai
     ],
 )
 def test_skip_google_compute_engine_agent_manager_service_terminated_during_maintenance_window(
-    run_slack_alerter,
-    number_of_http_calls,
-    caplog,
-    timestamp,
-):
+    run_slack_alerter: Callable,
+    number_of_http_calls: Callable,
+    caplog: Any,
+    timestamp: str,
+) -> None:
     # arrange - Friday during maintenance window
     example_log_entry = {
         "insertId": "testyfq1u7e4umi2",
@@ -2299,11 +2335,11 @@ def test_skip_google_compute_engine_agent_manager_service_terminated_during_main
     ],
 )
 def test_skip_gce_guest_agent_metadata_context_canceled_during_maintenance_window(
-    run_slack_alerter,
-    number_of_http_calls,
-    caplog,
-    timestamp,
-):
+    run_slack_alerter: Callable,
+    number_of_http_calls: Callable,
+    caplog: Any,
+    timestamp: str,
+) -> None:
     # arrange - Friday during maintenance window
     example_log_entry = {
         "insertId": "testjhigkve7mleb",
@@ -2354,8 +2390,8 @@ def test_skip_gce_guest_agent_metadata_context_canceled_during_maintenance_windo
 
 
 def test_allows_google_compute_engine_service_terminated_outside_maintenance_window(
-    run_slack_alerter, number_of_http_calls, caplog
-):
+    run_slack_alerter: Callable, number_of_http_calls: Callable, caplog: Any
+) -> None:
     # arrange - Tuesday at 10:00 AM UTC (outside maintenance window)
     example_log_entry = {
         "insertId": "test1a2sfo7e84rqe",
@@ -2419,11 +2455,11 @@ def test_allows_google_compute_engine_service_terminated_outside_maintenance_win
     ],
 )
 def test_skip_fluent_bit_tls_error_during_maintenance_window(
-    run_slack_alerter,
-    number_of_http_calls,
-    caplog,
-    timestamp,
-):
+    run_slack_alerter: Callable,
+    number_of_http_calls: Callable,
+    caplog: Any,
+    timestamp: str,
+) -> None:
     # arrange - Friday during maintenance window
     example_log_entry = {
         "insertId": "testnmg0smfqwksg9",
@@ -2471,11 +2507,11 @@ def test_skip_fluent_bit_tls_error_during_maintenance_window(
     ],
 )
 def test_skip_fluent_bit_syscall_error_during_maintenance_window(
-    run_slack_alerter,
-    number_of_http_calls,
-    caplog,
-    timestamp,
-):
+    run_slack_alerter: Callable,
+    number_of_http_calls: Callable,
+    caplog: Any,
+    timestamp: str,
+) -> None:
     # arrange - Friday during maintenance window
     example_log_entry = {
         "insertId": "test14j6phjfqtmdxg",
@@ -2523,11 +2559,11 @@ def test_skip_fluent_bit_syscall_error_during_maintenance_window(
     ],
 )
 def test_skip_fluent_bit_broken_connection_during_maintenance_window(
-    run_slack_alerter,
-    number_of_http_calls,
-    caplog,
-    timestamp,
-):
+    run_slack_alerter: Callable,
+    number_of_http_calls: Callable,
+    caplog: Any,
+    timestamp: str,
+) -> None:
     # arrange - Friday during maintenance window
     example_log_entry = {
         "insertId": "test14j6phjfqtmdxh",
@@ -2566,8 +2602,8 @@ def test_skip_fluent_bit_broken_connection_during_maintenance_window(
 
 
 def test_allows_fluent_bit_errors_outside_maintenance_window(
-    run_slack_alerter, number_of_http_calls, caplog
-):
+    run_slack_alerter: Callable, number_of_http_calls: Callable, caplog: Any
+) -> None:
     # arrange - Tuesday at 10:00 AM UTC (outside maintenance window)
     example_log_entry = {
         "insertId": "testnmg0smfqwksg9_outside",
@@ -2614,11 +2650,11 @@ def test_allows_fluent_bit_errors_outside_maintenance_window(
     ],
 )
 def test_skip_fluent_bit_winlog_security_error_during_maintenance_window(
-    run_slack_alerter,
-    number_of_http_calls,
-    caplog,
-    timestamp,
-):
+    run_slack_alerter: Callable,
+    number_of_http_calls: Callable,
+    caplog: Any,
+    timestamp: str,
+) -> None:
     # arrange - Friday during maintenance window
     example_log_entry = {
         "insertId": "1rjve2ff2jo6ma",
@@ -2666,11 +2702,11 @@ def test_skip_fluent_bit_winlog_security_error_during_maintenance_window(
     ],
 )
 def test_skip_fluent_bit_winlog_system_error_during_maintenance_window(
-    run_slack_alerter,
-    number_of_http_calls,
-    caplog,
-    timestamp,
-):
+    run_slack_alerter: Callable,
+    number_of_http_calls: Callable,
+    caplog: Any,
+    timestamp: str,
+) -> None:
     # arrange - Friday during maintenance window
     example_log_entry = {
         "insertId": "2abc3def4ghi5jk",
@@ -2718,11 +2754,11 @@ def test_skip_fluent_bit_winlog_system_error_during_maintenance_window(
     ],
 )
 def test_skip_fluent_bit_winlog_cannot_read_error_during_maintenance_window(
-    run_slack_alerter,
-    number_of_http_calls,
-    caplog,
-    timestamp,
-):
+    run_slack_alerter: Callable,
+    number_of_http_calls: Callable,
+    caplog: Any,
+    timestamp: str,
+) -> None:
     # arrange - Friday during maintenance window
     example_log_entry = {
         "insertId": "3lmn4opq5rst6uv",
@@ -2761,8 +2797,8 @@ def test_skip_fluent_bit_winlog_cannot_read_error_during_maintenance_window(
 
 
 def test_allows_fluent_bit_winlog_errors_outside_maintenance_window(
-    run_slack_alerter, number_of_http_calls, caplog
-):
+    run_slack_alerter: Callable, number_of_http_calls: Callable, caplog: Any
+) -> None:
     # arrange - Tuesday at 10:00 AM UTC (outside maintenance window)
     example_log_entry = {
         "insertId": "1rjve2ff2jo6ma_outside",
@@ -2799,7 +2835,9 @@ def test_allows_fluent_bit_winlog_errors_outside_maintenance_window(
     assert len(skip_messages) == 0
 
 
-def test_skip_get_role_alerts_latest(run_slack_alerter, number_of_http_calls, caplog):
+def test_skip_get_role_alerts_latest(
+    run_slack_alerter: Callable, number_of_http_calls: Callable, caplog: Any
+) -> None:
     # arrange - Tuesday at 10:00 AM UTC (outside maintenance window)
     example_log_entry = {
         "protoPayload": {

@@ -9,7 +9,8 @@ import pytz
 
 from lib import send_alerts
 from lib.alerter import Alerter
-from lib.log_processor import ProcessedLogEntry, APP_LOG_PAYLOAD_FACTORIES
+from lib.log_processor.processed_log_entry import ProcessedLogEntry
+from lib.log_processor import APP_LOG_PAYLOAD_FACTORIES
 from lib.slack.slack_message import SlackMessage
 
 
@@ -19,7 +20,7 @@ def message():
 
 
 @pytest.fixture
-def alerter(message) -> Mock:
+def alerter(message: str) -> Mock:
     alerter = Mock(spec=Alerter)
     alerter.create_alert.return_value = message
     alerter.create_raw_alert.return_value = message

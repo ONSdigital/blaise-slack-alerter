@@ -5,7 +5,7 @@ import pytz
 
 from lib.cloud_logging import LogEntry, PayloadType
 from lib.log_processor import AppLogPayload
-from lib.log_processor import ProcessedLogEntry
+from lib.log_processor.processed_log_entry import ProcessedLogEntry
 from lib.log_processor.processed_log_entry import create_processed_log_entry
 
 

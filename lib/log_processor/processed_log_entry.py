@@ -10,7 +10,7 @@ from lib.log_processor.app_log_payload import AppLogPayload
 
 @dataclass(frozen=True)
 class ProcessedLogEntry:
-    message: str
+    message: Optional[str]
     data: Union[str, Dict[str, Any]] = field(
         default_factory=cast(Callable[[], Dict[str, Any]], dict)
     )

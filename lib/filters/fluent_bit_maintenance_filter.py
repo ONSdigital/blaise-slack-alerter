@@ -1,10 +1,11 @@
 import logging
+from typing import Optional
 from lib.log_processor import ProcessedLogEntry
 from lib.utilities.weekly_maintenance_window import is_in_friday_maintenance_window
 from lib.utilities.log_validation import validate_log_entry_fields
 
 
-def fluent_bit_maintenance_filter(log_entry: ProcessedLogEntry) -> bool:
+def fluent_bit_maintenance_filter(log_entry: Optional[ProcessedLogEntry]) -> bool:
     """
     Filter fluent-bit related errors during weekly maintenance windows.
     These errors are expected during VM maintenance when connections are disrupted.
@@ -58,9 +59,9 @@ def fluent_bit_maintenance_filter(log_entry: ProcessedLogEntry) -> bool:
         "[error] [in_winlog]",
     ]
 
+    message = log_entry.message or ""
     message_matches = any(
-        indicator in log_entry.message
-        for indicator in fluent_bit_maintenance_indicators
+        indicator in message for indicator in fluent_bit_maintenance_indicators
     )
 
     if message_matches:

@@ -1,8 +1,9 @@
+import typing
 import pytest
 import datetime
 import dataclasses
 
-from lib.log_processor import ProcessedLogEntry
+from lib.log_processor.processed_log_entry import ProcessedLogEntry
 from lib.filters.generic_not_found_filter import generic_not_found_filter
 
 
@@ -59,7 +60,7 @@ def processed_log_entry_generic_not_found_error_with_uuid() -> ProcessedLogEntry
 
 def test_log_is_not_skipped_when_its_first_run_generic_not_found_error_latest(
     processed_log_entry_generic_not_found_error_latest: ProcessedLogEntry,
-):
+) -> None:
     log_is_skipped = generic_not_found_filter(
         processed_log_entry_generic_not_found_error_latest
     )
@@ -68,7 +69,7 @@ def test_log_is_not_skipped_when_its_first_run_generic_not_found_error_latest(
 
 def test_log_is_not_skipped_when_its_first_run_generic_not_found_error_version(
     processed_log_entry_generic_not_found_error_version: ProcessedLogEntry,
-):
+) -> None:
     log_is_skipped = generic_not_found_filter(
         processed_log_entry_generic_not_found_error_version
     )
@@ -77,7 +78,7 @@ def test_log_is_not_skipped_when_its_first_run_generic_not_found_error_version(
 
 def test_log_is_not_skipped_when_its_first_run_generic_not_found_error_with_uuid(
     processed_log_entry_generic_not_found_error_with_uuid: ProcessedLogEntry,
-):
+) -> None:
     log_is_skipped = generic_not_found_filter(
         processed_log_entry_generic_not_found_error_with_uuid
     )
@@ -86,7 +87,7 @@ def test_log_is_not_skipped_when_its_first_run_generic_not_found_error_with_uuid
 
 def test_log_is_skipped_when_its_from_cloud_run_revision_when_generic_not_found_error_latest(
     processed_log_entry_generic_not_found_error_latest: ProcessedLogEntry,
-):
+) -> None:
     log_is_skipped = generic_not_found_filter(
         processed_log_entry_generic_not_found_error_latest
     )
@@ -95,7 +96,7 @@ def test_log_is_skipped_when_its_from_cloud_run_revision_when_generic_not_found_
 
 def test_log_is_skipped_when_its_from_cloud_run_revision_when_generic_not_found_error_version(
     processed_log_entry_generic_not_found_error_version: ProcessedLogEntry,
-):
+) -> None:
     log_is_skipped = generic_not_found_filter(
         processed_log_entry_generic_not_found_error_version
     )
@@ -104,7 +105,7 @@ def test_log_is_skipped_when_its_from_cloud_run_revision_when_generic_not_found_
 
 def test_log_is_skipped_when_its_from_cloud_run_revision_when_generic_not_found_error_with_uuid(
     processed_log_entry_generic_not_found_error_with_uuid: ProcessedLogEntry,
-):
+) -> None:
     log_is_skipped = generic_not_found_filter(
         processed_log_entry_generic_not_found_error_with_uuid
     )
@@ -113,9 +114,10 @@ def test_log_is_skipped_when_its_from_cloud_run_revision_when_generic_not_found_
 
 def test_log_message_is_not_a_string_when_generic_not_found_error_latest(
     processed_log_entry_generic_not_found_error_latest: ProcessedLogEntry,
-):
+) -> None:
     processed_log_entry_generic_not_found_error_latest = dataclasses.replace(
-        processed_log_entry_generic_not_found_error_latest, message=1234
+        processed_log_entry_generic_not_found_error_latest,
+        message=typing.cast(typing.Any, 1234),
     )
     log_is_skipped = generic_not_found_filter(
         processed_log_entry_generic_not_found_error_latest
@@ -126,9 +128,10 @@ def test_log_message_is_not_a_string_when_generic_not_found_error_latest(
 
 def test_log_message_is_not_a_string_when_generic_not_found_error_version(
     processed_log_entry_generic_not_found_error_version: ProcessedLogEntry,
-):
+) -> None:
     processed_log_entry_generic_not_found_error_version = dataclasses.replace(
-        processed_log_entry_generic_not_found_error_version, message=1234
+        processed_log_entry_generic_not_found_error_version,
+        message=typing.cast(typing.Any, 1234),
     )
     log_is_skipped = generic_not_found_filter(
         processed_log_entry_generic_not_found_error_version
@@ -139,9 +142,10 @@ def test_log_message_is_not_a_string_when_generic_not_found_error_version(
 
 def test_log_message_is_not_a_string_when_generic_not_found_error_with_uuid(
     processed_log_entry_generic_not_found_error_with_uuid: ProcessedLogEntry,
-):
+) -> None:
     processed_log_entry_generic_not_found_error_with_uuid = dataclasses.replace(
-        processed_log_entry_generic_not_found_error_with_uuid, message=1234
+        processed_log_entry_generic_not_found_error_with_uuid,
+        message=typing.cast(typing.Any, 1234),
     )
     log_is_skipped = generic_not_found_filter(
         processed_log_entry_generic_not_found_error_with_uuid
@@ -152,7 +156,7 @@ def test_log_message_is_not_a_string_when_generic_not_found_error_with_uuid(
 
 def test_log_message_is_not_skipped_when_it_does_not_contain_generic_not_found_error_latest(
     processed_log_entry_generic_not_found_error_latest: ProcessedLogEntry,
-):
+) -> None:
     processed_log_entry_generic_not_found_error_latest = dataclasses.replace(
         processed_log_entry_generic_not_found_error_latest, message="foo"
     )
@@ -165,7 +169,7 @@ def test_log_message_is_not_skipped_when_it_does_not_contain_generic_not_found_e
 
 def test_log_message_is_not_skipped_when_it_does_not_contain_generic_not_found_error_version(
     processed_log_entry_generic_not_found_error_version: ProcessedLogEntry,
-):
+) -> None:
     processed_log_entry_generic_not_found_error_version = dataclasses.replace(
         processed_log_entry_generic_not_found_error_version, message="foo"
     )
@@ -178,7 +182,7 @@ def test_log_message_is_not_skipped_when_it_does_not_contain_generic_not_found_e
 
 def test_log_message_is_not_skipped_when_it_does_not_contain_generic_not_found_error_with_uuid(
     processed_log_entry_generic_not_found_error_with_uuid: ProcessedLogEntry,
-):
+) -> None:
     processed_log_entry_generic_not_found_error_with_uuid = dataclasses.replace(
         processed_log_entry_generic_not_found_error_with_uuid, message="foo"
     )
@@ -191,7 +195,7 @@ def test_log_message_is_not_skipped_when_it_does_not_contain_generic_not_found_e
 
 def test_log_message_is_not_skipped_when_it_contains_severity_info_latest(
     processed_log_entry_generic_not_found_error_latest: ProcessedLogEntry,
-):
+) -> None:
     processed_log_entry_generic_not_found_error_latest = dataclasses.replace(
         processed_log_entry_generic_not_found_error_latest, severity="INFO"
     )
@@ -204,7 +208,7 @@ def test_log_message_is_not_skipped_when_it_contains_severity_info_latest(
 
 def test_log_message_is_not_skipped_when_it_contains_severity_info_version(
     processed_log_entry_generic_not_found_error_version: ProcessedLogEntry,
-):
+) -> None:
     processed_log_entry_generic_not_found_error_version = dataclasses.replace(
         processed_log_entry_generic_not_found_error_version, severity="INFO"
     )
@@ -217,7 +221,7 @@ def test_log_message_is_not_skipped_when_it_contains_severity_info_version(
 
 def test_log_message_is_not_skipped_when_it_contains_severity_info_with_uuid(
     processed_log_entry_generic_not_found_error_with_uuid: ProcessedLogEntry,
-):
+) -> None:
     processed_log_entry_generic_not_found_error_with_uuid = dataclasses.replace(
         processed_log_entry_generic_not_found_error_with_uuid, severity="INFO"
     )
@@ -230,7 +234,7 @@ def test_log_message_is_not_skipped_when_it_contains_severity_info_with_uuid(
 
 def test_log_message_is_skipped_for_different_uuids(
     processed_log_entry_generic_not_found_error_with_uuid: ProcessedLogEntry,
-):
+) -> None:
     uuids = [
         "75172346-8454-4d2a-9c43-68d11a246e9f",
         "d649b442-8700-4a12-9718-df3eb8b3cc47",
@@ -256,7 +260,7 @@ def test_log_message_is_skipped_for_different_uuids(
 
 def test_log_message_is_not_skipped_when_uuid_format_is_incorrect(
     processed_log_entry_generic_not_found_error_with_uuid: ProcessedLogEntry,
-):
+) -> None:
     processed_log_entry_generic_not_found_error_with_uuid = dataclasses.replace(
         processed_log_entry_generic_not_found_error_with_uuid,
         message='alert: ERROR: [AuditLog] generic::not_found: Failed to fetch "65618e9ec-3d4a-4778-a1d3-af58553134d3"',

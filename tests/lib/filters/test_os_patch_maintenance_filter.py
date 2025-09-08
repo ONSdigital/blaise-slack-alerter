@@ -3,7 +3,7 @@ import datetime
 import dataclasses
 from datetime import timezone
 from typing import Any, Dict, List
-from lib.log_processor import ProcessedLogEntry
+from lib.log_processor.processed_log_entry import ProcessedLogEntry
 from lib.filters.os_patch_maintenance_filter import os_patch_maintenance_filter
 
 
@@ -79,7 +79,7 @@ MAINTENANCE_LOG_PATTERNS: Dict[str, List[Dict[str, str]]] = {
 
 def test_os_patch_maintenance_log_patterns_are_skipped_during_maintenance(
     base_maintenance_log: ProcessedLogEntry,
-):
+) -> None:
     for pattern_name, pattern_tests in MAINTENANCE_LOG_PATTERNS.items():
         for pattern_test in pattern_tests:
             log = create_log_with_field(
@@ -94,7 +94,7 @@ def test_os_patch_maintenance_log_patterns_are_skipped_during_maintenance(
 
 def test_patterns_are_not_skipped_outside_maintenance_window(
     base_non_maintenance_log: ProcessedLogEntry,
-):
+) -> None:
     for pattern_name, pattern_tests in MAINTENANCE_LOG_PATTERNS.items():
         for pattern_test in pattern_tests[:1]:
             log = create_log_with_field(
@@ -109,7 +109,7 @@ def test_patterns_are_not_skipped_outside_maintenance_window(
 
 def test_maintenance_window_boundary_conditions(
     base_maintenance_log: ProcessedLogEntry,
-):
+) -> None:
     # Prod weekly maintenance window in July is 01:25-01:35 BST = 00:25-00:35 UTC
     test_times = [
         (datetime.datetime(2025, 7, 11, 0, 25, 0, tzinfo=timezone.utc), True),
@@ -134,7 +134,7 @@ def test_maintenance_window_boundary_conditions(
 
 def test_logs_not_matching_patterns_are_not_skipped(
     base_maintenance_log: ProcessedLogEntry,
-):
+) -> None:
     test_cases: List[Dict[str, Any]] = [
         {
             "message": "Some completely different error message",
@@ -186,7 +186,7 @@ def test_logs_not_matching_patterns_are_not_skipped(
 
 def test_invalid_or_missing_fields_are_not_skipped(
     base_maintenance_log: ProcessedLogEntry,
-):
+) -> None:
     invalid_variations: List[Dict[str, Any]] = [
         {"platform": "cloud_run_revision", "description": "Wrong platform type"},
         {"platform": 123, "description": "Invalid platform type"},
@@ -207,7 +207,7 @@ def test_invalid_or_missing_fields_are_not_skipped(
 
 def test_specific_field_combinations_are_not_skipped(
     base_maintenance_log: ProcessedLogEntry,
-):
+) -> None:
     assert (
         os_patch_maintenance_filter(
             create_log_with_field(base_maintenance_log, platform=None)

@@ -1,8 +1,9 @@
+import typing
 import pytest
 import datetime
 import dataclasses
 
-from lib.log_processor import ProcessedLogEntry
+from lib.log_processor.processed_log_entry import ProcessedLogEntry
 from lib.filters.invalid_login_attempt_filter import invalid_login_attempt_filter
 
 
@@ -42,7 +43,7 @@ def processed_log_entry_invalid_login_attempt_error_GCP() -> ProcessedLogEntry:
 
 def test_log_is_not_skipped_when_its_first_run_invalid_login_attempt_error_Slack(
     processed_log_entry_invalid_login_attempt_error_Slack: ProcessedLogEntry,
-):
+) -> None:
     log_is_skipped = invalid_login_attempt_filter(
         processed_log_entry_invalid_login_attempt_error_Slack
     )
@@ -51,7 +52,7 @@ def test_log_is_not_skipped_when_its_first_run_invalid_login_attempt_error_Slack
 
 def test_log_is_skipped_when_its_from_cloud_run_revision_when_invalid_login_attempt_error_GCP(
     processed_log_entry_invalid_login_attempt_error_GCP: ProcessedLogEntry,
-):
+) -> None:
     log_is_skipped = invalid_login_attempt_filter(
         processed_log_entry_invalid_login_attempt_error_GCP
     )
@@ -60,9 +61,10 @@ def test_log_is_skipped_when_its_from_cloud_run_revision_when_invalid_login_atte
 
 def test_log_message_is_not_a_string_when_invalid_login_attempt_error_Slack(
     processed_log_entry_invalid_login_attempt_error_Slack: ProcessedLogEntry,
-):
+) -> None:
     processed_log_entry_invalid_login_attempt_error_Slack = dataclasses.replace(
-        processed_log_entry_invalid_login_attempt_error_Slack, message=1234
+        processed_log_entry_invalid_login_attempt_error_Slack,
+        message=typing.cast(typing.Any, 1234),
     )
     log_is_skipped = invalid_login_attempt_filter(
         processed_log_entry_invalid_login_attempt_error_Slack
@@ -73,9 +75,10 @@ def test_log_message_is_not_a_string_when_invalid_login_attempt_error_Slack(
 
 def test_log_message_is_not_a_string_when_invalid_login_attempt_error_GCP(
     processed_log_entry_invalid_login_attempt_error_GCP: ProcessedLogEntry,
-):
+) -> None:
     processed_log_entry_invalid_login_attempt_error_GCP = dataclasses.replace(
-        processed_log_entry_invalid_login_attempt_error_GCP, message=1234
+        processed_log_entry_invalid_login_attempt_error_GCP,
+        message=typing.cast(typing.Any, 1234),
     )
     log_is_skipped = invalid_login_attempt_filter(
         processed_log_entry_invalid_login_attempt_error_GCP
@@ -86,7 +89,7 @@ def test_log_message_is_not_a_string_when_invalid_login_attempt_error_GCP(
 
 def test_log_message_is_not_skipped_when_it_does_not_contain_invalid_login_attempt_error_Slack(
     processed_log_entry_invalid_login_attempt_error_Slack: ProcessedLogEntry,
-):
+) -> None:
     processed_log_entry_invalid_login_attempt_error_Slack = dataclasses.replace(
         processed_log_entry_invalid_login_attempt_error_Slack, message="foo"
     )
@@ -99,7 +102,7 @@ def test_log_message_is_not_skipped_when_it_does_not_contain_invalid_login_attem
 
 def test_log_message_is_not_skipped_when_it_does_not_contain_invalid_login_attempt_error_GCP(
     processed_log_entry_invalid_login_attempt_error_GCP: ProcessedLogEntry,
-):
+) -> None:
     processed_log_entry_invalid_login_attempt_error_GCP = dataclasses.replace(
         processed_log_entry_invalid_login_attempt_error_GCP, message="foo"
     )
@@ -112,7 +115,7 @@ def test_log_message_is_not_skipped_when_it_does_not_contain_invalid_login_attem
 
 def test_log_message_is_not_skipped_when_it_contains_severity_info_Slack(
     processed_log_entry_invalid_login_attempt_error_Slack: ProcessedLogEntry,
-):
+) -> None:
     processed_log_entry_invalid_login_attempt_error_Slack = dataclasses.replace(
         processed_log_entry_invalid_login_attempt_error_Slack, severity="INFO"
     )
@@ -125,7 +128,7 @@ def test_log_message_is_not_skipped_when_it_contains_severity_info_Slack(
 
 def test_log_message_is_not_skipped_when_it_contains_severity_info_GCP(
     processed_log_entry_invalid_login_attempt_error_GCP: ProcessedLogEntry,
-):
+) -> None:
     processed_log_entry_invalid_login_attempt_error_GCP = dataclasses.replace(
         processed_log_entry_invalid_login_attempt_error_GCP, severity="INFO"
     )

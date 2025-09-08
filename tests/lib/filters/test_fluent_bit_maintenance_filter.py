@@ -3,7 +3,7 @@ import datetime
 import dataclasses
 from datetime import timezone
 from typing import Any, Dict, List
-from lib.log_processor import ProcessedLogEntry
+from lib.log_processor.processed_log_entry import ProcessedLogEntry
 from lib.filters.fluent_bit_maintenance_filter import fluent_bit_maintenance_filter
 
 
@@ -51,7 +51,7 @@ def create_log_with_field(
 
 def test_fluent_bit_error_patterns_are_skipped_during_maintenance(
     base_maintenance_log: ProcessedLogEntry,
-):
+) -> None:
     error_messages = [
         # TLS/OpenSSL patterns
         "[2025/07/18 12:48:35] [error] [C:\\work\\submodules\\fluent-bit\\src\\tls\\openssl.c:551 errno=0] No error",
@@ -77,7 +77,7 @@ def test_fluent_bit_error_patterns_are_skipped_during_maintenance(
 
 def test_logs_are_not_skipped_outside_maintenance_window(
     base_non_maintenance_log: ProcessedLogEntry,
-):
+) -> None:
     error_messages = [
         "[2025/07/18 12:48:35] [error] [C:\\work\\submodules\\fluent-bit\\src\\tls\\openssl.c:551 errno=0] No error",
         "[2025/07/25 16:04:40] [error] [input:winlog:winlog.1] failed to read 'Security'",
@@ -93,7 +93,7 @@ def test_logs_are_not_skipped_outside_maintenance_window(
 
 def test_maintenance_window_boundary_conditions(
     base_maintenance_log: ProcessedLogEntry,
-):
+) -> None:
     # Prod weekly maintenance window in July is 01:25-01:35 BST = 00:25-00:35 UTC
     test_times = [
         (
@@ -124,7 +124,7 @@ def test_maintenance_window_boundary_conditions(
 
 def test_logs_not_matching_patterns_are_not_skipped(
     base_maintenance_log: ProcessedLogEntry,
-):
+) -> None:
     test_cases: List[Dict[str, Any]] = [
         {"platform": 123, "description": "Invalid platform type"},
         {"platform": "cloud_run_revision", "description": "Wrong platform type"},
@@ -155,7 +155,9 @@ def test_logs_not_matching_patterns_are_not_skipped(
         ), f"{description} should not be skipped"
 
 
-def test_log_name_variations_are_accepted(base_maintenance_log: ProcessedLogEntry):
+def test_log_name_variations_are_accepted(
+    base_maintenance_log: ProcessedLogEntry,
+) -> None:
     valid_log_names = [
         "projects/ons-blaise-v2-prod/logs/ops-agent-fluent-bit",
         "some-prefix-ops-agent-fluent-bit-suffix",
@@ -169,5 +171,5 @@ def test_log_name_variations_are_accepted(base_maintenance_log: ProcessedLogEntr
         ), f"Log name '{log_name}' should be accepted"
 
 
-def test_none_log_entry_is_not_skipped():
+def test_none_log_entry_is_not_skipped() -> None:
     assert fluent_bit_maintenance_filter(None) is False

@@ -3,7 +3,7 @@ import logging
 from lib.log_processor import ProcessedLogEntry
 
 
-def _is_formal_environment(log_name):
+def _is_formal_environment(log_name: str) -> bool:
     project_name = log_name.split("/")[1]
     formal_environments = [
         "ons-blaise-v2-dev",
