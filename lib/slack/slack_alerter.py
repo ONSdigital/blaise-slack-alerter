@@ -4,8 +4,8 @@ from lib.log_processor import ProcessedLogEntry
 from lib.slack.send_slack_message import send_slack_message
 from lib.slack.slack_message import (
     SlackMessage,
-    create_from_raw,
     create_from_processed_log_entry,
+    create_from_raw,
 )
 
 

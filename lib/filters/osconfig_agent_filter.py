@@ -25,5 +25,5 @@ def osconfig_agent_filter(log_entry: ProcessedLogEntry) -> bool:
     ):
         return False
 
-    logging.info(f"Skipping os config agent alert")
+    logging.info("Skipping os config agent alert")
     return True

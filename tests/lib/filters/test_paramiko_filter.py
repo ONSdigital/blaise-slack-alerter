@@ -1,9 +1,11 @@
-import pytest
-import datetime
 import dataclasses
+import datetime
+import typing
 
-from lib.log_processor import ProcessedLogEntry
+import pytest
+
 from lib.filters.paramiko_filter import paramiko_filter
+from lib.log_processor.processed_log_entry import ProcessedLogEntry
 
 
 @pytest.fixture()
@@ -25,16 +27,16 @@ def processed_log_entry_paramiko_error() -> ProcessedLogEntry:
 
 def test_log_is_skipped_when_its_from_cloud_run_revision_when_paramiko_error(
     processed_log_entry_paramiko_error: ProcessedLogEntry,
-):
+) -> None:
     log_is_skipped = paramiko_filter(processed_log_entry_paramiko_error)
     assert log_is_skipped is True
 
 
 def test_log_message_is_not_a_string_when_paramiko_error(
     processed_log_entry_paramiko_error: ProcessedLogEntry,
-):
+) -> None:
     processed_log_entry_paramiko_error = dataclasses.replace(
-        processed_log_entry_paramiko_error, message=1234
+        processed_log_entry_paramiko_error, message=typing.cast(typing.Any, 1234)
     )
     log_is_skipped = paramiko_filter(processed_log_entry_paramiko_error)
 
@@ -43,7 +45,7 @@ def test_log_message_is_not_a_string_when_paramiko_error(
 
 def test_log_message_is_not_skipped_when_it_contains_severity_info_for_paramiko_error(
     processed_log_entry_paramiko_error: ProcessedLogEntry,
-):
+) -> None:
     processed_log_entry_paramiko_error = dataclasses.replace(
         processed_log_entry_paramiko_error, severity="INFO"
     )
@@ -54,7 +56,7 @@ def test_log_message_is_not_skipped_when_it_contains_severity_info_for_paramiko_
 
 def test_log_message_does_not_contain_paramiko(
     processed_log_entry_paramiko_error: ProcessedLogEntry,
-):
+) -> None:
     processed_log_entry_paramiko_error = dataclasses.replace(
         processed_log_entry_paramiko_error,
         message="some other message",

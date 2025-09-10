@@ -1,4 +1,4 @@
-from typing import Optional, Tuple, Union, Dict, Any
+from typing import Any, Dict, Optional, Tuple, Union
 
 from lib.cloud_logging import LogEntry, PayloadType
 from lib.log_processor.app_log_payload import AppLogPayload

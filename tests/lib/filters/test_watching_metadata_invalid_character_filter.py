@@ -1,11 +1,12 @@
-import pytest
-import datetime
 import dataclasses
+import datetime
 
-from lib.log_processor import ProcessedLogEntry
+import pytest
+
 from lib.filters.watching_metadata_invalid_character_filter import (
     watching_metadata_invalid_character_filter,
 )
+from lib.log_processor.processed_log_entry import ProcessedLogEntry
 
 
 @pytest.fixture()
@@ -30,7 +31,7 @@ def processed_log_entry_watching_metadata_invalid_character_error() -> (
 
 def test_log_is_a_valid_watching_metadata_invalid_character_error(
     processed_log_entry_watching_metadata_invalid_character_error: ProcessedLogEntry,
-):
+) -> None:
     log_is_skipped = watching_metadata_invalid_character_filter(
         processed_log_entry_watching_metadata_invalid_character_error
     )
@@ -40,7 +41,7 @@ def test_log_is_a_valid_watching_metadata_invalid_character_error(
 
 def test_log_is_not_from_gce_instance_when_watching_metadata_invalid_character_error(
     processed_log_entry_watching_metadata_invalid_character_error: ProcessedLogEntry,
-):
+) -> None:
     processed_log_entry_watching_metadata_invalid_character_error = dataclasses.replace(
         processed_log_entry_watching_metadata_invalid_character_error,
         platform="not_gce_instance",
@@ -54,7 +55,7 @@ def test_log_is_not_from_gce_instance_when_watching_metadata_invalid_character_e
 
 def test_log_is_not_from_GCEGuestAgent_when_watching_metadata_invalid_character_error(
     processed_log_entry_watching_metadata_invalid_character_error: ProcessedLogEntry,
-):
+) -> None:
     processed_log_entry_watching_metadata_invalid_character_error = dataclasses.replace(
         processed_log_entry_watching_metadata_invalid_character_error,
         log_name="not_valid_value",
@@ -68,7 +69,7 @@ def test_log_is_not_from_GCEGuestAgent_when_watching_metadata_invalid_character_
 
 def test_second_version_log_if_logName_is_Not_explicitly_GCEGuestAgent_when_watching_metadata_invalid_character_error(
     processed_log_entry_watching_metadata_invalid_character_error: ProcessedLogEntry,
-):
+) -> None:
     processed_log_entry_watching_metadata_invalid_character_error = dataclasses.replace(
         processed_log_entry_watching_metadata_invalid_character_error,
         message="2023/10/10 23:06:39 GCEGuestAgent: Error watching metadata: invalid character '<' looking for beginning of value\r\n",

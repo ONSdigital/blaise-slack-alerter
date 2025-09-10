@@ -1,11 +1,12 @@
-import pytest
-import datetime
 import dataclasses
+import datetime
 
-from lib.log_processor import ProcessedLogEntry
+import pytest
+
 from lib.filters.all_preprod_and_training_alerts_except_erroneous_questionnaire_filter import (
     all_preprod_and_training_alerts_except_erroneous_questionnaire_filter,
 )
+from lib.log_processor import ProcessedLogEntry
 
 
 @pytest.fixture()

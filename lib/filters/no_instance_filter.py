@@ -38,6 +38,6 @@ def no_instance_filter(log_entry: ProcessedLogEntry) -> bool:
     if "cloudfunctions" not in log_entry.log_name:
         return False
 
-    logging.info(f"Skipping no instance agent alert")
+    logging.info("Skipping no instance agent alert")
 
     return True

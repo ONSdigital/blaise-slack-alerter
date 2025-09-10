@@ -1,5 +1,6 @@
 import logging
 import re
+
 from lib.log_processor import ProcessedLogEntry
 
 
@@ -27,5 +28,5 @@ def generic_not_found_filter(log_entry: ProcessedLogEntry) -> bool:
     ):
         return False
 
-    logging.info(f"Skipping generic not found alert")
+    logging.info("Skipping generic not found alert")
     return True

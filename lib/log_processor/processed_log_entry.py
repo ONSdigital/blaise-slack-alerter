@@ -1,8 +1,8 @@
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Any, Dict, cast, Callable, Optional, Union, List
+from typing import Any, Callable, Dict, List, Optional, Union, cast
 
-from dateutil.parser import parse, ParserError
+from dateutil.parser import ParserError, parse
 
 from lib.cloud_logging import LogEntry
 from lib.log_processor.app_log_payload import AppLogPayload
@@ -10,7 +10,7 @@ from lib.log_processor.app_log_payload import AppLogPayload
 
 @dataclass(frozen=True)
 class ProcessedLogEntry:
-    message: str
+    message: Optional[str]
     data: Union[str, Dict[str, Any]] = field(
         default_factory=cast(Callable[[], Dict[str, Any]], dict)
     )

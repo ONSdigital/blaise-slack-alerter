@@ -23,5 +23,5 @@ def paramiko_filter(log_entry: ProcessedLogEntry) -> bool:
     if ("ValueError: I/O operation on closed file.") not in log_entry.message:
         return False
 
-    logging.info(f"Skipping paramiko error alert")
+    logging.info("Skipping paramiko error alert")
     return True
