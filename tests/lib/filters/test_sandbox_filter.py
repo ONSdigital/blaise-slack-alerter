@@ -1,9 +1,10 @@
-import pytest
-import datetime
 import dataclasses
+import datetime
 
-from lib.log_processor import ProcessedLogEntry
+import pytest
+
 from lib.filters.sandbox_filter import sandbox_filter
+from lib.log_processor.processed_log_entry import ProcessedLogEntry
 
 
 @pytest.fixture()
@@ -56,7 +57,7 @@ def processed_log_entry() -> ProcessedLogEntry:
 )
 def test_log_is_skipped_for_sandbox_environment(
     processed_log_entry: ProcessedLogEntry, sandbox_log_name_example: str
-):
+) -> None:
     # arrange
     processed_sandbox_environment_log_entry = dataclasses.replace(
         processed_log_entry, log_name=sandbox_log_name_example
@@ -79,7 +80,7 @@ def test_log_is_skipped_for_sandbox_environment(
 )
 def test_log_is_not_skipped_for_formal_environment(
     processed_log_entry: ProcessedLogEntry, formal_log_name_example: str
-):
+) -> None:
     # arrange
     processed_formal_environment_log_entry = dataclasses.replace(
         processed_log_entry, log_name=formal_log_name_example

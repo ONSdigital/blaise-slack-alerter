@@ -6,11 +6,11 @@ import pytest
 from dateutil.parser import parse
 
 from lib.cloud_logging.log_query_link import create_log_query_link
-from lib.log_processor import ProcessedLogEntry
+from lib.log_processor.processed_log_entry import ProcessedLogEntry
 from lib.slack.slack_message import (
-    create_from_processed_log_entry,
     SlackMessage,
     _create_footnote,
+    create_from_processed_log_entry,
 )
 
 
@@ -25,7 +25,7 @@ def log_timestamp_gmt() -> datetime:
 
 
 @pytest.fixture()
-def processed_log_entry(log_timestamp) -> ProcessedLogEntry:
+def processed_log_entry(log_timestamp: datetime) -> ProcessedLogEntry:
     return ProcessedLogEntry(
         message="Example error",
         data={"example_field": "example value"},
@@ -40,7 +40,7 @@ def processed_log_entry(log_timestamp) -> ProcessedLogEntry:
 
 
 @pytest.fixture()
-def log_query_link(log_timestamp):
+def log_query_link(log_timestamp: datetime) -> str:
     return create_log_query_link(
         fields={},
         severities=["WARNING", "ERROR", "CRITICAL", "ALERT", "EMERGENCY", "DEBUG"],
@@ -50,7 +50,7 @@ def log_query_link(log_timestamp):
 
 
 @pytest.fixture()
-def log_query_link_in_gmt(log_timestamp_gmt):
+def log_query_link_in_gmt(log_timestamp_gmt: datetime) -> str:
     return create_log_query_link(
         fields={},
         severities=["WARNING", "ERROR", "CRITICAL", "ALERT", "EMERGENCY", "DEBUG"],
@@ -59,7 +59,9 @@ def log_query_link_in_gmt(log_timestamp_gmt):
     )
 
 
-def test_create_from_processed_log_entry(processed_log_entry, log_query_link):
+def test_create_from_processed_log_entry(
+    processed_log_entry: ProcessedLogEntry, log_query_link: str
+) -> None:
     message = create_from_processed_log_entry(
         processed_log_entry,
         project_name="example-gcp-project",
@@ -85,8 +87,10 @@ def test_create_from_processed_log_entry(processed_log_entry, log_query_link):
 
 
 def test_create_from_processed_log_entry_with_timestamp_in_gmt(
-    processed_log_entry, log_timestamp_gmt, log_query_link_in_gmt
-):
+    processed_log_entry: ProcessedLogEntry,
+    log_timestamp_gmt: datetime,
+    log_query_link_in_gmt: str,
+) -> None:
     message = create_from_processed_log_entry(
         replace(
             processed_log_entry,
@@ -115,8 +119,8 @@ def test_create_from_processed_log_entry_with_timestamp_in_gmt(
 
 
 def test_create_from_processed_log_entry_with_most_important_fields(
-    processed_log_entry, log_query_link
-):
+    processed_log_entry: ProcessedLogEntry, log_query_link: str
+) -> None:
     message = create_from_processed_log_entry(
         replace(
             processed_log_entry,
@@ -148,8 +152,8 @@ def test_create_from_processed_log_entry_with_most_important_fields(
 
 
 def test_create_from_processed_log_entry_with_most_important_field_not_found(
-    processed_log_entry, log_query_link
-):
+    processed_log_entry: ProcessedLogEntry, log_query_link: str
+) -> None:
     message = create_from_processed_log_entry(
         replace(
             processed_log_entry,
@@ -181,8 +185,8 @@ def test_create_from_processed_log_entry_with_most_important_field_not_found(
 
 
 def test_create_from_processed_log_entry_with_no_important_fields(
-    processed_log_entry, log_query_link
-):
+    processed_log_entry: ProcessedLogEntry, log_query_link: str
+) -> None:
     message = create_from_processed_log_entry(
         replace(
             processed_log_entry,
@@ -215,7 +219,9 @@ def test_create_from_processed_log_entry_with_no_important_fields(
     )
 
 
-def test_create_from_processed_log_with_string_data(processed_log_entry):
+def test_create_from_processed_log_with_string_data(
+    processed_log_entry: ProcessedLogEntry,
+) -> None:
     message = create_from_processed_log_entry(
         replace(processed_log_entry, data="This data is a string"),
         project_name="example-gcp-project",

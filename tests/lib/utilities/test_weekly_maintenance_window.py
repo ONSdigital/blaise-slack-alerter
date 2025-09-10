@@ -1,10 +1,10 @@
-import pytest
-from datetime import datetime, timezone, timedelta
-from typing import Any
 import zoneinfo
+from datetime import datetime, timedelta, timezone
+from typing import Any
+
+import pytest
 
 from lib.utilities.weekly_maintenance_window import is_in_friday_maintenance_window
-
 
 # Test constants
 UK_TZ = zoneinfo.ZoneInfo("Europe/London")
@@ -31,7 +31,7 @@ def create_datetime_with_offset(base_time: datetime, **kwargs: Any) -> datetime:
 
 
 @pytest.mark.parametrize("invalid_input", ["not a datetime", None, 123, [], {}])
-def test_returns_false_for_non_datetime_input(invalid_input: Any):
+def test_returns_false_for_non_datetime_input(invalid_input: Any) -> None:
     assert is_in_friday_maintenance_window(invalid_input) is False
 
 
@@ -45,7 +45,7 @@ def test_returns_false_for_non_datetime_input(invalid_input: Any):
         (create_datetime_with_offset(MAINTENANCE_START_UK, minute=33), True),
     ],
 )
-def test_friday_maintenance_window_times(test_time: datetime, expected: bool):
+def test_friday_maintenance_window_times(test_time: datetime, expected: bool) -> None:
     assert is_in_friday_maintenance_window(test_time) is expected
 
 
@@ -61,12 +61,12 @@ def test_friday_maintenance_window_times(test_time: datetime, expected: bool):
         (MAINTENANCE_END_UK.replace(hour=3), False),  # After window (03:35 UK)
     ],
 )
-def test_friday_outside_maintenance_window(test_time: datetime, expected: bool):
+def test_friday_outside_maintenance_window(test_time: datetime, expected: bool) -> None:
     assert is_in_friday_maintenance_window(test_time) is expected
 
 
 @pytest.mark.parametrize("target_weekday", [0, 1, 2, 3, 5, 6])  # Non-Friday weekdays
-def test_non_friday_during_maintenance_hours(target_weekday: int):
+def test_non_friday_during_maintenance_hours(target_weekday: int) -> None:
     days_difference = target_weekday - 4
     non_friday = MAINTENANCE_MIDDLE_UK + timedelta(days=days_difference)
     assert is_in_friday_maintenance_window(non_friday) is False
@@ -107,7 +107,9 @@ def test_non_friday_during_maintenance_hours(target_weekday: int):
         ),
     ],
 )
-def test_timezone_conversions(test_time: datetime, expected: bool, description: str):
+def test_timezone_conversions(
+    test_time: datetime, expected: bool, description: str
+) -> None:
     assert is_in_friday_maintenance_window(test_time) is expected
 
 
@@ -125,7 +127,7 @@ def test_timezone_conversions(test_time: datetime, expected: bool, description: 
         ),
     ],
 )
-def test_edge_cases_with_microseconds(test_time: datetime, expected: bool):
+def test_edge_cases_with_microseconds(test_time: datetime, expected: bool) -> None:
     assert is_in_friday_maintenance_window(test_time) is expected
 
 
@@ -138,7 +140,9 @@ def test_edge_cases_with_microseconds(test_time: datetime, expected: bool):
         (12, 25, 3),  # Thursday, Dec 25, 2025
     ],
 )
-def test_different_non_friday_dates(month: int, day: int, expected_weekday: int):
+def test_different_non_friday_dates(
+    month: int, day: int, expected_weekday: int
+) -> None:
     non_friday_date = datetime(2025, month, day, 1, 30, 0, tzinfo=UK_TZ)  # UK timezone
     assert non_friday_date.weekday() == expected_weekday
     assert is_in_friday_maintenance_window(non_friday_date) is False
@@ -146,6 +150,6 @@ def test_different_non_friday_dates(month: int, day: int, expected_weekday: int)
 
 def test_fixtures_work_correctly(
     maintenance_friday: datetime, non_maintenance_tuesday: datetime
-):
+) -> None:
     assert is_in_friday_maintenance_window(maintenance_friday) is True
     assert is_in_friday_maintenance_window(non_maintenance_tuesday) is False

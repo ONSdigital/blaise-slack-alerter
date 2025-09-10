@@ -1,13 +1,13 @@
-import pytest
-import datetime
 import dataclasses
+import datetime
 from typing import Any
 
-from lib.log_processor import ProcessedLogEntry
+import pytest
+
 from lib.filters.scc_dormant_accounts_prod_alert_filter import (
     scc_dormant_accounts_prod_alert_filter,
 )
-
+from lib.log_processor.processed_log_entry import ProcessedLogEntry
 
 # Test constants
 TARGET_SERVICE_ACCOUNT = (
@@ -60,7 +60,7 @@ def create_log_with_data(base_log: ProcessedLogEntry, data: Any) -> ProcessedLog
 
 def test_log_is_skipped_when_from_target_service_account(
     base_scc_log: ProcessedLogEntry,
-):
+) -> None:
     assert scc_dormant_accounts_prod_alert_filter(base_scc_log) is True
 
 
@@ -73,19 +73,19 @@ def test_log_is_skipped_when_from_target_service_account(
 )
 def test_log_is_skipped_for_service_account_errors(
     base_scc_log: ProcessedLogEntry, error_message: str
-):
+) -> None:
     log = create_log_with_message(base_scc_log, error_message)
     assert scc_dormant_accounts_prod_alert_filter(log) is True
 
 
-def test_log_is_not_skipped_when_log_entry_is_none():
+def test_log_is_not_skipped_when_log_entry_is_none() -> None:
     assert scc_dormant_accounts_prod_alert_filter(None) is False
 
 
 @pytest.mark.parametrize("invalid_platform", [123, "different_platform", None])
 def test_log_is_not_skipped_for_invalid_platform(
     base_scc_log: ProcessedLogEntry, invalid_platform: Any
-):
+) -> None:
     log = create_log_with_field(base_scc_log, platform=invalid_platform)
     assert scc_dormant_accounts_prod_alert_filter(log) is False
 
@@ -101,7 +101,7 @@ def test_log_is_not_skipped_for_invalid_platform(
 )
 def test_log_is_not_skipped_for_invalid_data(
     base_scc_log: ProcessedLogEntry, invalid_data: Any
-):
+) -> None:
     log = create_log_with_data(base_scc_log, invalid_data)
     assert scc_dormant_accounts_prod_alert_filter(log) is False
 
@@ -109,14 +109,14 @@ def test_log_is_not_skipped_for_invalid_data(
 @pytest.mark.parametrize("invalid_message", [1234, None, []])
 def test_log_is_not_skipped_for_invalid_message(
     base_scc_log: ProcessedLogEntry, invalid_message: Any
-):
+) -> None:
     log = create_log_with_field(base_scc_log, message=invalid_message)
     assert scc_dormant_accounts_prod_alert_filter(log) is False
 
 
 def test_log_is_not_skipped_for_different_service_account(
     base_scc_log: ProcessedLogEntry,
-):
+) -> None:
     data = {
         "description": "dummy",
         "authenticationInfo": {
@@ -130,7 +130,7 @@ def test_log_is_not_skipped_for_different_service_account(
 
 def test_log_is_not_skipped_for_invalid_principal_email_type(
     base_scc_log: ProcessedLogEntry,
-):
+) -> None:
     data = {
         "description": "dummy",
         "authenticationInfo": {
@@ -145,6 +145,6 @@ def test_log_is_not_skipped_for_invalid_principal_email_type(
 @pytest.mark.parametrize("invalid_severity", ["INFO", "WARNING", "DEBUG", None, 123])
 def test_log_is_not_skipped_for_invalid_severity(
     base_scc_log: ProcessedLogEntry, invalid_severity: Any
-):
+) -> None:
     log = create_log_with_field(base_scc_log, severity=invalid_severity)
     assert scc_dormant_accounts_prod_alert_filter(log) is False

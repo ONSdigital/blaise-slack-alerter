@@ -18,5 +18,5 @@ def agent_connect_filter(log_entry: ProcessedLogEntry) -> bool:
     ):
         return False
 
-    logging.info(f"Skipping agent connect alert")
+    logging.info("Skipping agent connect alert")
     return True

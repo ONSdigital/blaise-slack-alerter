@@ -1,7 +1,7 @@
 from copy import copy
-from typing import Optional, Any, Dict, Tuple, Union
+from typing import Any, Dict, Optional, Union
 
-from lib.cloud_logging import LogEntry, PayloadType
+from lib.cloud_logging import LogEntry
 from lib.log_processor.app_log_payload import AppLogPayload
 
 

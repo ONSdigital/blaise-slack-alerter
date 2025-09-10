@@ -1,4 +1,5 @@
 import logging
+
 from lib.log_processor import ProcessedLogEntry
 
 
@@ -16,5 +17,5 @@ def invalid_login_attempt_filter(log_entry: ProcessedLogEntry) -> bool:
     if 'Required "container.clusters.list" permission(s)' not in log_entry.message:
         return False
 
-    logging.info(f"Skipping invalid login attempt alert")
+    logging.info("Skipping invalid login attempt alert")
     return True

@@ -1,14 +1,13 @@
-import pytest
 from datetime import datetime, timezone
 from typing import Any, Dict, Optional
-from unittest.mock import Mock
 
-from lib.utilities.log_validation import (
-    validate_log_entry_fields,
-    validate_gce_instance_log_entry,
-)
+import pytest
+
 from lib.log_processor.processed_log_entry import ProcessedLogEntry
-
+from lib.utilities.log_validation import (
+    validate_gce_instance_log_entry,
+    validate_log_entry_fields,
+)
 
 # Test constants
 DEFAULT_TIMESTAMP = datetime(2025, 7, 25, 12, 0, 0, tzinfo=timezone.utc)
@@ -38,11 +37,13 @@ def create_test_log_entry(
 
 
 class TestValidateLogEntryFields:
-    def test_returns_true_for_valid_entry_no_requirements(self):
+    def test_returns_true_for_valid_entry_no_requirements(self) -> None:
         log_entry = create_test_log_entry()
         assert validate_log_entry_fields(log_entry) is True
 
-    def test_returns_true_for_valid_entry_with_none_values_no_requirements(self):
+    def test_returns_true_for_valid_entry_with_none_values_no_requirements(
+        self,
+    ) -> None:
         log_entry = ProcessedLogEntry(
             message=None, platform=None, log_name=None, timestamp=None
         )
@@ -63,7 +64,7 @@ class TestValidateLogEntryFields:
     )
     def test_required_platform_validation(
         self, platform: Any, required_platform: Optional[str], expected: bool
-    ):
+    ) -> None:
         log_entry = create_test_log_entry(platform=platform)
         result = validate_log_entry_fields(
             log_entry, required_platform=required_platform
@@ -79,7 +80,7 @@ class TestValidateLogEntryFields:
             (123, False),
         ],
     )
-    def test_require_message_validation(self, message: Any, expected: bool):
+    def test_require_message_validation(self, message: Any, expected: bool) -> None:
         log_entry = create_test_log_entry(message=message)
         result = validate_log_entry_fields(log_entry, require_message=True)
         assert result is expected
@@ -93,7 +94,7 @@ class TestValidateLogEntryFields:
             (456, False),
         ],
     )
-    def test_require_log_name_validation(self, log_name: Any, expected: bool):
+    def test_require_log_name_validation(self, log_name: Any, expected: bool) -> None:
         log_entry = create_test_log_entry(log_name=log_name)
         result = validate_log_entry_fields(log_entry, require_log_name=True)
         assert result is expected
@@ -108,12 +109,12 @@ class TestValidateLogEntryFields:
             (None, False),
         ],
     )
-    def test_require_timestamp_validation(self, timestamp: Any, expected: bool):
+    def test_require_timestamp_validation(self, timestamp: Any, expected: bool) -> None:
         log_entry = create_test_log_entry(timestamp=timestamp)
         result = validate_log_entry_fields(log_entry, require_timestamp=True)
         assert result is expected
 
-    def test_multiple_requirements_all_valid(self):
+    def test_multiple_requirements_all_valid(self) -> None:
         log_entry = create_test_log_entry(
             message="Valid message",
             platform=GCE_PLATFORM,
@@ -140,7 +141,7 @@ class TestValidateLogEntryFields:
     )
     def test_multiple_requirements_fails_on_invalid_field(
         self, invalid_field: str, field_value: Any
-    ):
+    ) -> None:
         valid_data: Dict[str, Any] = {
             "message": "Valid message",
             "platform": GCE_PLATFORM,
@@ -170,7 +171,7 @@ class TestValidateGceInstanceLogEntry:
             (123, False),
         ],
     )
-    def test_platform_validation(self, platform: Any, expected: bool):
+    def test_platform_validation(self, platform: Any, expected: bool) -> None:
         log_entry = create_test_log_entry(platform=platform)
         result = validate_gce_instance_log_entry(log_entry)
         assert result is expected
@@ -184,7 +185,7 @@ class TestValidateGceInstanceLogEntry:
             (123, False),
         ],
     )
-    def test_message_validation(self, message: Any, expected: bool):
+    def test_message_validation(self, message: Any, expected: bool) -> None:
         log_entry = create_test_log_entry(message=message, platform=GCE_PLATFORM)
         result = validate_gce_instance_log_entry(log_entry)
         assert result is expected
@@ -198,7 +199,7 @@ class TestValidateGceInstanceLogEntry:
             (123, False),
         ],
     )
-    def test_log_name_validation(self, log_name: Any, expected: bool):
+    def test_log_name_validation(self, log_name: Any, expected: bool) -> None:
         log_entry = create_test_log_entry(log_name=log_name, platform=GCE_PLATFORM)
         result = validate_gce_instance_log_entry(log_entry)
         assert result is expected
@@ -214,18 +215,18 @@ class TestValidateGceInstanceLogEntry:
             (None, False),
         ],
     )
-    def test_timestamp_validation(self, timestamp: Any, expected: bool):
+    def test_timestamp_validation(self, timestamp: Any, expected: bool) -> None:
         log_entry = create_test_log_entry(timestamp=timestamp, platform=GCE_PLATFORM)
         result = validate_gce_instance_log_entry(log_entry)
         assert result is expected
 
-    def test_all_fields_invalid_returns_false(self):
+    def test_all_fields_invalid_returns_false(self) -> None:
         log_entry = ProcessedLogEntry(
             message=None, platform="cloud_run", log_name=None, timestamp=None
         )
         assert validate_gce_instance_log_entry(log_entry) is False
 
-    def test_all_fields_valid_returns_true(self):
+    def test_all_fields_valid_returns_true(self) -> None:
         log_entry = create_test_log_entry(
             message="Error in application",
             platform=GCE_PLATFORM,
@@ -234,7 +235,7 @@ class TestValidateGceInstanceLogEntry:
         )
         assert validate_gce_instance_log_entry(log_entry) is True
 
-    def test_with_additional_fields_returns_true(self):
+    def test_with_additional_fields_returns_true(self) -> None:
         log_entry = ProcessedLogEntry(
             message="Error in application",
             platform=GCE_PLATFORM,

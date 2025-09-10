@@ -1,14 +1,13 @@
-from datetime import datetime
 from unittest.mock import Mock
 
 import pytest
 
 from lib.cloud_logging import LogEntry, PayloadType
 from lib.log_processor import (
-    process_log_entry,
-    NoMatchingLogTypeFound,
     AppLogPayload,
+    NoMatchingLogTypeFound,
     ProcessedLogEntry,
+    process_log_entry,
 )
 
 

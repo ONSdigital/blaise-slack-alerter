@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime, timedelta
+
 from lib.log_processor import ProcessedLogEntry
 
 
@@ -25,5 +25,5 @@ def bootstrapper_filter(log_entry: ProcessedLogEntry) -> bool:
     ):
         return False
 
-    logging.info(f"Skipping bootstrapper alert")
+    logging.info("Skipping bootstrapper alert")
     return True

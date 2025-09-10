@@ -26,7 +26,7 @@ def test_attempt_create_returns_processed_text_payload(log_entry):
     assert instance.message == "Unexpected Error"
     assert instance.data == "Example text payload"
     assert instance.platform == "unknown-resource"
-    assert instance.application == None
+    assert instance.application is None
 
 
 def test_attempt_create_returns_none_payload_type_is_not_none(log_entry):

@@ -8,10 +8,10 @@ from lib import send_alerts
 from lib.log_processor import APP_LOG_PAYLOAD_FACTORIES
 from lib.slack import SlackAlerter
 
-setup_logging(StructuredLogHandler())
+setup_logging(StructuredLogHandler())  # type: ignore
 
 
-def send_slack_alert(event: dict, _context) -> str:
+def send_slack_alert(event: dict, _context: dict) -> str:
     slack_url = os.environ["SLACK_URL"]
     project_name = os.environ["GCP_PROJECT_NAME"]
     alerter = SlackAlerter(slack_url, project_name)

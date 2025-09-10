@@ -1,9 +1,11 @@
-import pytest
-import datetime
 import dataclasses
+import datetime
+import typing
 
-from lib.log_processor import ProcessedLogEntry
+import pytest
+
 from lib.filters.no_instance_filter import no_instance_filter
+from lib.log_processor.processed_log_entry import ProcessedLogEntry
 
 
 @pytest.fixture()
@@ -25,14 +27,14 @@ def processed_log_entry_no_instance_error() -> ProcessedLogEntry:
 
 def test_log_is_skipped_when_its_not_from_cloud_run_revision_instance_when_no_instance_error(
     processed_log_entry_no_instance_error: ProcessedLogEntry,
-):
+) -> None:
     log_is_skipped = no_instance_filter(processed_log_entry_no_instance_error)
     assert log_is_skipped is True
 
 
 def test_log_is_skipped_when_its_application_is_bert_instance_when_no_instance_error(
     processed_log_entry_no_instance_error: ProcessedLogEntry,
-):
+) -> None:
     processed_log_entry_no_instance_error = dataclasses.replace(
         processed_log_entry_no_instance_error, application="bert-call-history"
     )
@@ -42,7 +44,7 @@ def test_log_is_skipped_when_its_application_is_bert_instance_when_no_instance_e
 
 def test_log_is_not_skipped_when_its_application_is_not_in_list_of_skippable_applications_instance_when_no_instance_error(
     processed_log_entry_no_instance_error: ProcessedLogEntry,
-):
+) -> None:
     processed_log_entry_no_instance_error = dataclasses.replace(
         processed_log_entry_no_instance_error, application="dummy"
     )
@@ -52,7 +54,7 @@ def test_log_is_not_skipped_when_its_application_is_not_in_list_of_skippable_app
 
 def test_log_is_not_skipped_when_not_from_cloud_run_revision_instance_when_no_instance_error(
     processed_log_entry_no_instance_error: ProcessedLogEntry,
-):
+) -> None:
     processed_log_entry_no_instance_error = dataclasses.replace(
         processed_log_entry_no_instance_error,
         platform="not_cloud_run_revision_instance",
@@ -64,7 +66,7 @@ def test_log_is_not_skipped_when_not_from_cloud_run_revision_instance_when_no_in
 
 def test_log_message_is_a_string_when_no_instance_error(
     processed_log_entry_no_instance_error: ProcessedLogEntry,
-):
+) -> None:
     log_is_skipped = no_instance_filter(processed_log_entry_no_instance_error)
 
     assert log_is_skipped is True
@@ -72,9 +74,9 @@ def test_log_message_is_a_string_when_no_instance_error(
 
 def test_log_message_is_not_a_string_when_no_instance_error(
     processed_log_entry_no_instance_error: ProcessedLogEntry,
-):
+) -> None:
     processed_log_entry_no_instance_error = dataclasses.replace(
-        processed_log_entry_no_instance_error, message=1234
+        processed_log_entry_no_instance_error, message=typing.cast(typing.Any, 1234)
     )
     log_is_skipped = no_instance_filter(processed_log_entry_no_instance_error)
 
@@ -83,7 +85,7 @@ def test_log_message_is_not_a_string_when_no_instance_error(
 
 def test_log_message_is_skipped_when_it_contains_no_instance_error(
     processed_log_entry_no_instance_error: ProcessedLogEntry,
-):
+) -> None:
     log_is_skipped = no_instance_filter(processed_log_entry_no_instance_error)
 
     assert log_is_skipped is True
@@ -91,7 +93,7 @@ def test_log_message_is_skipped_when_it_contains_no_instance_error(
 
 def test_log_message_is_not_skipped_when_it_does_not_contain_no_instance_error(
     processed_log_entry_no_instance_error: ProcessedLogEntry,
-):
+) -> None:
     processed_log_entry_no_instance_error = dataclasses.replace(
         processed_log_entry_no_instance_error, message="foo"
     )
@@ -102,9 +104,9 @@ def test_log_message_is_not_skipped_when_it_does_not_contain_no_instance_error(
 
 def test_log_message_is_not_skipped_when_log_name_is_not_a_string(
     processed_log_entry_no_instance_error: ProcessedLogEntry,
-):
+) -> None:
     processed_log_entry_no_instance_error = dataclasses.replace(
-        processed_log_entry_no_instance_error, log_name=1234
+        processed_log_entry_no_instance_error, log_name=typing.cast(typing.Any, 1234)
     )
     log_is_skipped = no_instance_filter(processed_log_entry_no_instance_error)
 
@@ -113,7 +115,7 @@ def test_log_message_is_not_skipped_when_log_name_is_not_a_string(
 
 def test_log_message_is_not_skipped_when_log_message_and_log_name_contain_no_instance_agent_error(
     processed_log_entry_no_instance_error: ProcessedLogEntry,
-):
+) -> None:
     processed_log_entry_no_instance_error = dataclasses.replace(
         processed_log_entry_no_instance_error, message="foo", log_name="foo"
     )
