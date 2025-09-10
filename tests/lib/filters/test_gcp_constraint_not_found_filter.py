@@ -1,13 +1,16 @@
-import pytest
-import datetime
 import dataclasses
+import datetime
+import typing
+from typing import Any
 
-from lib.log_processor import ProcessedLogEntry
+import pytest
+
 from lib.filters.gcp_constraint_not_found_filter import (
     org_policy_constraint_not_found_filter,
     physical_zone_separation_constraint_filter,
     service_account_hmac_key_constraint_filter,
 )
+from lib.log_processor.processed_log_entry import ProcessedLogEntry
 
 CONSTRAINT_NAMES = {
     "physical_zone_separation": "constraints/gcp.requiresPhysicalZoneSeparation",
@@ -48,7 +51,7 @@ def processed_org_policy_constraint_log() -> ProcessedLogEntry:
 
 def test_filter_skips_allowed_physical_zone_separation_constraint_error(
     processed_org_policy_constraint_log: ProcessedLogEntry,
-):
+) -> None:
     log_is_skipped = org_policy_constraint_not_found_filter(
         processed_org_policy_constraint_log
     )
@@ -57,7 +60,7 @@ def test_filter_skips_allowed_physical_zone_separation_constraint_error(
 
 def test_filter_skips_allowed_hmac_key_constraint_error(
     processed_org_policy_constraint_log: ProcessedLogEntry,
-):
+) -> None:
     processed_log = dataclasses.replace(
         processed_org_policy_constraint_log,
         message=ERROR_MESSAGES["hmac_key_constraint_error"],
@@ -68,7 +71,7 @@ def test_filter_skips_allowed_hmac_key_constraint_error(
 
 def test_filter_does_not_skip_other_constraint_error(
     processed_org_policy_constraint_log: ProcessedLogEntry,
-):
+) -> None:
     processed_log = dataclasses.replace(
         processed_org_policy_constraint_log,
         message=ERROR_MESSAGES["other_constraint_error"],
@@ -79,7 +82,7 @@ def test_filter_does_not_skip_other_constraint_error(
 
 def test_specific_physical_zone_filter_skips_correct_constraint(
     processed_org_policy_constraint_log: ProcessedLogEntry,
-):
+) -> None:
     log_is_skipped = physical_zone_separation_constraint_filter(
         processed_org_policy_constraint_log
     )
@@ -88,7 +91,7 @@ def test_specific_physical_zone_filter_skips_correct_constraint(
 
 def test_specific_hmac_key_filter_skips_correct_constraint(
     processed_org_policy_constraint_log: ProcessedLogEntry,
-):
+) -> None:
     processed_log = dataclasses.replace(
         processed_org_policy_constraint_log,
         message=ERROR_MESSAGES["hmac_key_constraint_error"],
@@ -99,7 +102,7 @@ def test_specific_hmac_key_filter_skips_correct_constraint(
 
 def test_specific_filters_do_not_skip_other_constraints(
     processed_org_policy_constraint_log: ProcessedLogEntry,
-):
+) -> None:
     processed_log = dataclasses.replace(
         processed_org_policy_constraint_log,
         message=ERROR_MESSAGES["other_constraint_error"],
@@ -111,14 +114,14 @@ def test_specific_filters_do_not_skip_other_constraints(
     assert hmac_key_skipped is False
 
 
-def test_log_is_not_skipped_when_log_entry_is_none():
+def test_log_is_not_skipped_when_log_entry_is_none() -> None:
     log_is_skipped = org_policy_constraint_not_found_filter(None)
     assert log_is_skipped is False
 
 
 def test_log_is_not_skipped_when_severity_is_not_error(
     processed_org_policy_constraint_log: ProcessedLogEntry,
-):
+) -> None:
     processed_log = dataclasses.replace(
         processed_org_policy_constraint_log, severity="INFO"
     )
@@ -128,9 +131,9 @@ def test_log_is_not_skipped_when_severity_is_not_error(
 
 def test_log_is_not_skipped_when_platform_is_not_string(
     processed_org_policy_constraint_log: ProcessedLogEntry,
-):
+) -> None:
     processed_log = dataclasses.replace(
-        processed_org_policy_constraint_log, platform=123
+        processed_org_policy_constraint_log, platform=typing.cast(Any, 123)
     )
     log_is_skipped = org_policy_constraint_not_found_filter(processed_log)
     assert log_is_skipped is False
@@ -138,7 +141,7 @@ def test_log_is_not_skipped_when_platform_is_not_string(
 
 def test_log_is_not_skipped_when_platform_is_not_audited_resource(
     processed_org_policy_constraint_log: ProcessedLogEntry,
-):
+) -> None:
     processed_log = dataclasses.replace(
         processed_org_policy_constraint_log, platform="different_platform"
     )
@@ -148,9 +151,9 @@ def test_log_is_not_skipped_when_platform_is_not_audited_resource(
 
 def test_log_is_not_skipped_when_message_is_not_string(
     processed_org_policy_constraint_log: ProcessedLogEntry,
-):
+) -> None:
     processed_log = dataclasses.replace(
-        processed_org_policy_constraint_log, message=123
+        processed_org_policy_constraint_log, message=typing.cast(Any, 123)
     )
     log_is_skipped = org_policy_constraint_not_found_filter(processed_log)
     assert log_is_skipped is False
@@ -158,7 +161,7 @@ def test_log_is_not_skipped_when_message_is_not_string(
 
 def test_log_is_not_skipped_when_data_is_not_dict(
     processed_org_policy_constraint_log: ProcessedLogEntry,
-):
+) -> None:
     processed_log = dataclasses.replace(
         processed_org_policy_constraint_log, data="not_a_dict"
     )
@@ -168,7 +171,7 @@ def test_log_is_not_skipped_when_data_is_not_dict(
 
 def test_log_is_not_skipped_when_service_name_is_not_string(
     processed_org_policy_constraint_log: ProcessedLogEntry,
-):
+) -> None:
     processed_log = dataclasses.replace(
         processed_org_policy_constraint_log,
         data={"serviceName": 123, "methodName": "test"},
@@ -179,7 +182,7 @@ def test_log_is_not_skipped_when_service_name_is_not_string(
 
 def test_log_is_not_skipped_when_service_name_is_missing(
     processed_org_policy_constraint_log: ProcessedLogEntry,
-):
+) -> None:
     processed_log = dataclasses.replace(
         processed_org_policy_constraint_log, data={"methodName": "test"}
     )
@@ -189,7 +192,7 @@ def test_log_is_not_skipped_when_service_name_is_missing(
 
 def test_log_is_not_skipped_when_service_name_is_not_orgpolicy(
     processed_org_policy_constraint_log: ProcessedLogEntry,
-):
+) -> None:
     processed_log = dataclasses.replace(
         processed_org_policy_constraint_log,
         data=dict(serviceName="different.service.com", methodName="test"),
@@ -200,7 +203,7 @@ def test_log_is_not_skipped_when_service_name_is_not_orgpolicy(
 
 def test_log_is_not_skipped_when_message_does_not_contain_constraint_patterns(
     processed_org_policy_constraint_log: ProcessedLogEntry,
-):
+) -> None:
     processed_log = dataclasses.replace(
         processed_org_policy_constraint_log, message=ERROR_MESSAGES["different_error"]
     )

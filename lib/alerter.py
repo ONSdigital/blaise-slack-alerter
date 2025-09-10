@@ -1,4 +1,4 @@
-from typing import TypeVar, Protocol, Any
+from typing import Any, Protocol, TypeVar
 
 from lib.log_processor import ProcessedLogEntry
 

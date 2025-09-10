@@ -13,7 +13,7 @@ def assert_field_in_event(field_name: str, event: dict) -> None:
         raise InvalidCloudRunRevisionEvent(f"Field '{field_name}' is missing.")
 
 
-def parse_event(event) -> Event:
+def parse_event(event: dict) -> Event:
     assert_field_in_event("data", event)
 
     try:

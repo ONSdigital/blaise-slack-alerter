@@ -1,9 +1,10 @@
-import pytest
-import datetime
 import dataclasses
+import datetime
 
-from lib.log_processor import ProcessedLogEntry
+import pytest
+
 from lib.filters.agent_connect_filter import agent_connect_filter
+from lib.log_processor.processed_log_entry import ProcessedLogEntry
 
 
 @pytest.fixture()
@@ -27,7 +28,7 @@ def processed_log_entry_agent_connect_error() -> ProcessedLogEntry:
 
 def test_log_is_from_gce_instance_when_agent_connect_error(
     processed_log_entry_agent_connect_error: ProcessedLogEntry,
-):
+) -> None:
     log_is_skipped = agent_connect_filter(processed_log_entry_agent_connect_error)
 
     assert log_is_skipped is True
@@ -35,7 +36,7 @@ def test_log_is_from_gce_instance_when_agent_connect_error(
 
 def test_log_is_not_from_gce_instance_when_agent_connect_error(
     processed_log_entry_agent_connect_error: ProcessedLogEntry,
-):
+) -> None:
     processed_log_entry_agent_connect_error = dataclasses.replace(
         processed_log_entry_agent_connect_error, platform="not_gce_instance"
     )
@@ -46,7 +47,7 @@ def test_log_is_not_from_gce_instance_when_agent_connect_error(
 
 def test_log_data_is_dict_and_has_description_when_agent_connect_error(
     processed_log_entry_agent_connect_error: ProcessedLogEntry,
-):
+) -> None:
     log_is_skipped = agent_connect_filter(processed_log_entry_agent_connect_error)
 
     assert log_is_skipped is True
@@ -54,7 +55,7 @@ def test_log_data_is_dict_and_has_description_when_agent_connect_error(
 
 def test_log_data_is_dict_but_no_description_when_agent_connect_error(
     processed_log_entry_agent_connect_error: ProcessedLogEntry,
-):
+) -> None:
     processed_log_entry_agent_connect_error = dataclasses.replace(
         processed_log_entry_agent_connect_error, data=dict(source_name="gcp")
     )
@@ -65,7 +66,7 @@ def test_log_data_is_dict_but_no_description_when_agent_connect_error(
 
 def test_log_data_is_not_dict_and_no_description_when_agent_connect_error(
     processed_log_entry_agent_connect_error: ProcessedLogEntry,
-):
+) -> None:
     processed_log_entry_agent_connect_error = dataclasses.replace(
         processed_log_entry_agent_connect_error, data="no-relevant-data"
     )
@@ -76,7 +77,7 @@ def test_log_data_is_not_dict_and_no_description_when_agent_connect_error(
 
 def test_log_data_description_has_target_text_when_agent_connect_error(
     processed_log_entry_agent_connect_error: ProcessedLogEntry,
-):
+) -> None:
     log_is_skipped = agent_connect_filter(processed_log_entry_agent_connect_error)
 
     assert log_is_skipped is True
@@ -84,7 +85,7 @@ def test_log_data_description_has_target_text_when_agent_connect_error(
 
 def test_log_data_description_has_no_target_text_when_agent_connect_error(
     processed_log_entry_agent_connect_error: ProcessedLogEntry,
-):
+) -> None:
     processed_log_entry_agent_connect_error = dataclasses.replace(
         processed_log_entry_agent_connect_error,
         data=dict(description="ERROR: there is no relevant data descrtiption"),

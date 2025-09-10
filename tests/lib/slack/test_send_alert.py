@@ -35,7 +35,7 @@ def test_successfully_sending_a_message():
 
         send_slack_message("https://slack.com/example/web-hook", message)
 
-    assert mock.call_count is 1
+    assert mock.call_count == 1
     assert json.loads(mock.request_history[0].text) == convert_slack_message_to_blocks(
         message
     )

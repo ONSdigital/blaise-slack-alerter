@@ -1,8 +1,12 @@
 import logging
+from typing import Optional
+
 from lib.log_processor import ProcessedLogEntry
 
 
-def org_policy_constraint_not_found_filter(log_entry: ProcessedLogEntry) -> bool:
+def org_policy_constraint_not_found_filter(
+    log_entry: Optional[ProcessedLogEntry],
+) -> bool:
     if log_entry is None:
         return False
 

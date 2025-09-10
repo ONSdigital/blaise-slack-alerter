@@ -1,11 +1,11 @@
-from typing import List, Callable, Optional, TypeVar
+from typing import Callable, List, Optional, TypeVar
 
 Arg = TypeVar("Arg")
 Return = TypeVar("Return")
 
 
 def first_successful(
-    factories: List[Callable[[], Optional[Return]]]
+    factories: List[Callable[[], Optional[Return]]],
 ) -> Optional[Return]:
     for create in factories:
         result = create()

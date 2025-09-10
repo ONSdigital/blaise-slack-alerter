@@ -1,9 +1,11 @@
-import pytest
-import datetime
 import dataclasses
+import datetime
+import typing
 
-from lib.log_processor import ProcessedLogEntry
+import pytest
+
 from lib.filters.ip_space_exhausted_filter import ip_space_exhausted_filter
+from lib.log_processor.processed_log_entry import ProcessedLogEntry
 
 
 @pytest.fixture()
@@ -25,7 +27,7 @@ def processed_log_entry_IP_space_exhausted() -> ProcessedLogEntry:
 
 def test_log_is_IP_space_exhausted(
     processed_log_entry_IP_space_exhausted: ProcessedLogEntry,
-):
+) -> None:
     log_is_skipped = ip_space_exhausted_filter(processed_log_entry_IP_space_exhausted)
 
     assert log_is_skipped is True
@@ -33,9 +35,9 @@ def test_log_is_IP_space_exhausted(
 
 def test_log_platform_is_not_a_string(
     processed_log_entry_IP_space_exhausted: ProcessedLogEntry,
-):
+) -> None:
     processed_log_entry_IP_space_exhausted = dataclasses.replace(
-        processed_log_entry_IP_space_exhausted, platform=123
+        processed_log_entry_IP_space_exhausted, platform=typing.cast(typing.Any, 1234)
     )
     log_is_skipped = ip_space_exhausted_filter(processed_log_entry_IP_space_exhausted)
 
@@ -44,7 +46,7 @@ def test_log_platform_is_not_a_string(
 
 def test_log_platform_not_gce_instance_in_IP_space_exhausted(
     processed_log_entry_IP_space_exhausted: ProcessedLogEntry,
-):
+) -> None:
     processed_log_entry_IP_space_exhausted = dataclasses.replace(
         processed_log_entry_IP_space_exhausted, platform="not_gce_instance"
     )
@@ -55,9 +57,9 @@ def test_log_platform_not_gce_instance_in_IP_space_exhausted(
 
 def test_log_message_is_not_a_string_in_IP_space_exhausted(
     processed_log_entry_IP_space_exhausted: ProcessedLogEntry,
-):
+) -> None:
     processed_log_entry_IP_space_exhausted = dataclasses.replace(
-        processed_log_entry_IP_space_exhausted, message=123
+        processed_log_entry_IP_space_exhausted, message=typing.cast(typing.Any, 1234)
     )
     log_is_skipped = ip_space_exhausted_filter(processed_log_entry_IP_space_exhausted)
 
@@ -66,7 +68,7 @@ def test_log_message_is_not_a_string_in_IP_space_exhausted(
 
 def test_IP_space_exhausted_is_not_in_message(
     processed_log_entry_IP_space_exhausted: ProcessedLogEntry,
-):
+) -> None:
     processed_log_entry_IP_space_exhausted = dataclasses.replace(
         processed_log_entry_IP_space_exhausted, message="IP_SPACE_is_not_EXHAUSTED"
     )

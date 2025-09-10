@@ -1,4 +1,5 @@
 import logging
+
 from lib.log_processor import ProcessedLogEntry
 
 
@@ -16,5 +17,5 @@ def get_role_filter(log_entry: ProcessedLogEntry) -> bool:
     if "You don't have permission to get the role at" not in log_entry.message:
         return False
 
-    logging.info(f"Skipping get role alert")
+    logging.info("Skipping get role alert")
     return True

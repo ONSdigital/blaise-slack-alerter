@@ -13,5 +13,5 @@ def auditlog_filter(log_entry: ProcessedLogEntry) -> bool:
     if not log_entry.data.get("methodName", "").startswith("storage."):
         return False
 
-    logging.info(f"Skipping audit log alert")
+    logging.info("Skipping audit log alert")
     return True

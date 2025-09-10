@@ -1,9 +1,11 @@
-import pytest
-import datetime
 import dataclasses
+import datetime
+import typing
 
-from lib.log_processor import ProcessedLogEntry
+import pytest
+
 from lib.filters.socket_exception_filter import socket_exception_filter
+from lib.log_processor.processed_log_entry import ProcessedLogEntry
 
 
 @pytest.fixture()
@@ -25,16 +27,17 @@ def processed_log_entry_socket_not_found_error() -> ProcessedLogEntry:
 
 def test_socket_exception_error_log_is_skipped_when_its_run(
     processed_log_entry_socket_not_found_error: ProcessedLogEntry,
-):
+) -> None:
     log_is_skipped = socket_exception_filter(processed_log_entry_socket_not_found_error)
     assert log_is_skipped is True
 
 
 def test_log_message_is_not_a_string_when_socket_exception_error(
     processed_log_entry_socket_not_found_error: ProcessedLogEntry,
-):
+) -> None:
     processed_log_entry_socket_not_found_error = dataclasses.replace(
-        processed_log_entry_socket_not_found_error, message=1234
+        processed_log_entry_socket_not_found_error,
+        message=typing.cast(typing.Any, 1234),
     )
     log_is_skipped = socket_exception_filter(processed_log_entry_socket_not_found_error)
 
@@ -43,7 +46,7 @@ def test_log_message_is_not_a_string_when_socket_exception_error(
 
 def test_log_message_is_not_skipped_when_it_does_not_contain_socket_exception_error(
     processed_log_entry_socket_not_found_error: ProcessedLogEntry,
-):
+) -> None:
     processed_log_entry_socket_not_found_error = dataclasses.replace(
         processed_log_entry_socket_not_found_error, message="foo"
     )
@@ -54,7 +57,7 @@ def test_log_message_is_not_skipped_when_it_does_not_contain_socket_exception_er
 
 def test_log_message_is_not_skipped_when_it_contains_severity_info_socket_exception_error(
     processed_log_entry_socket_not_found_error: ProcessedLogEntry,
-):
+) -> None:
     processed_log_entry_socket_not_found_error = dataclasses.replace(
         processed_log_entry_socket_not_found_error, severity="INFO"
     )

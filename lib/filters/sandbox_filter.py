@@ -3,7 +3,7 @@ import logging
 from lib.log_processor import ProcessedLogEntry
 
 
-def _is_formal_environment(log_name):
+def _is_formal_environment(log_name: str) -> bool:
     project_name = log_name.split("/")[1]
     formal_environments = [
         "ons-blaise-v2-dev",
@@ -27,5 +27,5 @@ def sandbox_filter(log_entry: ProcessedLogEntry) -> bool:
     if _is_formal_environment(log_entry.log_name):
         return False
 
-    logging.info(f"Skipping sandbox alert")
+    logging.info("Skipping sandbox alert")
     return True

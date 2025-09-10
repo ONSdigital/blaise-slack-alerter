@@ -1,8 +1,8 @@
 import json
 from dataclasses import dataclass
-from typing import Dict, Any, Tuple, Optional
-
 from datetime import datetime
+from typing import Any, Dict, Optional, Tuple
+
 import pytz
 
 from lib.cloud_logging.log_query_link import create_log_query_link
@@ -53,7 +53,8 @@ def create_from_processed_log_entry(
 
 
 def _create_title(processed_log_entry: ProcessedLogEntry) -> Tuple[str, Optional[str]]:
-    message_lines = processed_log_entry.message.split("\n")
+    message = processed_log_entry.message or ""
+    message_lines = message.split("\n")
 
     title = f":alert: {processed_log_entry.severity or 'UNKNOWN'}: {message_lines[0]}"
 
@@ -66,7 +67,7 @@ def _create_title(processed_log_entry: ProcessedLogEntry) -> Tuple[str, Optional
     return title, full_message
 
 
-def _create_log_time_in_local_timezone(processed_log_entry):
+def _create_log_time_in_local_timezone(processed_log_entry: ProcessedLogEntry) -> str:
     return (
         _convert_time_to_london_timezone(processed_log_entry.timestamp).strftime(
             "%Y-%m-%d %H:%M:%S"
@@ -82,7 +83,7 @@ def _convert_time_to_london_timezone(timestamp: datetime) -> datetime:
 
 def _create_content(
     processed_log_entry: ProcessedLogEntry, full_message: Optional[str]
-):
+) -> str:
     content = (
         processed_log_entry.data
         if isinstance(processed_log_entry.data, str)
@@ -162,7 +163,8 @@ def _is_totalmobile_alert(processed_log_entry: ProcessedLogEntry) -> bool:
         "bts-create-totalmobile-jobs-processor",
     ]
 
-    if any(match in processed_log_entry.message for match in totalmobile_errors):
+    message = processed_log_entry.message or ""
+    if any(match in message for match in totalmobile_errors):
         return True
 
     try:
@@ -190,17 +192,17 @@ def _is_nisra_alert(processed_log_entry: ProcessedLogEntry) -> bool:
     return False
 
 
-def _populate_instructions_line(processed_log_entry: ProcessedLogEntry):
+def _populate_instructions_line(processed_log_entry: ProcessedLogEntry) -> str:
     if _is_data_delivery_alert(processed_log_entry):
-        return f"4. <https://officefornationalstatistics.atlassian.net/wiki/spaces/QSS/pages/50299847/Troubleshooting+Playbook+-+Data+Delivery | View the Data Delivery Troubleshooting Playbook>"
+        return "4. <https://officefornationalstatistics.atlassian.net/wiki/spaces/QSS/pages/50299847/Troubleshooting+Playbook+-+Data+Delivery | View the Data Delivery Troubleshooting Playbook>"
 
     if _is_totalmobile_alert(processed_log_entry):
-        return f"4. <https://officefornationalstatistics.atlassian.net/wiki/spaces/QSS/pages/50326799/Troubleshooting+Playbook+-+BTS+Totalmobile | View the BTS/Totalmobile Troubleshooting Playbook>"
+        return "4. <https://officefornationalstatistics.atlassian.net/wiki/spaces/QSS/pages/50326799/Troubleshooting+Playbook+-+BTS+Totalmobile | View the BTS/Totalmobile Troubleshooting Playbook>"
 
     if _is_nisra_alert(processed_log_entry):
         return "4. <https://officefornationalstatistics.atlassian.net/wiki/spaces/QSS/pages/50326981/Troubleshooting+Playbook+-+NISRA | View the NISRA Troubleshooting Playbook>"
 
-    return f"4. Follow the <https://officefornationalstatistics.atlassian.net/wiki/spaces/QSS/pages/50299787/Troubleshooting+Playbook+-+Slack+Alerts | Managing Prod Alerts> process"
+    return "4. Follow the <https://officefornationalstatistics.atlassian.net/wiki/spaces/QSS/pages/50299787/Troubleshooting+Playbook+-+Slack+Alerts | Managing Prod Alerts> process"
 
 
 def _create_footnote(processed_log_entry: ProcessedLogEntry, project_name: str) -> str:
@@ -217,20 +219,20 @@ def _create_footnote(processed_log_entry: ProcessedLogEntry, project_name: str) 
     )
 
 
-def _trim_number_of_lines(content, max_lines):
+def _trim_number_of_lines(content: str, max_lines: int) -> str:
     lines = content.split("\n")
     if len(lines) > max_lines:
         content = "\n".join(lines[0 : max_lines - 2]) + "\n" "...\n" "[truncated]"
     return content
 
 
-def _trim_length(content, max_chars):
+def _trim_length(content: str, max_chars: int) -> str:
     if len(content) > max_chars:
         content = f"{content[:max_chars]}...\n[truncated]"
     return content
 
 
-def _get_value(dictionary, path: str) -> Optional[Any]:
+def _get_value(dictionary: dict, path: str) -> Optional[Any]:
     parts = path.split(".")
     result = dictionary
     for part in parts:

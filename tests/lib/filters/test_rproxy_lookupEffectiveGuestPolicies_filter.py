@@ -1,11 +1,12 @@
-import pytest
-import datetime
 import dataclasses
+import datetime
 
-from lib.log_processor import ProcessedLogEntry
+import pytest
+
 from lib.filters.rproxy_lookupEffectiveGuestPolicies_filter import (
     rproxy_lookupEffectiveGuestPolicies_filter,
 )
+from lib.log_processor.processed_log_entry import ProcessedLogEntry
 
 
 @pytest.fixture()
@@ -27,7 +28,7 @@ def processed_log_entry_rproxy_lookupEffectiveGuestPolicies_error() -> (
 
 def test_log_is_a_valid_rproxy_lookupEffectiveGuestPolicies_error(
     processed_log_entry_rproxy_lookupEffectiveGuestPolicies_error: ProcessedLogEntry,
-):
+) -> None:
     log_is_skipped = rproxy_lookupEffectiveGuestPolicies_filter(
         processed_log_entry_rproxy_lookupEffectiveGuestPolicies_error
     )
@@ -37,7 +38,7 @@ def test_log_is_a_valid_rproxy_lookupEffectiveGuestPolicies_error(
 
 def test_log_is_not_from_gce_instance_when_rproxy_lookupEffectiveGuestPolicies_error(
     processed_log_entry_rproxy_lookupEffectiveGuestPolicies_error: ProcessedLogEntry,
-):
+) -> None:
     processed_log_entry_rproxy_lookupEffectiveGuestPolicies_error = dataclasses.replace(
         processed_log_entry_rproxy_lookupEffectiveGuestPolicies_error,
         platform="not_gce_instance",
@@ -51,7 +52,7 @@ def test_log_is_not_from_gce_instance_when_rproxy_lookupEffectiveGuestPolicies_e
 
 def test_log_is_not_from_rproxy_gce_instance_when_rproxy_lookupEffectiveGuestPolicies_error(
     processed_log_entry_rproxy_lookupEffectiveGuestPolicies_error: ProcessedLogEntry,
-):
+) -> None:
     processed_log_entry_rproxy_lookupEffectiveGuestPolicies_error = dataclasses.replace(
         processed_log_entry_rproxy_lookupEffectiveGuestPolicies_error,
         platform="not_rproxy_vm",
@@ -65,7 +66,7 @@ def test_log_is_not_from_rproxy_gce_instance_when_rproxy_lookupEffectiveGuestPol
 
 def test_log_message_is_not_a_rproxy_lookupEffectiveGuestPolicies_error(
     processed_log_entry_rproxy_lookupEffectiveGuestPolicies_error: ProcessedLogEntry,
-):
+) -> None:
     processed_log_entry_rproxy_lookupEffectiveGuestPolicies_error = dataclasses.replace(
         processed_log_entry_rproxy_lookupEffectiveGuestPolicies_error,
         message="not_rproxy_lookupEffectiveGuestPolicies_error",

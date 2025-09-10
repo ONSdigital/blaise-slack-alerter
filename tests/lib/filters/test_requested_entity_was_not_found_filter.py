@@ -1,11 +1,13 @@
-import pytest
-import datetime
 import dataclasses
+import datetime
+import typing
 
-from lib.log_processor import ProcessedLogEntry
+import pytest
+
 from lib.filters.requested_entity_was_not_found_filter import (
     requested_entity_was_not_found_filter,
 )
+from lib.log_processor.processed_log_entry import ProcessedLogEntry
 
 
 @pytest.fixture()
@@ -27,7 +29,7 @@ def processed_log_entry_requested_entity_was_not_found_error() -> ProcessedLogEn
 
 def test_log_is_skipped_when_its_from_cloud_run_revision_when_requested_entity_was_not_found_error_GCP(
     processed_log_entry_requested_entity_was_not_found_error: ProcessedLogEntry,
-):
+) -> None:
     log_is_skipped = requested_entity_was_not_found_filter(
         processed_log_entry_requested_entity_was_not_found_error
     )
@@ -36,9 +38,10 @@ def test_log_is_skipped_when_its_from_cloud_run_revision_when_requested_entity_w
 
 def test_log_message_is_not_a_string_when_entity_was_not_found_error_GCP(
     processed_log_entry_requested_entity_was_not_found_error: ProcessedLogEntry,
-):
+) -> None:
     processed_log_entry_requested_entity_was_not_found_error = dataclasses.replace(
-        processed_log_entry_requested_entity_was_not_found_error, message=1234
+        processed_log_entry_requested_entity_was_not_found_error,
+        message=typing.cast(typing.Any, 1234),
     )
     log_is_skipped = requested_entity_was_not_found_filter(
         processed_log_entry_requested_entity_was_not_found_error
@@ -49,7 +52,7 @@ def test_log_message_is_not_a_string_when_entity_was_not_found_error_GCP(
 
 def test_log_message_is_not_skipped_when_it_does_not_contain_requested_entity_was_not_found_error_GCP(
     processed_log_entry_requested_entity_was_not_found_error: ProcessedLogEntry,
-):
+) -> None:
     processed_log_entry_requested_entity_was_not_found_error = dataclasses.replace(
         processed_log_entry_requested_entity_was_not_found_error, message="foo"
     )
@@ -62,7 +65,7 @@ def test_log_message_is_not_skipped_when_it_does_not_contain_requested_entity_wa
 
 def test_log_message_is_not_skipped_when_it_contains_severity_info_GCP(
     processed_log_entry_requested_entity_was_not_found_error: ProcessedLogEntry,
-):
+) -> None:
     processed_log_entry_requested_entity_was_not_found_error = dataclasses.replace(
         processed_log_entry_requested_entity_was_not_found_error, severity="INFO"
     )
